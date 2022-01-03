@@ -1,0 +1,13 @@
+{
+    "author" : ["CrunchBangDev"],
+    "install_msg" : "You've just installed the Vibe cog!",
+    "name" : "Vibe",
+    "short" : "Inspirobot and chill",
+    "description" : "Allow yourself to drift quietly",
+    "required_cogs": {},
+    "requirements": ["inspiro"],
+    "min_bot_version": "3.1.8",
+    "max_bot_version": "0.0.0",
+    "tags": [],
+    "type": "COG"
+}

@@ -1,0 +1,1 @@
+A slimmer fork of [RedBot](https://github.com/Cog-Creators/Red-DiscordBot), with code updated to discord.py 2.0.0a and beyond.
