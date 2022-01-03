@@ -431,8 +431,8 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         else:
             owner = app_info.owner
 
-        dpy_version = "[{}]({})".format(discord.__version__, dpy_repo)
-        python_version = "[{}.{}.{}]({})".format(
+        dpy_version = "[`{}`]({})".format(discord.__version__, dpy_repo)
+        python_version = "[`{}.{}.{}`]({})".format(
             *sys.version_info[:3], python_url)
 
         embed = discord.Embed(
@@ -445,7 +445,8 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
 
         about = (
             "A customized fork of RedBot,"
-            "\nupdated discord.py 2.0.0a+."
+            "\nupdated for discord.py `2.0.0a`+."
+            "\n\nFork maintained by <@723268667579826267>"
         )
         embed.add_field(
             name=_(f"About {ctx.me.display_name}"), value=about, inline=False)
