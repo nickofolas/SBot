@@ -3532,7 +3532,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             os_info = platform.mac_ver()
             osver = f"Mac OSX {os_info[0]} {os_info[2]}"
         elif IS_LINUX:
-            osver = f"{distro.name()} {distro.version()}".strip()
+            osver = f"{distro.name()} {distro.version()}".strip()  # type: ignore
         else:
             osver = "Could not parse OS, report this on Github."
         user_who_ran = getpass.getuser()
@@ -3884,7 +3884,6 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         **Arguments:**
             - `<users_or_roles...>` - The users or roles to remove from the local allowlist.
         """
-        names = [getattr(u_or_r, "name", u_or_r) for u_or_r in users_or_roles]
         uids = {getattr(u_or_r, "id", u_or_r) for u_or_r in users_or_roles}
         if not (ctx.guild.owner == ctx.author or await self.bot.is_owner(ctx.author)):
             current_whitelist = await self.bot.get_whitelist(ctx.guild)
@@ -3950,7 +3949,6 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         **Arguments:**
             - `<users_or_roles...>` - The users or roles to remove from the local allowlist.
         """
-        names = [getattr(u_or_r, "name", u_or_r) for u_or_r in users_or_roles]
         uids = {getattr(u_or_r, "id", u_or_r) for u_or_r in users_or_roles}
         if not (ctx.guild.owner == ctx.author or await self.bot.is_owner(ctx.author)):
             current_whitelist = await self.bot.get_whitelist(ctx.guild)
