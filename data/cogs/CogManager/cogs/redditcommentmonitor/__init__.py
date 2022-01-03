@@ -1,4 +1,4 @@
-from .treepaunch_reddit_cog import RedditPostMonitor
+from .commentmonitor import RedditPostMonitor
 
 
 def setup(bot):
