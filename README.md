@@ -2,7 +2,7 @@ A slimmer fork of [RedBot](https://github.com/Cog-Creators/Red-DiscordBot), with
 
 ---
 
-Some aspects of the code have been modified for customization reasons and/or implementing compatability with discord.py 2.0.0's breaking changes.
+Some aspects of the code have been modified for customization reasons and/or implementing compatability with discord.py `2.0.0`+'s breaking changes.
 
 
 Besides these changes, all code in `Red-DiscordBot/` belongs to its respective owners, and its license is available under `Red-DiscordBot/redbot.LICENSE`.  

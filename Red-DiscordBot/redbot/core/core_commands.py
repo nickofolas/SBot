@@ -422,6 +422,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         See `[p]set custominfo` to customize.
         """
         red_repo = "https://github.com/Cog-Creators/Red-DiscordBot"
+        fork_repo = "https://github.com/nickofolas/SBot"
         dpy_repo = "https://github.com/nickofolas/discord.py"
         python_url = "https://www.python.org/"
 
@@ -453,7 +454,10 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
 
         view = discord.ui.View()
         view.add_item(discord.ui.Button(
-            url=red_repo, label="View original RedBot code"
+            url=red_repo, label="View RedBot code"
+        ))
+        view.add_item(discord.ui.Button(
+            url=fork_repo, label="View forked code"
         ))
 
         await ctx.send(embed=embed, view=view)
