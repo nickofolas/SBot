@@ -89,14 +89,16 @@ def init_events(bot, cli_flags):
         red_pkg = pkg_resources.get_distribution("Red-DiscordBot")
         dpy_version = discord.__version__
 
-        table_general_info = Table(show_edge=False, show_header=False, box=box.MINIMAL)
+        table_general_info = Table(
+            show_edge=False, show_header=False, box=box.MINIMAL)
         table_general_info.add_row("Prefixes", ", ".join(prefixes))
         table_general_info.add_row("Language", lang)
         table_general_info.add_row("Red version", red_version)
         table_general_info.add_row("Discord.py version", dpy_version)
         table_general_info.add_row("Storage type", data_manager.storage_type())
 
-        table_counts = Table(show_edge=False, show_header=False, box=box.MINIMAL)
+        table_counts = Table(
+            show_edge=False, show_header=False, box=box.MINIMAL)
         # String conversion is needed as Rich doesn't deal with ints
         table_counts.add_row("Shards", str(bot.shard_count))
         table_counts.add_row("Servers", str(guilds))
@@ -108,20 +110,24 @@ def init_events(bot, cli_flags):
         if guilds:
             rich_console.print(
                 Columns(
-                    [Panel(table_general_info, title=str(bot.user.name)), Panel(table_counts)],
+                    [Panel(table_general_info, title=str(
+                        bot.user.name)), Panel(table_counts)],
                     equal=True,
                     align="center",
                 )
             )
         else:
-            rich_console.print(Columns([Panel(table_general_info, title=str(bot.user.name))]))
+            rich_console.print(
+                Columns([Panel(table_general_info, title=str(bot.user.name))]))
 
         rich_console.print(
-            "Loaded {} cogs with {} commands".format(len(bot.cogs), len(bot.commands))
+            "Loaded {} cogs with {} commands".format(
+                len(bot.cogs), len(bot.commands))
         )
 
         if invite_url:
-            rich_console.print(f"\nInvite URL: {Text(invite_url, style=f'link {invite_url}')}")
+            rich_console.print(
+                f"\nInvite URL: {Text(invite_url, style=f'link {invite_url}')}")
             # We generally shouldn't care if the client supports it or not as Rich deals with it.
         if not guilds:
             rich_console.print(
@@ -183,9 +189,11 @@ def init_events(bot, cli_flags):
             message = _(
                 "Error in command '{command}'. Check your console or logs for details."
             ).format(command=ctx.command.qualified_name)
-            exception_log = "Exception in command '{}'\n" "".format(ctx.command.qualified_name)
+            exception_log = "Exception in command '{}'\n" "".format(
+                ctx.command.qualified_name)
             exception_log += "".join(
-                traceback.format_exception(type(error), error, error.__traceback__)
+                traceback.format_exception(
+                    type(error), error, error.__traceback__)
             )
             bot._last_exception = exception_log
             await ctx.send(inline(message))
@@ -231,7 +239,8 @@ def init_events(bot, cli_flags):
                 await bot.invoke(new_ctx)
                 return
             if delay := humanize_timedelta(seconds=error.retry_after):
-                msg = _("This command is on cooldown. Try again in {delay}.").format(delay=delay)
+                msg = _("This command is on cooldown. Try again in {delay}.").format(
+                    delay=delay)
             else:
                 msg = _("This command is on cooldown. Try again in 1 second.")
             await ctx.send(msg, delete_after=error.retry_after)

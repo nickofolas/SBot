@@ -42,7 +42,8 @@ class CogManager:
         self.config = Config.get_conf(self, 2938473984732, True)
         tmp_cog_install_path = cog_data_path(self) / "cogs"
         tmp_cog_install_path.mkdir(parents=True, exist_ok=True)
-        self.config.register_global(paths=[], install_path=str(tmp_cog_install_path))
+        self.config.register_global(
+            paths=[], install_path=str(tmp_cog_install_path))
 
     async def paths(self) -> List[Path]:
         """Get all currently valid path directories, in order of priority
@@ -155,7 +156,8 @@ class CogManager:
             raise ValueError("'{}' is not a valid directory.".format(path))
 
         if path == await self.install_path():
-            raise ValueError("Cannot add the install path as an additional path.")
+            raise ValueError(
+                "Cannot add the install path as an additional path.")
         if path == self.CORE_PATH:
             raise ValueError("Cannot add the core path as an additional path.")
 
@@ -257,7 +259,8 @@ class CogManager:
         except ImportError as e:
             if e.name == package + real_name:
                 raise NoSuchCog(
-                    "No core cog by the name of '{}' could be found.".format(name),
+                    "No core cog by the name of '{}' could be found.".format(
+                        name),
                     path=e.path,
                     name=e.name,
                 ) from e
@@ -429,7 +432,8 @@ class CogManagerUI(commands.Cog):
 
         install_path = await ctx.bot._cog_mgr.install_path()
         await ctx.send(
-            _("The bot will install new cogs to the `{}` directory.").format(install_path)
+            _("The bot will install new cogs to the `{}` directory.").format(
+                install_path)
         )
 
     @commands.command()
@@ -448,19 +452,23 @@ class CogManagerUI(commands.Cog):
         unloaded = sorted(list(unloaded), key=str.lower)
 
         if await ctx.embed_requested():
-            loaded = _("**{} loaded:**\n").format(len(loaded)) + ", ".join(loaded)
-            unloaded = _("**{} unloaded:**\n").format(len(unloaded)) + ", ".join(unloaded)
+            loaded = _("**{} loaded:**\n").format(len(loaded)) + \
+                ", ".join(loaded)
+            unloaded = _("**{} unloaded:**\n").format(len(unloaded)
+                                                      ) + ", ".join(unloaded)
 
             for page in pagify(loaded, delims=[", ", "\n"], page_length=1800):
                 if page.startswith(", "):
                     page = page[2:]
-                e = discord.Embed(description=page, colour=discord.Colour.dark_green())
+                e = discord.Embed(description=page,
+                                  colour=discord.Colour.dark_green())
                 await ctx.send(embed=e)
 
             for page in pagify(unloaded, delims=[", ", "\n"], page_length=1800):
                 if page.startswith(", "):
                     page = page[2:]
-                e = discord.Embed(description=page, colour=discord.Colour.dark_red())
+                e = discord.Embed(description=page,
+                                  colour=discord.Colour.dark_red())
                 await ctx.send(embed=e)
         else:
             loaded_count = _("**{} loaded:**\n").format(len(loaded))

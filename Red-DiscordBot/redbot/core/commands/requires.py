@@ -34,7 +34,8 @@ if TYPE_CHECKING:
     from .commands import Command
     from .context import Context
 
-    _CommandOrCoro = TypeVar("_CommandOrCoro", Callable[..., Awaitable[Any]], Command)
+    _CommandOrCoro = TypeVar(
+        "_CommandOrCoro", Callable[..., Awaitable[Any]], Command)
 
 __all__ = [
     "CheckPredicate",
@@ -80,7 +81,8 @@ GuildPermissionModel = Union[
     discord.Guild,
 ]
 PermissionModel = Union[GlobalPermissionModel, GuildPermissionModel]
-CheckPredicate = Callable[["Context"], Union[Optional[bool], Awaitable[Optional[bool]]]]
+CheckPredicate = Callable[["Context"],
+                          Union[Optional[bool], Awaitable[Optional[bool]]]]
 
 # Here we are trying to model DM permissions as closely as possible. The only
 # discrepancy I've found is that users can pin messages, but they cannot delete them.
@@ -219,7 +221,8 @@ class PermState(enum.Enum):
 # to PASSIVE_ALLOW. In this case "next state" is a dict mapping the
 # permission check results to the actual next state.
 
-TransitionResult = Tuple[Optional[bool], Union[PermState, Dict[bool, PermState]]]
+TransitionResult = Tuple[Optional[bool],
+                         Union[PermState, Dict[bool, PermState]]]
 TransitionDict = Dict[PermState, Dict[PermState, TransitionResult]]
 
 PermStateTransitions: TransitionDict = {
@@ -252,10 +255,13 @@ PermStateTransitions: TransitionDict = {
         PermState.ACTIVE_DENY: (False, PermState.ACTIVE_DENY),
     },
     PermState.ACTIVE_DENY: {  # We can only start from ACTIVE_DENY if it is set on a cog.
-        PermState.ACTIVE_ALLOW: (True, PermState.ACTIVE_ALLOW),  # Should never happen
+        # Should never happen
+        PermState.ACTIVE_ALLOW: (True, PermState.ACTIVE_ALLOW),
         PermState.NORMAL: (False, PermState.ACTIVE_DENY),
-        PermState.PASSIVE_ALLOW: (False, PermState.ACTIVE_DENY),  # Should never happen
-        PermState.CAUTIOUS_ALLOW: (False, PermState.ACTIVE_DENY),  # Should never happen
+        # Should never happen
+        PermState.PASSIVE_ALLOW: (False, PermState.ACTIVE_DENY),
+        # Should never happen
+        PermState.CAUTIOUS_ALLOW: (False, PermState.ACTIVE_DENY),
         PermState.ACTIVE_DENY: (False, PermState.ACTIVE_DENY),
     },
 }
@@ -336,7 +342,8 @@ class Requires:
         self.ready_event = asyncio.Event()
 
         if isinstance(user_perms, dict):
-            self.user_perms: Optional[discord.Permissions] = discord.Permissions.none()
+            self.user_perms: Optional[discord.Permissions] = discord.Permissions.none(
+            )
             _validate_perms_dict(user_perms)
             self.user_perms.update(**user_perms)
         else:
@@ -399,7 +406,8 @@ class Requires:
             model = model.id
         rules: Mapping[Union[int, str], PermState]
         if guild_id:
-            rules = ChainMap(self._global_rules, self._guild_rules.get(guild_id, _RulesDict()))
+            rules = ChainMap(self._global_rules,
+                             self._guild_rules.get(guild_id, _RulesDict()))
         else:
             rules = self._global_rules
         return rules.get(model, PermState.NORMAL)
@@ -518,7 +526,8 @@ class Requires:
 
         bot_perms = ctx.channel.permissions_for(bot_user)
         if not (bot_perms.administrator or bot_perms >= self.bot_perms):
-            raise BotMissingPermissions(missing=self._missing_perms(self.bot_perms, bot_perms))
+            raise BotMissingPermissions(
+                missing=self._missing_perms(self.bot_perms, bot_perms))
 
     async def _transition_state(self, ctx: "Context") -> bool:
         should_invoke, next_state = self._get_transitioned_state(ctx)
@@ -729,7 +738,8 @@ def has_permissions(**perms: bool):
     This check can be overridden by rules.
     """
     if perms is None:
-        raise TypeError("Must provide at least one keyword argument to has_permissions")
+        raise TypeError(
+            "Must provide at least one keyword argument to has_permissions")
     return Requires.get_decorator(None, perms)
 
 
@@ -814,12 +824,14 @@ class _RulesDict(Dict[Union[int, str], PermState]):
 
     def __getitem__(self, key: Any) -> PermState:
         if key != Requires.DEFAULT and not isinstance(key, int):
-            raise TypeError(f'Expected "{Requires.DEFAULT}" or int key, not "{key}"')
+            raise TypeError(
+                f'Expected "{Requires.DEFAULT}" or int key, not "{key}"')
         return super().__getitem__(key)  # pylint: disable=no-member
 
     def __setitem__(self, key: Any, value: PermState) -> None:
         if key != Requires.DEFAULT and not isinstance(key, int):
-            raise TypeError(f'Expected "{Requires.DEFAULT}" or int key, not "{key}"')
+            raise TypeError(
+                f'Expected "{Requires.DEFAULT}" or int key, not "{key}"')
         return super().__setitem__(key, value)  # pylint: disable=no-member
 
 
@@ -831,4 +843,5 @@ def _validate_perms_dict(perms: Dict[str, bool]) -> None:
         if value is not True:
             # We reject any permission not specified as 'True', since this is the only value which
             # makes practical sense.
-            raise TypeError(f"Permission {perm} may only be specified as 'True', not {value}")
+            raise TypeError(
+                f"Permission {perm} may only be specified as 'True', not {value}")

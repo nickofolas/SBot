@@ -58,7 +58,8 @@ class PlaylistUtilities(MixinMeta, metaclass=CompositeMetaClass):
             else self.bot.get_user(playlist.author) or user
         )
 
-        is_different_user = len({playlist.author, user_to_query.id, ctx.author.id}) != 1
+        is_different_user = len(
+            {playlist.author, user_to_query.id, ctx.author.id}) != 1
         is_different_guild = True if guild_to_query is None else ctx.guild.id != guild_to_query.id
         if getattr(playlist, "id", 0) == 42069:
             has_perms = bypass
@@ -103,7 +104,8 @@ class PlaylistUtilities(MixinMeta, metaclass=CompositeMetaClass):
                     "You do not have the permissions to manage that playlist in {guild}."
                 ).format(guild=guild_to_query)
             elif (
-                playlist.scope in [PlaylistScope.GUILD.value, PlaylistScope.USER.value]
+                playlist.scope in [
+                    PlaylistScope.GUILD.value, PlaylistScope.USER.value]
                 and is_different_user
             ):
                 msg = _(
@@ -195,7 +197,8 @@ class PlaylistUtilities(MixinMeta, metaclass=CompositeMetaClass):
                     p for p in matches.get(PlaylistScope.GLOBAL.value) if p.author == user_to_query
                 ]
             else:
-                correct_scope_matches_global = [p for p in matches.get(PlaylistScope.GLOBAL.value)]
+                correct_scope_matches_global = [
+                    p for p in matches.get(PlaylistScope.GLOBAL.value)]
 
         correct_scope_matches = [
             *correct_scope_matches_global,
@@ -211,7 +214,8 @@ class PlaylistUtilities(MixinMeta, metaclass=CompositeMetaClass):
                 correct_scope_matches = correct_scope_matches2
             elif original_input.isnumeric():
                 arg = int(original_input)
-                correct_scope_matches3 = [p for p in correct_scope_matches if p.id == arg]
+                correct_scope_matches3 = [
+                    p for p in correct_scope_matches if p.id == arg]
                 if correct_scope_matches3:
                     correct_scope_matches = correct_scope_matches3
         match_count = len(correct_scope_matches)
@@ -219,7 +223,8 @@ class PlaylistUtilities(MixinMeta, metaclass=CompositeMetaClass):
         if match_count > 10:
             if original_input.isnumeric():
                 arg = int(original_input)
-                correct_scope_matches = [p for p in correct_scope_matches if p.id == arg]
+                correct_scope_matches = [
+                    p for p in correct_scope_matches if p.id == arg]
             if match_count > 10:
                 raise TooManyMatches(
                     _(
@@ -236,9 +241,11 @@ class PlaylistUtilities(MixinMeta, metaclass=CompositeMetaClass):
         pos_len = 3
         playlists = f"{'#':{pos_len}}\n"
         number = 0
-        correct_scope_matches = sorted(correct_scope_matches, key=lambda x: x.name.lower())
+        correct_scope_matches = sorted(
+            correct_scope_matches, key=lambda x: x.name.lower())
         async for number, playlist in AsyncIter(correct_scope_matches).enumerate(start=1):
-            author = self.bot.get_user(playlist.author) or playlist.author or _("Unknown")
+            author = self.bot.get_user(
+                playlist.author) or playlist.author or _("Unknown")
             line = _(
                 "{number}."
                 "    <{playlist.name}>\n"
@@ -317,7 +324,8 @@ class PlaylistUtilities(MixinMeta, metaclass=CompositeMetaClass):
             )
         embed.set_footer(
             text=_("Page {page_num}/{total_pages} | {num} playlists.").format(
-                page_num=page_num, total_pages=plist_num_pages, num=len(abc_names)
+                page_num=page_num, total_pages=plist_num_pages, num=len(
+                    abc_names)
             )
         )
         return embed
@@ -377,7 +385,8 @@ class PlaylistUtilities(MixinMeta, metaclass=CompositeMetaClass):
         )
         await playlist_msg.edit(embed=embed3)
         database_entries = []
-        time_now = int(datetime.datetime.now(datetime.timezone.utc).timestamp())
+        time_now = int(datetime.datetime.now(
+            datetime.timezone.utc).timestamp())
         async for t in AsyncIter(track_list):
             uri = t.get("info", {}).get("uri")
             if uri:
@@ -412,12 +421,14 @@ class PlaylistUtilities(MixinMeta, metaclass=CompositeMetaClass):
 
         embed1 = discord.Embed(title=_("Please wait, adding tracks..."))
         playlist_msg = await self.send_embed_msg(ctx, embed=embed1)
-        notifier = Notifier(ctx, playlist_msg, {"playlist": _("Loading track {num}/{total}...")})
+        notifier = Notifier(ctx, playlist_msg, {
+                            "playlist": _("Loading track {num}/{total}...")})
         async for track_count, song_url in AsyncIter(uploaded_track_list).enumerate(start=1):
             try:
                 try:
                     result, called_api = await self.api_interface.fetch_track(
-                        ctx, player, Query.process_input(song_url, self.local_folder_current_path)
+                        ctx, player, Query.process_input(
+                            song_url, self.local_folder_current_path)
                     )
                 except TrackEnqueueError:
                     self.update_player_lock(ctx, False)
@@ -487,7 +498,8 @@ class PlaylistUtilities(MixinMeta, metaclass=CompositeMetaClass):
             _, updated_tracks = await self._get_bundled_playlist_tracks()
             results = {}
             old_tracks = playlist.tracks_obj
-            new_tracks = [lavalink.Track(data=track) for track in updated_tracks]
+            new_tracks = [lavalink.Track(data=track)
+                          for track in updated_tracks]
             removed = list(set(old_tracks) - set(new_tracks))
             added = list(set(new_tracks) - set(old_tracks))
             if removed or added:
@@ -552,7 +564,8 @@ class PlaylistUtilities(MixinMeta, metaclass=CompositeMetaClass):
                 await self.send_embed_msg(
                     ctx,
                     title=_("Unable To Get Playlists"),
-                    description=_("Connection to Lavalink has not yet been established."),
+                    description=_(
+                        "Connection to Lavalink has not yet been established."),
                 )
                 return False
             except AttributeError:
@@ -570,7 +583,8 @@ class PlaylistUtilities(MixinMeta, metaclass=CompositeMetaClass):
             await self.send_embed_msg(
                 ctx,
                 title=_("Unable To Get Playlists"),
-                description=_("You must be in the voice channel to use the playlist command."),
+                description=_(
+                    "You must be in the voice channel to use the playlist command."),
             )
             return False
         await self._eq_check(ctx, player)
@@ -593,7 +607,8 @@ class PlaylistUtilities(MixinMeta, metaclass=CompositeMetaClass):
                     return await self.send_embed_msg(
                         ctx,
                         title=_("Unable To Get Tracks"),
-                        description=_("Wait until the playlist has finished loading."),
+                        description=_(
+                            "Wait until the playlist has finished loading."),
                     )
             except KeyError:
                 pass
@@ -696,7 +711,8 @@ class PlaylistUtilities(MixinMeta, metaclass=CompositeMetaClass):
                 try:
                     data = json.loads(await response.read())
                 except Exception:
-                    log.exception("Curated playlist couldn't be parsed, report this error.")
+                    log.exception(
+                        "Curated playlist couldn't be parsed, report this error.")
                     data = {}
                 web_version = data.get("version", 0)
                 entries = data.get("entries", [])

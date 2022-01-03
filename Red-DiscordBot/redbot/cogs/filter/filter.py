@@ -458,7 +458,8 @@ class Filter(commands.Cog):
                 user=author,
                 moderator=guild.me,
                 reason=(
-                    _("Filtered words used: {words}").format(words=humanize_list(list(hits)))
+                    _("Filtered words used: {words}").format(
+                        words=humanize_list(list(hits)))
                     if len(hits) > 1
                     else _("Filtered word used: {word}").format(word=list(hits)[0])
                 ),
@@ -483,7 +484,8 @@ class Filter(commands.Cog):
                             await modlog.create_case(
                                 self.bot,
                                 guild,
-                                message.created_at.replace(tzinfo=timezone.utc),
+                                message.created_at.replace(
+                                    tzinfo=timezone.utc),
                                 "filterban",
                                 author,
                                 guild.me,
@@ -545,7 +547,8 @@ class Filter(commands.Cog):
 
         if await self.filter_hits(member.display_name, member.guild):
             name_to_use = guild_data["filter_default_name"]
-            reason = _("Filtered nickname") if member.nick else _("Filtered name")
+            reason = _("Filtered nickname") if member.nick else _(
+                "Filtered name")
             try:
                 await member.edit(nick=name_to_use, reason=reason)
             except discord.HTTPException:

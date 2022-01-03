@@ -60,7 +60,8 @@ class I18nManager:
     def __init__(self, config: Config):
         self._config: Config = config
         self._guild_locale: Dict[Union[int, None], Union[str, None]] = {}
-        self._guild_regional_format: Dict[Union[int, None], Union[str, None]] = {}
+        self._guild_regional_format: Dict[Union[int,
+                                                None], Union[str, None]] = {}
 
     async def get_locale(self, guild: Union[discord.Guild, None]) -> str:
         """Get the guild locale from the cache"""
@@ -123,7 +124,8 @@ class I18nManager:
             else:
                 return self._guild_regional_format[guild.id]
         else:  # Uncached guild
-            out = await self._config.guild(guild).regional_format()  # No locale set
+            # No locale set
+            out = await self._config.guild(guild).regional_format()
             if out is None:
                 self._guild_regional_format[guild.id] = None
                 return self._guild_regional_format[None]
@@ -273,7 +275,8 @@ class WhitelistBlacklistManager:
             gid: Optional[int] = guild.id if guild else None
             role_or_user = role_or_user or []
             if not all(isinstance(r_or_u, int) for r_or_u in role_or_user):
-                raise TypeError("`role_or_user` must be an iterable of `int`s.")
+                raise TypeError(
+                    "`role_or_user` must be an iterable of `int`s.")
 
             if gid is None:
                 if gid not in self._cached_whitelist:
@@ -307,7 +310,8 @@ class WhitelistBlacklistManager:
             gid: Optional[int] = guild.id if guild else None
             role_or_user = role_or_user or []
             if not all(isinstance(r_or_u, int) for r_or_u in role_or_user):
-                raise TypeError("`role_or_user` must be an iterable of `int`s.")
+                raise TypeError(
+                    "`role_or_user` must be an iterable of `int`s.")
 
             if gid is None:
                 if gid not in self._cached_whitelist:
@@ -346,7 +350,8 @@ class WhitelistBlacklistManager:
             gid: Optional[int] = guild.id if guild else None
             role_or_user = role_or_user or []
             if not all(isinstance(r_or_u, int) for r_or_u in role_or_user):
-                raise TypeError("`role_or_user` must be an iterable of `int`s.")
+                raise TypeError(
+                    "`role_or_user` must be an iterable of `int`s.")
             if gid is None:
                 if gid not in self._cached_blacklist:
                     self._cached_blacklist[gid] = set(await self._config.blacklist())
@@ -378,7 +383,8 @@ class WhitelistBlacklistManager:
             gid: Optional[int] = guild.id if guild else None
             role_or_user = role_or_user or []
             if not all(isinstance(r_or_u, int) for r_or_u in role_or_user):
-                raise TypeError("`role_or_user` must be an iterable of `int`s.")
+                raise TypeError(
+                    "`role_or_user` must be an iterable of `int`s.")
             if gid is None:
                 if gid not in self._cached_blacklist:
                     self._cached_blacklist[gid] = set(await self._config.blacklist())

@@ -49,7 +49,8 @@ class Alias(commands.Cog):
 
         self.config.register_global(entries=[], handled_string_creator=False)
         self.config.register_guild(entries=[])
-        self._aliases: AliasCache = AliasCache(config=self.config, cache_enabled=True)
+        self._aliases: AliasCache = AliasCache(
+            config=self.config, cache_enabled=True)
         self._ready_event = asyncio.Event()
 
     async def red_delete_data_for_user(
@@ -202,7 +203,8 @@ class Alias(commands.Cog):
             page = (
                 _("Aliases:\n")
                 + page
-                + _("\n\nPage {page}/{total}").format(page=count, total=len(temp))
+                + _("\n\nPage {page}/{total}").format(page=count,
+                                                      total=len(temp))
             )
             alias_list.append(box("".join(page), "diff"))
         if len(alias_list) == 1:
@@ -260,7 +262,8 @@ class Alias(commands.Cog):
             )
             return
 
-        given_command_exists = self.bot.get_command(command.split(maxsplit=1)[0]) is not None
+        given_command_exists = self.bot.get_command(
+            command.split(maxsplit=1)[0]) is not None
         if not given_command_exists:
             await ctx.send(
                 _("You attempted to create a new alias for a command that doesn't exist.")
@@ -277,7 +280,8 @@ class Alias(commands.Cog):
             return await ctx.send(" ".join(e.args))
 
         await ctx.send(
-            _("A new alias with the trigger `{name}` has been created.").format(name=alias_name)
+            _("A new alias with the trigger `{name}` has been created.").format(
+                name=alias_name)
         )
 
     @checks.is_owner()
@@ -319,7 +323,8 @@ class Alias(commands.Cog):
             )
             return
 
-        given_command_exists = self.bot.get_command(command.split(maxsplit=1)[0]) is not None
+        given_command_exists = self.bot.get_command(
+            command.split(maxsplit=1)[0]) is not None
         if not given_command_exists:
             await ctx.send(
                 _("You attempted to create a new alias for a command that doesn't exist.")
@@ -347,11 +352,13 @@ class Alias(commands.Cog):
         alias = await self._aliases.get_alias(ctx.guild, alias_name)
         if not alias:
             await ctx.send(
-                _("The alias with the name {name} does not exist.").format(name=alias_name)
+                _("The alias with the name {name} does not exist.").format(
+                    name=alias_name)
             )
             return
 
-        given_command_exists = self.bot.get_command(command.split(maxsplit=1)[0]) is not None
+        given_command_exists = self.bot.get_command(
+            command.split(maxsplit=1)[0]) is not None
         if not given_command_exists:
             await ctx.send(_("You attempted to edit an alias to a command that doesn't exist."))
             return
@@ -369,7 +376,8 @@ class Alias(commands.Cog):
             else:
                 # This part should technically never be reached...
                 await ctx.send(
-                    _("Alias with the name `{name}` was not found.").format(name=alias_name)
+                    _("Alias with the name `{name}` was not found.").format(
+                        name=alias_name)
                 )
         except ArgParseError as e:
             return await ctx.send(" ".join(e.args))
@@ -382,11 +390,13 @@ class Alias(commands.Cog):
         alias = await self._aliases.get_alias(None, alias_name)
         if not alias:
             await ctx.send(
-                _("The alias with the name {name} does not exist.").format(name=alias_name)
+                _("The alias with the name {name} does not exist.").format(
+                    name=alias_name)
             )
             return
 
-        given_command_exists = self.bot.get_command(command.split(maxsplit=1)[0]) is not None
+        given_command_exists = self.bot.get_command(
+            command.split(maxsplit=1)[0]) is not None
         if not given_command_exists:
             await ctx.send(_("You attempted to edit an alias to a command that doesn't exist."))
             return
@@ -402,7 +412,8 @@ class Alias(commands.Cog):
             else:
                 # This part should technically never be reached...
                 await ctx.send(
-                    _("Alias with the name `{name}` was not found.").format(name=alias_name)
+                    _("Alias with the name `{name}` was not found.").format(
+                        name=alias_name)
                 )
         except ArgParseError as e:
             return await ctx.send(" ".join(e.args))
@@ -441,7 +452,8 @@ class Alias(commands.Cog):
 
         if await self._aliases.delete_alias(ctx, alias_name):
             await ctx.send(
-                _("Alias with the name `{name}` was successfully deleted.").format(name=alias_name)
+                _("Alias with the name `{name}` was successfully deleted.").format(
+                    name=alias_name)
             )
         else:
             await ctx.send(_("Alias with name `{name}` was not found.").format(name=alias_name))
@@ -456,7 +468,8 @@ class Alias(commands.Cog):
 
         if await self._aliases.delete_alias(ctx, alias_name, global_=True):
             await ctx.send(
-                _("Alias with the name `{name}` was successfully deleted.").format(name=alias_name)
+                _("Alias with the name `{name}` was successfully deleted.").format(
+                    name=alias_name)
             )
         else:
             await ctx.send(_("Alias with name `{name}` was not found.").format(name=alias_name))

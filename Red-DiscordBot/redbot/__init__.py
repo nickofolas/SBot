@@ -47,7 +47,8 @@ class VersionInfo:
         r"$",
         flags=_re.IGNORECASE,
     )
-    _RELEASE_LEVELS: _ClassVar[_List[str]] = [ALPHA, BETA, RELEASE_CANDIDATE, FINAL]
+    _RELEASE_LEVELS: _ClassVar[_List[str]] = [
+        ALPHA, BETA, RELEASE_CANDIDATE, FINAL]
     _SHORT_RELEASE_LEVELS: _ClassVar[_Dict[str, str]] = {
         "a": ALPHA,
         "b": BETA,
@@ -69,7 +70,8 @@ class VersionInfo:
         self.micro: int = micro
 
         if releaselevel not in self._RELEASE_LEVELS:
-            raise TypeError(f"'releaselevel' must be one of: {', '.join(self._RELEASE_LEVELS)}")
+            raise TypeError(
+                f"'releaselevel' must be one of: {', '.join(self._RELEASE_LEVELS)}")
 
         self.releaselevel: str = releaselevel
         self.serial: _Optional[int] = serial
@@ -128,10 +130,12 @@ class VersionInfo:
     def _generate_comparison_tuples(
         self, other: "VersionInfo"
     ) -> _List[
-        _Tuple[int, int, int, int, _Union[int, float], _Union[int, float], _Union[int, float]]
+        _Tuple[int, int, int, int, _Union[int, float],
+               _Union[int, float], _Union[int, float]]
     ]:
         tups: _List[
-            _Tuple[int, int, int, int, _Union[int, float], _Union[int, float], _Union[int, float]]
+            _Tuple[int, int, int, int, _Union[int, float],
+                   _Union[int, float], _Union[int, float]]
         ] = []
         for obj in (self, other):
             tups.append(
@@ -226,7 +230,8 @@ if "--debug" not in _sys.argv:
     # DEP-WARN
     # Individual warnings - tracked in https://github.com/Cog-Creators/Red-DiscordBot/issues/3529
     # DeprecationWarning: an integer is required (got type float).  Implicit conversion to integers using __int__ is deprecated, and may be removed in a future version of Python.
-    _warnings.filterwarnings("ignore", category=DeprecationWarning, module="importlib", lineno=219)
+    _warnings.filterwarnings(
+        "ignore", category=DeprecationWarning, module="importlib", lineno=219)
     # DeprecationWarning: The loop argument is deprecated since Python 3.8, and scheduled for removal in Python 3.10
     #   stdin, stdout, stderr = await tasks.gather(stdin, stdout, stderr,
     # this is a bug in CPython

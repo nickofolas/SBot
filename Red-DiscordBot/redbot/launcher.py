@@ -34,7 +34,8 @@ INTRO = "==========================\nRed Discord Bot - Launcher\n===============
 IS_WINDOWS = os.name == "nt"
 IS_MAC = sys.platform == "darwin"
 
-PYTHON_OK = sys.version_info >= MIN_PYTHON_VERSION or os.getenv("READTHEDOCS", False)
+PYTHON_OK = sys.version_info >= MIN_PYTHON_VERSION or os.getenv(
+    "READTHEDOCS", False)
 
 
 def is_venv():
@@ -58,7 +59,8 @@ def parse_cli_args():
         help="The instance to run",
         choices=list(instances.keys()),
     )
-    parser.add_argument("--start", "-s", help="Starts Red", action="store_true")
+    parser.add_argument("--start", "-s", help="Starts Red",
+                        action="store_true")
     parser.add_argument(
         "--auto-restart", help="Autorestarts Red in case of issues", action="store_true"
     )
@@ -163,7 +165,8 @@ def main():
     elif args.start:
         print("WARNING: The launcher is scheduled for removal at a later date.")
         print("Starting Red...")
-        run_red(args.instancename, autorestart=args.auto_restart, cliflags=flags_to_pass)
+        run_red(args.instancename, autorestart=args.auto_restart,
+                cliflags=flags_to_pass)
 
 
 if __name__ == "__main__":

@@ -44,7 +44,8 @@ class ConfigMeta(type):
         defaults: dict = None,
     ):
         if cog_name is None:
-            raise ValueError("You must provide either the cog instance or a cog name.")
+            raise ValueError(
+                "You must provide either the cog instance or a cog name.")
 
         key = (cog_name, unique_identifier)
         if key in _config_cache:
@@ -351,7 +352,8 @@ class Group(Value):
                 config=self._config,
             )
         elif self.force_registration:
-            raise AttributeError("'{}' is not a valid registered Group or value.".format(item))
+            raise AttributeError(
+                "'{}' is not a valid registered Group or value.".format(item))
         else:
             return Value(
                 identifier_data=new_identifiers,
@@ -557,7 +559,8 @@ class Group(Value):
 
     async def set(self, value):
         if not isinstance(value, dict):
-            raise ValueError("You may only set the value of a group to be a dict.")
+            raise ValueError(
+                "You may only set the value of a group to be a dict.")
         await super().set(value)
 
     async def set_raw(self, *nested_path: Any, value):
@@ -795,7 +798,8 @@ class Config(metaclass=ConfigMeta):
                 existing_is_dict = isinstance(_partial[k], dict)
                 if val_is_dict != existing_is_dict:
                     # != is XOR
-                    raise KeyError("You cannot register a Group and a Value under the same name.")
+                    raise KeyError(
+                        "You cannot register a Group and a Value under the same name.")
                 if val_is_dict:
                     Config._update_defaults(v, _partial=_partial[k])
                 else:
@@ -919,7 +923,8 @@ class Config(metaclass=ConfigMeta):
             this is not a safe operation. Using this could end up corrupting your config file.
         """
         # noinspection PyTypeChecker
-        pkey_len, is_custom = ConfigCategory.get_pkey_info(category, self.custom_groups)
+        pkey_len, is_custom = ConfigCategory.get_pkey_info(
+            category, self.custom_groups)
         identifier_data = IdentifierData(
             cog_name=self.cog_name,
             uuid=self.unique_identifier,
@@ -1127,7 +1132,8 @@ class Config(metaclass=ConfigMeta):
 
         """
         if group_identifier not in self.custom_groups:
-            raise ValueError(f"Group identifier not initialized: {group_identifier}")
+            raise ValueError(
+                f"Group identifier not initialized: {group_identifier}")
         return self._get_base_group(str(group_identifier), *map(str, identifiers))
 
     async def _all_from_scope(self, scope: str) -> Dict[int, Dict[Any, Any]]:
@@ -1268,7 +1274,8 @@ class Config(metaclass=ConfigMeta):
                 pass
             else:
                 for guild_id, guild_data in dict_.items():
-                    ret[int(guild_id)] = self._all_members_from_guild(guild_data)
+                    ret[int(guild_id)] = self._all_members_from_guild(
+                        guild_data)
         else:
             group = self._get_base_group(self.MEMBER, str(guild.id))
             try:
@@ -1299,8 +1306,10 @@ class Config(metaclass=ConfigMeta):
         """
         if not scopes:
             # noinspection PyTypeChecker
-            identifier_data = IdentifierData(self.cog_name, self.unique_identifier, "", (), (), 0)
-            group = Group(identifier_data, defaults={}, driver=self.driver, config=self)
+            identifier_data = IdentifierData(
+                self.cog_name, self.unique_identifier, "", (), (), 0)
+            group = Group(identifier_data, defaults={},
+                          driver=self.driver, config=self)
         else:
             cat, *scopes = scopes
             group = self._get_base_group(cat, *scopes)
@@ -1470,7 +1479,8 @@ class Config(metaclass=ConfigMeta):
                 group_identifier, self.custom_groups
             )
         except KeyError:
-            raise ValueError(f"Custom group not initialized: {group_identifier}") from None
+            raise ValueError(
+                f"Custom group not initialized: {group_identifier}") from None
         else:
             id_data = IdentifierData(
                 self.cog_name,

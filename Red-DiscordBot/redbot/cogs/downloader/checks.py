@@ -10,6 +10,8 @@ T_ = Translator("DownloaderChecks", __file__)
 
 
 def _(s): return s
+
+
 REPO_INSTALL_MSG = _(
     "You're about to add a 3rd party repository. The creator of Red"
     " and its community have no responsibility for any potential "

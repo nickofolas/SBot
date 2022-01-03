@@ -106,14 +106,16 @@ class EqualizerUtilities(MixinMeta, metaclass=CompositeMetaClass):
 
         if react_emoji == "\N{UP-POINTING SMALL RED TRIANGLE}":
             await self.remove_react(message, react_emoji, react_user)
-            _max = float("{:.2f}".format(min(eq.get_gain(selected) + 0.1, 1.0)))
+            _max = float("{:.2f}".format(
+                min(eq.get_gain(selected) + 0.1, 1.0)))
             eq.set_gain(selected, _max)
             await self._apply_gain(ctx.guild.id, selected, _max)
             await self._eq_interact(ctx, player, eq, message, selected)
 
         if react_emoji == "\N{DOWN-POINTING SMALL RED TRIANGLE}":
             await self.remove_react(message, react_emoji, react_user)
-            _min = float("{:.2f}".format(max(eq.get_gain(selected) - 0.1, -0.25)))
+            _min = float("{:.2f}".format(
+                max(eq.get_gain(selected) - 0.1, -0.25)))
             eq.set_gain(selected, _min)
             await self._apply_gain(ctx.guild.id, selected, _min)
             await self._eq_interact(ctx, player, eq, message, selected)

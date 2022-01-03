@@ -59,10 +59,12 @@ class KickBanMixin(MixinMeta):
                 return inv
         else:  # No existing invite found that is valid
             channels_and_perms = zip(
-                guild.text_channels, map(guild.me.permissions_in, guild.text_channels)
+                guild.text_channels, map(
+                    guild.me.permissions_in, guild.text_channels)
             )
             channel = next(
-                (channel for channel, perms in channels_and_perms if perms.create_instant_invite),
+                (channel for channel,
+                 perms in channels_and_perms if perms.create_instant_invite),
                 None,
             )
             if channel is None:
@@ -153,12 +155,14 @@ class KickBanMixin(MixinMeta):
             if toggle:
                 with contextlib.suppress(discord.HTTPException):
                     em = discord.Embed(
-                        title=bold(_("You have been banned from {guild}.").format(guild=guild)),
+                        title=bold(
+                            _("You have been banned from {guild}.").format(guild=guild)),
                         color=await self.bot.get_embed_color(user),
                     )
                     em.add_field(
                         name=_("**Reason**"),
-                        value=reason if reason is not None else _("No reason was given."),
+                        value=reason if reason is not None else _(
+                            "No reason was given."),
                         inline=False,
                     )
                     await user.send(embed=em)
@@ -176,7 +180,8 @@ class KickBanMixin(MixinMeta):
                 else:
                     return (
                         False,
-                        _("User with ID {user_id} is already banned.").format(user_id=user.id),
+                        _("User with ID {user_id} is already banned.").format(
+                            user_id=user.id),
                     )
 
             ban_type = "hackban"
@@ -198,7 +203,8 @@ class KickBanMixin(MixinMeta):
                 await guild.ban(user, reason=audit_reason, delete_message_days=days)
                 log.info(
                     "{}({}) {}ned {}({}), deleting {} days worth of messages.".format(
-                        author.name, author.id, ban_type, username, user.id, str(days)
+                        author.name, author.id, ban_type, username, user.id, str(
+                            days)
                     )
                 )
                 success_message = _("Done. That felt good.")
@@ -234,7 +240,8 @@ class KickBanMixin(MixinMeta):
             try:
                 await self._check_tempban_expirations()
             except Exception:
-                log.exception("Something went wrong in check_tempban_expirations:")
+                log.exception(
+                    "Something went wrong in check_tempban_expirations:")
 
             await asyncio.sleep(60)
 
@@ -330,18 +337,21 @@ class KickBanMixin(MixinMeta):
         if toggle:
             with contextlib.suppress(discord.HTTPException):
                 em = discord.Embed(
-                    title=bold(_("You have been kicked from {guild}.").format(guild=guild)),
+                    title=bold(
+                        _("You have been kicked from {guild}.").format(guild=guild)),
                     color=await self.bot.get_embed_color(member),
                 )
                 em.add_field(
                     name=_("**Reason**"),
-                    value=reason if reason is not None else _("No reason was given."),
+                    value=reason if reason is not None else _(
+                        "No reason was given."),
                     inline=False,
                 )
                 await member.send(embed=em)
         try:
             await guild.kick(member, reason=audit_reason)
-            log.info("{}({}) kicked {}({})".format(author.name, author.id, member.name, member.id))
+            log.info("{}({}) kicked {}({})".format(
+                author.name, author.id, member.name, member.id))
         except discord.errors.Forbidden:
             await ctx.send(_("I'm not allowed to do that."))
         except Exception:
@@ -546,7 +556,8 @@ class KickBanMixin(MixinMeta):
                 else:
                     try:
                         await guild.ban(user, reason=audit_reason, delete_message_days=days)
-                        log.info("{}({}) hackbanned {}".format(author.name, author.id, user_id))
+                        log.info("{}({}) hackbanned {}".format(
+                            author.name, author.id, user_id))
                     except discord.NotFound:
                         errors[user_id] = _("User with ID {user_id} not found").format(
                             user_id=user_id
@@ -623,7 +634,8 @@ class KickBanMixin(MixinMeta):
         guild_data = await self.config.guild(guild).all()
 
         if duration is None:
-            duration = timedelta(seconds=guild_data["default_tempban_duration"])
+            duration = timedelta(
+                seconds=guild_data["default_tempban_duration"])
         unban_time = datetime.now(timezone.utc) + duration
 
         if days is None:
@@ -742,7 +754,8 @@ class KickBanMixin(MixinMeta):
         else:
             log.info(
                 "{}({}) softbanned {}({}), deleting 1 day worth "
-                "of messages.".format(author.name, author.id, member.name, member.id)
+                "of messages.".format(
+                    author.name, author.id, member.name, member.id)
             )
             await modlog.create_case(
                 self.bot,

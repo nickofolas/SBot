@@ -116,7 +116,8 @@ class LocalTrackUtilities(MixinMeta, metaclass=CompositeMetaClass):
         to_search_string = {
             i.local_track_path.name for i in to_search if i.local_track_path is not None
         }
-        search_results = process.extract(search_words, to_search_string, limit=50)
+        search_results = process.extract(
+            search_words, to_search_string, limit=50)
         search_list = []
         async for track_match, percent_match in AsyncIter(search_results):
             if percent_match > 85:

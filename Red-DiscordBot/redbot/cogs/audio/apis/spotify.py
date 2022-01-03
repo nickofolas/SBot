@@ -90,7 +90,8 @@ class SpotifyWrapper:
             client_id = ""
         if client_secret is None:
             client_secret = ""
-        auth_header = base64.b64encode(f"{client_id}:{client_secret}".encode("ascii"))
+        auth_header = base64.b64encode(
+            f"{client_id}:{client_secret}".encode("ascii"))
         return {"Authorization": f"Basic {auth_header.decode('ascii')}"}
 
     async def get(
@@ -102,7 +103,8 @@ class SpotifyWrapper:
         async with self.session.request("GET", url, params=params, headers=headers) as r:
             data = await r.json(loads=json.loads)
             if r.status != 200:
-                log.debug("Issue making GET request to %r: [%d] %r", url, r.status, data)
+                log.debug(
+                    "Issue making GET request to %r: [%d] %r", url, r.status, data)
             return data
 
     async def update_token(self, new_token: Mapping[str, str]):
@@ -140,7 +142,8 @@ class SpotifyWrapper:
             return self.spotify_token["access_token"]
         token = await self.request_access_token()
         if token is None:
-            log.debug("Requested a token from Spotify, did not end up getting one.")
+            log.debug(
+                "Requested a token from Spotify, did not end up getting one.")
         try:
             token["expires_at"] = int(time.time()) + int(token["expires_in"])
         except KeyError:
@@ -156,7 +159,8 @@ class SpotifyWrapper:
         async with self.session.post(url, data=payload, headers=headers) as r:
             data = await r.json(loads=json.loads)
             if r.status != 200:
-                log.debug("Issue making POST request to %r: [%d] %r", url, r.status, data)
+                log.debug(
+                    "Issue making POST request to %r: [%d] %r", url, r.status, data)
             return data
 
     async def make_get_call(self, url: str, params: MutableMapping) -> MutableMapping:
@@ -167,7 +171,8 @@ class SpotifyWrapper:
     async def get_categories(self, ctx: Context = None) -> List[MutableMapping]:
         """Get the spotify categories."""
         country_code = await self.get_country_code(ctx=ctx)
-        params: MutableMapping = {"country": country_code} if country_code else {}
+        params: MutableMapping = {
+            "country": country_code} if country_code else {}
         result = await self.make_get_call(CATEGORY_ENDPOINT, params=params)
         with contextlib.suppress(KeyError):
             if result["error"]["status"] == 401:
@@ -184,7 +189,8 @@ class SpotifyWrapper:
         """Get spotify playlists for the specified category."""
         url = f"{CATEGORY_ENDPOINT}/{category}/playlists"
         country_code = await self.get_country_code(ctx=ctx)
-        params: MutableMapping = {"country": country_code} if country_code else {}
+        params: MutableMapping = {
+            "country": country_code} if country_code else {}
         result = await self.make_get_call(url, params=params)
         playlists = result.get("playlists", {}).get("items", [])
         return [

@@ -177,10 +177,12 @@ class Notifier:
             self.color = await self.context.embed_colour()
         embed2 = discord.Embed(
             colour=self.color,
-            title=self.updates.get(key, "").format(num=current, total=total, seconds=seconds),
+            title=self.updates.get(key, "").format(
+                num=current, total=total, seconds=seconds),
         )
         if seconds and seconds_key:
-            embed2.set_footer(text=self.updates.get(seconds_key, "").format(seconds=seconds))
+            embed2.set_footer(text=self.updates.get(
+                seconds_key, "").format(seconds=seconds))
         try:
             await self.message.edit(embed=embed2)
             self.last_msg_time = int(time.time())
@@ -219,7 +221,8 @@ class PlaylistScope(Enum):
 def task_callback(task: asyncio.Task) -> None:
     with contextlib.suppress(asyncio.CancelledError, asyncio.InvalidStateError):
         if exc := task.exception():
-            log.exception("%s raised an Exception", task.get_name(), exc_info=exc)
+            log.exception("%s raised an Exception",
+                          task.get_name(), exc_info=exc)
 
 
 def has_internal_server():

@@ -76,12 +76,14 @@ log = logging.getLogger("red.core.bank")
 _data_deletion_lock = asyncio.Lock()
 
 _cache_is_global = None
-_cache = {"bank_name": None, "currency": None, "default_balance": None, "max_balance": None}
+_cache = {"bank_name": None, "currency": None,
+          "default_balance": None, "max_balance": None}
 
 
 async def _init():
     global _config
-    _config = Config.get_conf(None, 384734293238749, cog_name="Bank", force_registration=True)
+    _config = Config.get_conf(None, 384734293238749,
+                              cog_name="Bank", force_registration=True)
     _config.register_global(**_DEFAULT_GLOBAL)
     _config.register_guild(**_DEFAULT_GUILD)
     _config.register_member(**_DEFAULT_MEMBER)
@@ -247,7 +249,8 @@ async def can_spend(member: discord.Member, amount: int) -> bool:
 
     """
     if not isinstance(amount, int):
-        raise TypeError("Amount must be of type int, not {}.".format(type(amount)))
+        raise TypeError(
+            "Amount must be of type int, not {}.".format(type(amount)))
     if _invalid_amount(amount):
         return False
     return await get_balance(member) >= amount
@@ -281,7 +284,8 @@ async def set_balance(member: Union[discord.Member, discord.User], amount: int) 
 
     """
     if not isinstance(amount, int):
-        raise TypeError("Amount must be of type int, not {}.".format(type(amount)))
+        raise TypeError(
+            "Amount must be of type int, not {}.".format(type(amount)))
     if amount < 0:
         raise ValueError("Not allowed to have negative balance.")
     guild = getattr(member, "guild", None)
@@ -336,7 +340,8 @@ async def withdraw_credits(member: discord.Member, amount: int) -> int:
 
     """
     if not isinstance(amount, int):
-        raise TypeError("Withdrawal amount must be of type int, not {}.".format(type(amount)))
+        raise TypeError(
+            "Withdrawal amount must be of type int, not {}.".format(type(amount)))
     if _invalid_amount(amount):
         raise ValueError(
             "Invalid withdrawal amount {} < 0".format(
@@ -380,7 +385,8 @@ async def deposit_credits(member: discord.Member, amount: int) -> int:
 
     """
     if not isinstance(amount, int):
-        raise TypeError("Deposit amount must be of type int, not {}.".format(type(amount)))
+        raise TypeError(
+            "Deposit amount must be of type int, not {}.".format(type(amount)))
     if _invalid_amount(amount):
         raise ValueError(
             "Invalid deposit amount {} <= 0".format(
@@ -426,7 +432,8 @@ async def transfer_credits(
         ``bank._MAX_BALANCE``.
     """
     if not isinstance(amount, int):
-        raise TypeError("Transfer amount must be of type int, not {}.".format(type(amount)))
+        raise TypeError(
+            "Transfer amount must be of type int, not {}.".format(type(amount)))
     if _invalid_amount(amount):
         raise ValueError(
             "Invalid transfer amount {} <= 0".format(
@@ -498,9 +505,11 @@ async def bank_prune(bot: Red, guild: discord.Guild = None, user_id: int = None)
 
     else:
         if guild is None:
-            raise BankPruneError("'guild' can't be None when pruning a local bank")
+            raise BankPruneError(
+                "'guild' can't be None when pruning a local bank")
         if user_id is None:
-            _guilds = {guild} if not guild.unavailable and guild.large else set()
+            _guilds = {
+                guild} if not guild.unavailable and guild.large else set()
             _uguilds = {guild} if guild.unavailable else set()
         group = _config._get_base_group(_config.MEMBER, str(guild.id))
 
@@ -557,7 +566,8 @@ async def get_leaderboard(positions: int = None, guild: discord.Guild = None) ->
         if guild is None:
             raise TypeError("Expected a guild, got NoneType object instead!")
         raw_accounts = await _config.all_members(guild)
-    sorted_acc = sorted(raw_accounts.items(), key=lambda x: x[1]["balance"], reverse=True)
+    sorted_acc = sorted(raw_accounts.items(),
+                        key=lambda x: x[1]["balance"], reverse=True)
     if positions is None:
         return sorted_acc
     else:
@@ -595,7 +605,8 @@ async def get_leaderboard_position(
     except TypeError:
         raise
     else:
-        pos = discord.utils.find(lambda x: x[1][0] == member.id, enumerate(leaderboard, 1))
+        pos = discord.utils.find(
+            lambda x: x[1][0] == member.id, enumerate(leaderboard, 1))
         if pos is None:
             return None
         else:
@@ -624,7 +635,8 @@ async def get_account(member: Union[discord.Member, discord.User]) -> Account:
         all_accounts = await _config.all_members(member.guild)
 
     if member.id not in all_accounts:
-        acc_data = {"name": member.display_name, "created_at": _DEFAULT_MEMBER["created_at"]}
+        acc_data = {"name": member.display_name,
+                    "created_at": _DEFAULT_MEMBER["created_at"]}
         try:
             acc_data["balance"] = await get_default_balance(member.guild)
         except AttributeError:
@@ -751,7 +763,8 @@ async def set_bank_name(name: str, guild: discord.Guild = None) -> str:
     elif guild is not None:
         await _config.guild(guild).bank_name.set(name)
     else:
-        raise RuntimeError("Guild must be provided if setting the name of a guild-specific bank.")
+        raise RuntimeError(
+            "Guild must be provided if setting the name of a guild-specific bank.")
     return name
 
 
@@ -878,7 +891,8 @@ async def set_max_balance(amount: int, guild: discord.Guild = None) -> int:
 
     """
     if not isinstance(amount, int):
-        raise TypeError("Amount must be of type int, not {}.".format(type(amount)))
+        raise TypeError(
+            "Amount must be of type int, not {}.".format(type(amount)))
     if not (0 < amount <= _MAX_BALANCE):
         raise ValueError(
             "Amount must be greater than zero and less than {max}.".format(
@@ -956,7 +970,8 @@ async def set_default_balance(amount: int, guild: discord.Guild = None) -> int:
 
     """
     if not isinstance(amount, int):
-        raise TypeError("Amount must be of type int, not {}.".format(type(amount)))
+        raise TypeError(
+            "Amount must be of type int, not {}.".format(type(amount)))
     max_bal = await get_max_balance(guild)
 
     if not (0 <= amount <= max_bal):
@@ -997,12 +1012,14 @@ def cost(amount: int):
     """
     # TODO: Add documentation for input/output/exceptions
     if not isinstance(amount, int) or amount < 0:
-        raise ValueError("This decorator requires an integer cost greater than or equal to zero")
+        raise ValueError(
+            "This decorator requires an integer cost greater than or equal to zero")
 
     def deco(coro_or_command):
         is_command = isinstance(coro_or_command, commands.Command)
         if not is_command and not asyncio.iscoroutinefunction(coro_or_command):
-            raise TypeError("@bank.cost() can only be used on commands or `async def` functions")
+            raise TypeError(
+                "@bank.cost() can only be used on commands or `async def` functions")
 
         coro = coro_or_command.callback if is_command else coro_or_command
 

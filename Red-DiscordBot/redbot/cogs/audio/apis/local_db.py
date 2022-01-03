@@ -84,16 +84,25 @@ class BaseWrapper:
     async def init(self) -> None:
         """Initialize the local cache"""
         with concurrent.futures.ThreadPoolExecutor(max_workers=1) as executor:
-            executor.submit(self.database.cursor().execute, self.statement.pragma_temp_store)
-            executor.submit(self.database.cursor().execute, self.statement.pragma_journal_mode)
-            executor.submit(self.database.cursor().execute, self.statement.pragma_read_uncommitted)
+            executor.submit(self.database.cursor().execute,
+                            self.statement.pragma_temp_store)
+            executor.submit(self.database.cursor().execute,
+                            self.statement.pragma_journal_mode)
+            executor.submit(self.database.cursor().execute,
+                            self.statement.pragma_read_uncommitted)
             executor.submit(self.maybe_migrate)
-            executor.submit(self.database.cursor().execute, LAVALINK_CREATE_TABLE)
-            executor.submit(self.database.cursor().execute, LAVALINK_CREATE_INDEX)
-            executor.submit(self.database.cursor().execute, YOUTUBE_CREATE_TABLE)
-            executor.submit(self.database.cursor().execute, YOUTUBE_CREATE_INDEX)
-            executor.submit(self.database.cursor().execute, SPOTIFY_CREATE_TABLE)
-            executor.submit(self.database.cursor().execute, SPOTIFY_CREATE_INDEX)
+            executor.submit(self.database.cursor().execute,
+                            LAVALINK_CREATE_TABLE)
+            executor.submit(self.database.cursor().execute,
+                            LAVALINK_CREATE_INDEX)
+            executor.submit(self.database.cursor().execute,
+                            YOUTUBE_CREATE_TABLE)
+            executor.submit(self.database.cursor().execute,
+                            YOUTUBE_CREATE_INDEX)
+            executor.submit(self.database.cursor().execute,
+                            SPOTIFY_CREATE_TABLE)
+            executor.submit(self.database.cursor().execute,
+                            SPOTIFY_CREATE_INDEX)
             await self.clean_up_old_entries()
 
     def close(self) -> None:
@@ -104,27 +113,33 @@ class BaseWrapper:
     async def clean_up_old_entries(self) -> None:
         """Delete entries older than x in the local cache tables"""
         max_age = await self.config.cache_age()
-        maxage = datetime.datetime.now(tz=datetime.timezone.utc) - datetime.timedelta(days=max_age)
+        maxage = datetime.datetime.now(
+            tz=datetime.timezone.utc) - datetime.timedelta(days=max_age)
         maxage_int = int(time.mktime(maxage.timetuple()))
         values = {"maxage": maxage_int}
         with concurrent.futures.ThreadPoolExecutor(max_workers=1) as executor:
-            executor.submit(self.database.cursor().execute, LAVALINK_DELETE_OLD_ENTRIES, values)
-            executor.submit(self.database.cursor().execute, YOUTUBE_DELETE_OLD_ENTRIES, values)
-            executor.submit(self.database.cursor().execute, SPOTIFY_DELETE_OLD_ENTRIES, values)
+            executor.submit(self.database.cursor().execute,
+                            LAVALINK_DELETE_OLD_ENTRIES, values)
+            executor.submit(self.database.cursor().execute,
+                            YOUTUBE_DELETE_OLD_ENTRIES, values)
+            executor.submit(self.database.cursor().execute,
+                            SPOTIFY_DELETE_OLD_ENTRIES, values)
 
     def maybe_migrate(self) -> None:
         """Maybe migrate Database schema for the local cache"""
         current_version = 0
         with concurrent.futures.ThreadPoolExecutor(max_workers=1) as executor:
             for future in concurrent.futures.as_completed(
-                [executor.submit(self.database.cursor().execute, self.statement.get_user_version)]
+                [executor.submit(self.database.cursor().execute,
+                                 self.statement.get_user_version)]
             ):
                 try:
                     row_result = future.result()
                     current_version = row_result.fetchone()
                     break
                 except Exception as exc:
-                    debug_exc_log(log, exc, "Failed to completed fetch from database")
+                    debug_exc_log(
+                        log, exc, "Failed to completed fetch from database")
             if isinstance(current_version, tuple):
                 current_version = current_version[0]
             if current_version == _SCHEMA_VERSION:
@@ -147,33 +162,39 @@ class BaseWrapper:
         """Update an entry of the local cache"""
 
         try:
-            time_now = int(datetime.datetime.now(datetime.timezone.utc).timestamp())
+            time_now = int(datetime.datetime.now(
+                datetime.timezone.utc).timestamp())
             values["last_fetched"] = time_now
             with concurrent.futures.ThreadPoolExecutor(max_workers=1) as executor:
-                executor.submit(self.database.cursor().execute, self.statement.update, values)
+                executor.submit(self.database.cursor().execute,
+                                self.statement.update, values)
         except Exception as exc:
             debug_exc_log(log, exc, "Error during table update")
 
     async def _fetch_one(
         self, values: MutableMapping
     ) -> Optional[
-        Union[LavalinkCacheFetchResult, SpotifyCacheFetchResult, YouTubeCacheFetchResult]
+        Union[LavalinkCacheFetchResult,
+              SpotifyCacheFetchResult, YouTubeCacheFetchResult]
     ]:
         """Get an entry from the local cache"""
         max_age = await self.config.cache_age()
-        maxage = datetime.datetime.now(tz=datetime.timezone.utc) - datetime.timedelta(days=max_age)
+        maxage = datetime.datetime.now(
+            tz=datetime.timezone.utc) - datetime.timedelta(days=max_age)
         maxage_int = int(time.mktime(maxage.timetuple()))
         values.update({"maxage": maxage_int})
         row = None
         with concurrent.futures.ThreadPoolExecutor(max_workers=1) as executor:
             for future in concurrent.futures.as_completed(
-                [executor.submit(self.database.cursor().execute, self.statement.get_one, values)]
+                [executor.submit(self.database.cursor().execute,
+                                 self.statement.get_one, values)]
             ):
                 try:
                     row_result = future.result()
                     row = row_result.fetchone()
                 except Exception as exc:
-                    debug_exc_log(log, exc, "Failed to completed fetch from database")
+                    debug_exc_log(
+                        log, exc, "Failed to completed fetch from database")
         if not row:
             return None
         if self.fetch_result is None:
@@ -190,12 +211,14 @@ class BaseWrapper:
             return []
         with concurrent.futures.ThreadPoolExecutor(max_workers=1) as executor:
             for future in concurrent.futures.as_completed(
-                [executor.submit(self.database.cursor().execute, self.statement.get_all, values)]
+                [executor.submit(self.database.cursor().execute,
+                                 self.statement.get_all, values)]
             ):
                 try:
                     row_result = future.result()
                 except Exception as exc:
-                    debug_exc_log(log, exc, "Failed to completed fetch from database")
+                    debug_exc_log(
+                        log, exc, "Failed to completed fetch from database")
         async for row in AsyncIter(row_result):
             output.append(self.fetch_result(*row))
         return output
@@ -203,7 +226,8 @@ class BaseWrapper:
     async def _fetch_random(
         self, values: MutableMapping
     ) -> Optional[
-        Union[LavalinkCacheFetchResult, SpotifyCacheFetchResult, YouTubeCacheFetchResult]
+        Union[LavalinkCacheFetchResult,
+              SpotifyCacheFetchResult, YouTubeCacheFetchResult]
     ]:
         """Get a random entry from the local cache"""
         row = None
@@ -223,7 +247,8 @@ class BaseWrapper:
                     else:
                         row = None
                 except Exception as exc:
-                    debug_exc_log(log, exc, "Failed to completed random fetch from database")
+                    debug_exc_log(
+                        log, exc, "Failed to completed random fetch from database")
         if not row:
             return None
         if self.fetch_result is None:
@@ -348,12 +373,14 @@ class LavalinkTableWrapper(BaseWrapper):
             return []
         with concurrent.futures.ThreadPoolExecutor(max_workers=1) as executor:
             for future in concurrent.futures.as_completed(
-                [executor.submit(self.database.cursor().execute, self.statement.get_all_global)]
+                [executor.submit(self.database.cursor().execute,
+                                 self.statement.get_all_global)]
             ):
                 try:
                     row_result = future.result()
                 except Exception as exc:
-                    debug_exc_log(log, exc, "Failed to completed fetch from database")
+                    debug_exc_log(
+                        log, exc, "Failed to completed fetch from database")
         async for row in AsyncIter(row_result):
             output.append(self.fetch_for_global(*row))
         return output
@@ -369,6 +396,9 @@ class LocalCacheWrapper:
         self.config = config
         self.database = conn
         self.cog = cog
-        self.lavalink: LavalinkTableWrapper = LavalinkTableWrapper(bot, config, conn, self.cog)
-        self.spotify: SpotifyTableWrapper = SpotifyTableWrapper(bot, config, conn, self.cog)
-        self.youtube: YouTubeTableWrapper = YouTubeTableWrapper(bot, config, conn, self.cog)
+        self.lavalink: LavalinkTableWrapper = LavalinkTableWrapper(
+            bot, config, conn, self.cog)
+        self.spotify: SpotifyTableWrapper = SpotifyTableWrapper(
+            bot, config, conn, self.cog)
+        self.youtube: YouTubeTableWrapper = YouTubeTableWrapper(
+            bot, config, conn, self.cog)

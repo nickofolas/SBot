@@ -217,7 +217,8 @@ def bordered(*columns: Sequence[str], ascii_border: bool = False) -> str:
     }
 
     sep = " " * 4  # Separator between boxes
-    widths = tuple(max(len(row) for row in column) + 9 for column in columns)  # width of each col
+    widths = tuple(max(len(row) for row in column) +
+                   9 for column in columns)  # width of each col
     colsdone = [False] * len(columns)  # whether or not each column is done
     lines = [sep.join("{TL}" + "{HZ}" * width + "{TR}" for width in widths)]
 
@@ -535,7 +536,8 @@ def humanize_timedelta(
     try:
         obj = seconds if seconds is not None else timedelta.total_seconds()
     except AttributeError:
-        raise ValueError("You must provide either a timedelta or a number of seconds")
+        raise ValueError(
+            "You must provide either a timedelta or a number of seconds")
 
     seconds = int(obj)
     periods = [

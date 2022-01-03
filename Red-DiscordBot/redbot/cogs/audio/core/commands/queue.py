@@ -74,7 +74,8 @@ class QueueCommands(MixinMeta, metaclass=CompositeMetaClass):
                 await self.get_track_description(player.current, self.local_folder_current_path)
                 or ""
             )
-            song += _("\n Requested by: **{track.requester}**").format(track=player.current)
+            song += _("\n Requested by: **{track.requester}**").format(
+                track=player.current)
             song += f"\n\n{arrow}`{pos}`/`{dur}`"
             embed = discord.Embed(title=_("Now Playing"), description=song)
             guild_data = await self.config.guild(ctx.guild).all()
@@ -104,7 +105,8 @@ class QueueCommands(MixinMeta, metaclass=CompositeMetaClass):
             )
             embed.set_footer(text=text)
             message = await self.send_embed_msg(ctx, embed=embed)
-            dj_enabled = self._dj_status_cache.setdefault(ctx.guild.id, guild_data["dj_enabled"])
+            dj_enabled = self._dj_status_cache.setdefault(
+                ctx.guild.id, guild_data["dj_enabled"])
             vote_enabled = guild_data["vote_enabled"]
             if (
                 (dj_enabled or vote_enabled)
@@ -124,14 +126,16 @@ class QueueCommands(MixinMeta, metaclass=CompositeMetaClass):
             if not player.queue and not autoplay:
                 expected = (emoji["stop"], emoji["pause"], emoji["close"])
             if player.current:
-                task: Optional[asyncio.Task] = start_adding_reactions(message, expected[:5])
+                task: Optional[asyncio.Task] = start_adding_reactions(
+                    message, expected[:5])
             else:
                 task: Optional[asyncio.Task] = None
 
             try:
                 (r, u) = await self.bot.wait_for(
                     "reaction_add",
-                    check=ReactionPredicate.with_emojis(expected, message, ctx.author),
+                    check=ReactionPredicate.with_emojis(
+                        expected, message, ctx.author),
                     timeout=30.0,
                 )
             except asyncio.TimeoutError:
@@ -160,7 +164,8 @@ class QueueCommands(MixinMeta, metaclass=CompositeMetaClass):
             return await self.send_embed_msg(ctx, title=_("There's nothing in the queue."))
 
         async with ctx.typing():
-            limited_queue = player.queue[:500]  # TODO: Improve when Toby menu's are merged
+            # TODO: Improve when Toby menu's are merged
+            limited_queue = player.queue[:500]
             len_queue_pages = math.ceil(len(limited_queue) / 10)
             queue_page_list = []
             async for page_num in AsyncIter(range(1, len_queue_pages + 1)):
@@ -336,7 +341,8 @@ class QueueCommands(MixinMeta, metaclass=CompositeMetaClass):
                 return await self.send_embed_msg(
                     ctx,
                     title=_("Unable To Shuffle Queue"),
-                    description=_("I don't have permission to connect and speak in your channel."),
+                    description=_(
+                        "I don't have permission to connect and speak in your channel."),
                 )
             player = await lavalink.connect(
                 ctx.author.voice.channel,
@@ -355,7 +361,8 @@ class QueueCommands(MixinMeta, metaclass=CompositeMetaClass):
             return await self.send_embed_msg(
                 ctx,
                 title=_("Unable To Shuffle Queue"),
-                description=_("Connection to Lavalink has not yet been established."),
+                description=_(
+                    "Connection to Lavalink has not yet been established."),
             )
         except KeyError:
             ctx.command.reset_cooldown(ctx)

@@ -75,7 +75,8 @@ class AsyncFilter(AsyncIterator[_T], Awaitable[List[_T]]):  # pylint: disable=du
         elif asyncio.iscoroutinefunction(func):
             self.__generator_instance = self.__sync_generator_async_pred()
         else:
-            raise TypeError("Must be either an async predicate, an async iterable, or both.")
+            raise TypeError(
+                "Must be either an async predicate, an async iterable, or both.")
 
     async def __sync_generator_async_pred(self) -> AsyncIterator[_T]:
         for item in self.__iterable:
@@ -544,9 +545,11 @@ def get_end_user_data_statement(file: Union[Path, str]) -> Optional[str]:
     except FileNotFoundError:
         log.critical("'%s' does not exist.", str(info_json))
     except KeyError:
-        log.critical("'%s' is missing an entry for 'end_user_data_statement'", str(info_json))
+        log.critical(
+            "'%s' is missing an entry for 'end_user_data_statement'", str(info_json))
     except json.JSONDecodeError as exc:
-        log.critical("'%s' is not a valid JSON file.", str(info_json), exc_info=exc)
+        log.critical("'%s' is not a valid JSON file.",
+                     str(info_json), exc_info=exc)
     except UnicodeError as exc:
         log.critical("'%s' has a bad encoding.", str(info_json), exc_info=exc)
     except Exception as exc:

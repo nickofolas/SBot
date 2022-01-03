@@ -68,7 +68,8 @@ __all__ = [
 _CT = TypeVar("_CT", bound=Context)
 _T = TypeVar("_T")
 _F = TypeVar("_F")
-CheckType = Union[Callable[[_CT], bool], Callable[[_CT], Coroutine[Any, Any, bool]]]
+CheckType = Union[Callable[[_CT], bool],
+                  Callable[[_CT], Coroutine[Any, Any, bool]]]
 CoroLike = Callable[..., Union[Awaitable[_T], Generator[Any, None, _T]]]
 InvokeHook = Callable[[_CT], Coroutine[Any, Any, bool]]
 
@@ -121,7 +122,8 @@ if TYPE_CHECKING:
         ...
 
 
-PrefixCallable = Callable[[dpy_commands.bot.BotBase, discord.Message], List[str]]
+PrefixCallable = Callable[[
+    dpy_commands.bot.BotBase, discord.Message], List[str]]
 
 
 def when_mentioned(bot: dpy_commands.bot.BotBase, msg: discord.Message) -> List[str]:

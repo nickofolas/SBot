@@ -153,7 +153,8 @@ class IdentifierData:
         return tuple(
             filter(
                 None,
-                (self.cog_name, self.uuid, self.category, *self.primary_key, *self.identifiers),
+                (self.cog_name, self.uuid, self.category,
+                 *self.primary_key, *self.identifiers),
             )
         )
 
@@ -286,19 +287,22 @@ class BaseDriver(abc.ABC):
         # Backend-agnostic method of migrating from one driver to another.
         with rich.progress.Progress(
             rich.progress.SpinnerColumn(),
-            rich.progress.TextColumn("[progress.description]{task.description}"),
+            rich.progress.TextColumn(
+                "[progress.description]{task.description}"),
             RichIndefiniteBarColumn(),
             rich.progress.TextColumn("{task.completed} cogs processed"),
             rich.progress.TimeElapsedColumn(),
         ) as progress:
             cog_count = 0
-            tid = progress.add_task("[yellow]Migrating", completed=cog_count, total=cog_count + 1)
+            tid = progress.add_task(
+                "[yellow]Migrating", completed=cog_count, total=cog_count + 1)
             async for cog_name, cog_id in cls.aiter_cogs():
                 progress.console.print(f"Working on {cog_name}...")
 
                 this_driver = cls(cog_name, cog_id)
                 other_driver = new_driver_cls(cog_name, cog_id)
-                custom_group_data = all_custom_group_data.get(cog_name, {}).get(cog_id, {})
+                custom_group_data = all_custom_group_data.get(
+                    cog_name, {}).get(cog_id, {})
                 exported_data = await this_driver.export_data(custom_group_data)
                 await other_driver.import_data(exported_data, custom_group_data)
 
@@ -342,7 +346,8 @@ class BaseDriver(abc.ABC):
             for _k, _v in currdata.items():
                 new_key = parent_key + (_k,)
                 if levels_remaining > 1:
-                    items.extend(flatten(levels_remaining - 1, _v, new_key).items())
+                    items.extend(
+                        flatten(levels_remaining - 1, _v, new_key).items())
                 else:
                     items.append((new_key, _v))
             return dict(items)
@@ -379,7 +384,8 @@ class BaseDriver(abc.ABC):
         self, cog_data: List[Tuple[str, Dict[str, Any]]], custom_group_data: Dict[str, int]
     ) -> None:
         for category, all_data in cog_data:
-            splitted_pkey = self._split_primary_key(category, custom_group_data, all_data)
+            splitted_pkey = self._split_primary_key(
+                category, custom_group_data, all_data)
             for pkey, data in splitted_pkey:
                 ident_data = IdentifierData(
                     self.cog_name,

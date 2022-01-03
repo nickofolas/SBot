@@ -53,7 +53,8 @@ class MiscellaneousCommands(MixinMeta, metaclass=CompositeMetaClass):
                 self.get_time_string(
                     int(
                         (
-                            datetime.datetime.now(datetime.timezone.utc) - p.connected_at
+                            datetime.datetime.now(
+                                datetime.timezone.utc) - p.connected_at
                         ).total_seconds()
                     )
                 )
@@ -85,7 +86,8 @@ class MiscellaneousCommands(MixinMeta, metaclass=CompositeMetaClass):
             )
             em.set_footer(
                 text=_("Page {}/{}").format(
-                    humanize_number(pages), humanize_number((math.ceil(len(msg) / 1500)))
+                    humanize_number(pages), humanize_number(
+                        (math.ceil(len(msg) / 1500)))
                 )
             )
             pages += 1
@@ -114,7 +116,8 @@ class MiscellaneousCommands(MixinMeta, metaclass=CompositeMetaClass):
                 requesters["total"] += 1
 
         async for track in AsyncIter(queue_tracks):
-            req_username = "{}#{}".format(track.requester.name, track.requester.discriminator)
+            req_username = "{}#{}".format(
+                track.requester.name, track.requester.discriminator)
             await _usercount(req_username)
 
         try:
@@ -129,7 +132,8 @@ class MiscellaneousCommands(MixinMeta, metaclass=CompositeMetaClass):
             percentage = float(requesters["users"][req_username]["songcount"]) / float(
                 requesters["total"]
             )
-            requesters["users"][req_username]["percent"] = round(percentage * 100, 1)
+            requesters["users"][req_username]["percent"] = round(
+                percentage * 100, 1)
 
         top_queue_users = heapq.nlargest(
             20,

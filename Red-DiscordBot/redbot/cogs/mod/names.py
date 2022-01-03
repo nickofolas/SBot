@@ -24,9 +24,11 @@ class ModInfo(MixinMeta):
         names = await self.config.user(user).past_names()
         nicks = await self.config.member(user).past_nicks()
         if names:
-            names = [escape_spoilers_and_mass_mentions(name) for name in names if name]
+            names = [escape_spoilers_and_mass_mentions(
+                name) for name in names if name]
         if nicks:
-            nicks = [escape_spoilers_and_mass_mentions(nick) for nick in nicks if nick]
+            nicks = [escape_spoilers_and_mass_mentions(
+                nick) for nick in nicks if nick]
         return names, nicks
 
     @commands.command()
@@ -89,7 +91,8 @@ class ModInfo(MixinMeta):
         if not a.name and not a.emoji:
             return None, discord.ActivityType.custom
         elif a.name and a.emoji:
-            c_status = _("Custom: {emoji} {name}").format(emoji=a.emoji, name=a.name)
+            c_status = _("Custom: {emoji} {name}").format(
+                emoji=a.emoji, name=a.name)
         elif a.emoji:
             c_status = _("Custom: {emoji}").format(emoji=a.emoji)
         elif a.name:
@@ -97,7 +100,8 @@ class ModInfo(MixinMeta):
         return c_status, discord.ActivityType.custom
 
     def handle_playing(self, user):
-        p_acts = [c for c in user.activities if c.type == discord.ActivityType.playing]
+        p_acts = [c for c in user.activities if c.type ==
+                  discord.ActivityType.playing]
         if not p_acts:
             return None, discord.ActivityType.playing
         p_act = p_acts[0]
@@ -105,7 +109,8 @@ class ModInfo(MixinMeta):
         return act, discord.ActivityType.playing
 
     def handle_streaming(self, user):
-        s_acts = [c for c in user.activities if c.type == discord.ActivityType.streaming]
+        s_acts = [c for c in user.activities if c.type ==
+                  discord.ActivityType.streaming]
         if not s_acts:
             return None, discord.ActivityType.streaming
         s_act = s_acts[0]
@@ -113,7 +118,8 @@ class ModInfo(MixinMeta):
             act = _("Streaming: [{name}{sep}{game}]({url})").format(
                 name=discord.utils.escape_markdown(s_act.name),
                 sep=" | " if s_act.game else "",
-                game=discord.utils.escape_markdown(s_act.game) if s_act.game else "",
+                game=discord.utils.escape_markdown(
+                    s_act.game) if s_act.game else "",
                 url=s_act.url,
             )
         else:
@@ -121,7 +127,8 @@ class ModInfo(MixinMeta):
         return act, discord.ActivityType.streaming
 
     def handle_listening(self, user):
-        l_acts = [c for c in user.activities if c.type == discord.ActivityType.listening]
+        l_acts = [c for c in user.activities if c.type ==
+                  discord.ActivityType.listening]
         if not l_acts:
             return None, discord.ActivityType.listening
         l_act = l_acts[0]
@@ -129,7 +136,8 @@ class ModInfo(MixinMeta):
             act = _("Listening: [{title}{sep}{artist}]({url})").format(
                 title=discord.utils.escape_markdown(l_act.title),
                 sep=" | " if l_act.artist else "",
-                artist=discord.utils.escape_markdown(l_act.artist) if l_act.artist else "",
+                artist=discord.utils.escape_markdown(
+                    l_act.artist) if l_act.artist else "",
                 url=f"https://open.spotify.com/track/{l_act.track_id}",
             )
         else:
@@ -137,7 +145,8 @@ class ModInfo(MixinMeta):
         return act, discord.ActivityType.listening
 
     def handle_watching(self, user):
-        w_acts = [c for c in user.activities if c.type == discord.ActivityType.watching]
+        w_acts = [c for c in user.activities if c.type ==
+                  discord.ActivityType.watching]
         if not w_acts:
             return None, discord.ActivityType.watching
         w_act = w_acts[0]
@@ -145,7 +154,8 @@ class ModInfo(MixinMeta):
         return act, discord.ActivityType.watching
 
     def handle_competing(self, user):
-        w_acts = [c for c in user.activities if c.type == discord.ActivityType.competing]
+        w_acts = [c for c in user.activities if c.type ==
+                  discord.ActivityType.competing]
         if not w_acts:
             return None, discord.ActivityType.competing
         w_act = w_acts[0]
@@ -187,7 +197,8 @@ class ModInfo(MixinMeta):
             member = author
 
         #  A special case for a special someone :^)
-        special_date = datetime.datetime(2016, 1, 10, 6, 8, 4, 443000, datetime.timezone.utc)
+        special_date = datetime.datetime(
+            2016, 1, 10, 6, 8, 4, 443000, datetime.timezone.utc)
         is_special = member.id == 96130341705637888 and guild.id == 133049272517001216
 
         roles = member.roles[-1:0:-1]
@@ -196,7 +207,8 @@ class ModInfo(MixinMeta):
         joined_at = member.joined_at.replace(tzinfo=datetime.timezone.utc)
         if is_special:
             joined_at = special_date
-        user_created = int(member.created_at.replace(tzinfo=datetime.timezone.utc).timestamp())
+        user_created = int(member.created_at.replace(
+            tzinfo=datetime.timezone.utc).timestamp())
         voice_state = member.voice
         member_number = (
             sorted(guild.members, key=lambda m: m.joined_at or ctx.message.created_at).index(
@@ -207,7 +219,8 @@ class ModInfo(MixinMeta):
 
         created_on = "<t:{0}>\n(<t:{0}:R>)".format(user_created)
         if joined_at is not None:
-            joined_on = "<t:{0}>\n(<t:{0}:R>)".format(int(joined_at.timestamp()))
+            joined_on = "<t:{0}>\n(<t:{0}:R>)".format(
+                int(joined_at.timestamp()))
         else:
             joined_on = _("Unknown")
 
@@ -238,7 +251,8 @@ class ModInfo(MixinMeta):
                 continuation_string = _(
                     "and {numeric_number} more roles not displayed due to embed limits."
                 )
-                available_length = 1024 - len(continuation_string)  # do not attempt to tweak, i18n
+                # do not attempt to tweak, i18n
+                available_length = 1024 - len(continuation_string)
 
                 role_chunks = []
                 remaining_roles = 0
@@ -253,14 +267,16 @@ class ModInfo(MixinMeta):
                     else:
                         remaining_roles += 1
 
-                role_chunks.append(continuation_string.format(numeric_number=remaining_roles))
+                role_chunks.append(continuation_string.format(
+                    numeric_number=remaining_roles))
 
                 role_str = "".join(role_chunks)
 
         else:
             role_str = None
 
-        data = discord.Embed(description=status_string or activity, colour=member.colour)
+        data = discord.Embed(
+            description=status_string or activity, colour=member.colour)
 
         data.add_field(name=_("Joined Discord on"), value=created_on)
         data.add_field(name=_("Joined this server on"), value=joined_on)
@@ -272,7 +288,8 @@ class ModInfo(MixinMeta):
             # May need sanitizing later, but mentions do not ping in embeds currently
             val = filter_invites(", ".join(names))
             data.add_field(
-                name=_("Previous Names") if len(names) > 1 else _("Previous Name"),
+                name=_("Previous Names") if len(
+                    names) > 1 else _("Previous Name"),
                 value=val,
                 inline=False,
             )
@@ -280,7 +297,8 @@ class ModInfo(MixinMeta):
             # May need sanitizing later, but mentions do not ping in embeds currently
             val = filter_invites(", ".join(nicks))
             data.add_field(
-                name=_("Previous Nicknames") if len(nicks) > 1 else _("Previous Nickname"),
+                name=_("Previous Nicknames") if len(
+                    nicks) > 1 else _("Previous Nickname"),
                 value=val,
                 inline=False,
             )
@@ -290,7 +308,8 @@ class ModInfo(MixinMeta):
                 value="{0.mention} ID: {0.id}".format(voice_state.channel),
                 inline=False,
             )
-        data.set_footer(text=_("Member #{} | User ID: {}").format(member_number, member.id))
+        data.set_footer(text=_("Member #{} | User ID: {}").format(
+            member_number, member.id))
 
         name = str(member)
         name = " ~ ".join((name, member.nick)) if member.nick else name

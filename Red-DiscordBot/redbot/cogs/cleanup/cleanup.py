@@ -34,7 +34,8 @@ class Cleanup(commands.Cog):
     def __init__(self, bot: Red):
         super().__init__()
         self.bot = bot
-        self.config = Config.get_conf(self, 8927348724, force_registration=True)
+        self.config = Config.get_conf(
+            self, 8927348724, force_registration=True)
         self.config.register_guild(notify=True)
 
     async def red_delete_data_for_user(self, **kwargs):
@@ -142,7 +143,8 @@ class Cleanup(commands.Cog):
                 await channel.send(_("1 message was deleted."), delete_after=5)
             else:
                 await channel.send(
-                    _("{num} messages were deleted.").format(num=humanize_number(num)),
+                    _("{num} messages were deleted.").format(
+                        num=humanize_number(num)),
                     delete_after=5,
                 )
 
@@ -434,13 +436,15 @@ class Cleanup(commands.Cog):
             mone = await channel.fetch_message(one)
         except discord.errors.NotFound:
             return await ctx.send(
-                _("Could not find a message with the ID of {id}.".format(id=one))
+                _("Could not find a message with the ID of {id}.".format(
+                    id=one))
             )
         try:
             mtwo = await channel.fetch_message(two)
         except discord.errors.NotFound:
             return await ctx.send(
-                _("Could not find a message with the ID of {id}.".format(id=two))
+                _("Could not find a message with the ID of {id}.".format(
+                    id=two))
             )
         to_delete = await self.get_messages_for_deletion(
             channel=channel, before=mtwo, after=mone, delete_pinned=delete_pinned
@@ -521,7 +525,8 @@ class Cleanup(commands.Cog):
             if not cont:
                 return
 
-        prefixes = await self.bot.get_prefix(ctx.message)  # This returns all server prefixes
+        # This returns all server prefixes
+        prefixes = await self.bot.get_prefix(ctx.message)
         if isinstance(prefixes, str):
             prefixes = [prefixes]
 
@@ -555,7 +560,8 @@ class Cleanup(commands.Cog):
             if p and len(p) > 0:
                 cmd_name = m.content[len(p):].split(" ")[0]
                 return (
-                    bool(self.bot.get_command(cmd_name)) or is_alias(cmd_name) or is_cc(cmd_name)
+                    bool(self.bot.get_command(cmd_name)) or is_alias(
+                        cmd_name) or is_cc(cmd_name)
                 )
             return False
 

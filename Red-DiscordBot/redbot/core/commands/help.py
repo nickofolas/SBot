@@ -48,10 +48,12 @@ __all__ = ["red_help", "RedHelpFormatter", "HelpSettings", "HelpFormatterABC"]
 
 _ = Translator("Help", __file__)
 
-HelpTarget = Union[commands.Command, commands.Group, commands.Cog, dpy_commands.bot.BotBase, str]
+HelpTarget = Union[commands.Command, commands.Group,
+                   commands.Cog, dpy_commands.bot.BotBase, str]
 
 # The below could be a protocol if we pulled in typing_extensions from mypy.
-SupportsCanSee = Union[commands.Command, commands.Group, dpy_commands.bot.BotBase, commands.Cog]
+SupportsCanSee = Union[commands.Command, commands.Group,
+                       dpy_commands.bot.BotBase, commands.Cog]
 
 EmbedField = namedtuple("EmbedField", "name value inline")
 EMPTY_STRING = "\N{ZERO WIDTH SPACE}"
@@ -113,7 +115,8 @@ class HelpSettings:
         if not self.delete_delay:
             data["delete_delay"] = _("Disabled")
         else:
-            data["delete_delay"] = humanize_timedelta(seconds=self.delete_delay)
+            data["delete_delay"] = humanize_timedelta(
+                seconds=self.delete_delay)
 
         if tag := data.pop("tagline", ""):
             tagline_info = _("\nCustom Tagline: {tag}").format(tag=tag)
@@ -247,7 +250,8 @@ class RedHelpFormatter(HelpFormatterABC):
     async def get_cog_help_mapping(
         self, ctx: Context, obj: commands.Cog, help_settings: HelpSettings
     ):
-        iterator = filter(lambda c: c.parent is None and c.cog is obj, ctx.bot.commands)
+        iterator = filter(
+            lambda c: c.parent is None and c.cog is obj, ctx.bot.commands)
         return {
             com.name: com
             async for com in self.help_filter_func(ctx, iterator, help_settings=help_settings)
@@ -323,7 +327,8 @@ class RedHelpFormatter(HelpFormatterABC):
 
         aliases = command.aliases
         if help_settings.show_aliases and aliases:
-            alias_fmt = _("Aliases") if len(command.aliases) > 1 else _("Alias")
+            alias_fmt = _("Aliases") if len(
+                command.aliases) > 1 else _("Alias")
             aliases = sorted(aliases, key=len)
 
             a_counter = 0
@@ -345,7 +350,8 @@ class RedHelpFormatter(HelpFormatterABC):
                 aliases_formatted_list = ", ".join(aliases_list)
                 if a_diff > 1:
                     aliases_content = _("{aliases} and {number} more aliases.").format(
-                        aliases=aliases_formatted_list, number=humanize_number(a_diff)
+                        aliases=aliases_formatted_list, number=humanize_number(
+                            a_diff)
                     )
                 else:
                     aliases_content = _("{aliases} and one more alias.").format(
@@ -359,7 +365,8 @@ class RedHelpFormatter(HelpFormatterABC):
             subcommands = await self.get_group_help_mapping(ctx, grp, help_settings=help_settings)
 
         if await ctx.embed_requested():
-            emb = {"embed": {"title": "", "description": ""}, "footer": {"text": ""}, "fields": []}
+            emb = {"embed": {"title": "", "description": ""},
+                   "footer": {"text": ""}, "fields": []}
 
             if description:
                 emb["embed"]["title"] = f"*{description[:250]}*"
@@ -385,7 +392,8 @@ class RedHelpFormatter(HelpFormatterABC):
                     return a_line[:67].rstrip() + "..."
 
                 subtext = "\n".join(
-                    shorten_line(f"**{name}** {command.format_shortdoc_for_context(ctx)}")
+                    shorten_line(
+                        f"**{name}** {command.format_shortdoc_for_context(ctx)}")
                     for name, command in sorted(subcommands.items())
                 )
                 for i, page in enumerate(pagify(subtext, page_length=500, shorten_by=0)):
@@ -404,7 +412,8 @@ class RedHelpFormatter(HelpFormatterABC):
             subtext_header = None
             if subcommands:
                 subtext_header = _("Subcommands:")
-                max_width = max(discord.utils._string_width(name) for name in subcommands.keys())
+                max_width = max(discord.utils._string_width(name)
+                                for name in subcommands.keys())
 
                 def width_maker(cmds):
                     doc_max_width = 80 - max_width
@@ -464,7 +473,8 @@ class RedHelpFormatter(HelpFormatterABC):
         pages = []
 
         page_char_limit = help_settings.page_char_limit
-        page_char_limit = min(page_char_limit, 5500)  # Just in case someone was manually...
+        # Just in case someone was manually...
+        page_char_limit = min(page_char_limit, 5500)
 
         author_info = {
             "name": _("{ctx.me.display_name} Help Menu").format(ctx=ctx),
@@ -499,7 +509,8 @@ class RedHelpFormatter(HelpFormatterABC):
             # This lower bound is safe based on parts of embed in use.
             page_char_limit = 250
 
-        field_groups = self.group_embed_fields(embed_dict["fields"], page_char_limit)
+        field_groups = self.group_embed_fields(
+            embed_dict["fields"], page_char_limit)
 
         color = await ctx.embed_color()
         page_count = len(field_groups)
@@ -540,7 +551,8 @@ class RedHelpFormatter(HelpFormatterABC):
         tagline = (help_settings.tagline) or self.get_default_tagline(ctx)
 
         if await ctx.embed_requested():
-            emb = {"embed": {"title": "", "description": ""}, "footer": {"text": ""}, "fields": []}
+            emb = {"embed": {"title": "", "description": ""},
+                   "footer": {"text": ""}, "fields": []}
 
             emb["footer"]["text"] = tagline
             if description:
@@ -560,7 +572,8 @@ class RedHelpFormatter(HelpFormatterABC):
                     return a_line[:67].rstrip() + "..."
 
                 command_text = "\n".join(
-                    shorten_line(f"**{name}** {command.format_shortdoc_for_context(ctx)}")
+                    shorten_line(
+                        f"**{name}** {command.format_shortdoc_for_context(ctx)}")
                     for name, command in sorted(coms.items())
                 )
                 for i, page in enumerate(pagify(command_text, page_length=500, shorten_by=0)):
@@ -578,7 +591,8 @@ class RedHelpFormatter(HelpFormatterABC):
             subtext_header = None
             if coms:
                 subtext_header = _("Commands:")
-                max_width = max(discord.utils._string_width(name) for name in coms.keys())
+                max_width = max(discord.utils._string_width(name)
+                                for name in coms.keys())
 
                 def width_maker(cmds):
                     doc_max_width = 80 - max_width
@@ -593,7 +607,8 @@ class RedHelpFormatter(HelpFormatterABC):
                     f"  {name:<{width}} {doc}" for name, doc, width in width_maker(coms.items())
                 )
 
-            to_page = "\n\n".join(filter(None, (description, subtext_header, subtext)))
+            to_page = "\n\n".join(
+                filter(None, (description, subtext_header, subtext)))
             pages = [box(p) for p in pagify(to_page)]
             await self.send_pages(ctx, pages, embed=False, help_settings=help_settings)
 
@@ -608,7 +623,8 @@ class RedHelpFormatter(HelpFormatterABC):
 
         if await ctx.embed_requested():
 
-            emb = {"embed": {"title": "", "description": ""}, "footer": {"text": ""}, "fields": []}
+            emb = {"embed": {"title": "", "description": ""},
+                   "footer": {"text": ""}, "fields": []}
 
             emb["footer"]["text"] = tagline
             if description:
@@ -627,12 +643,14 @@ class RedHelpFormatter(HelpFormatterABC):
                     return a_line[:67].rstrip() + "..."
 
                 cog_text = "\n".join(
-                    shorten_line(f"**{name}** {command.format_shortdoc_for_context(ctx)}")
+                    shorten_line(
+                        f"**{name}** {command.format_shortdoc_for_context(ctx)}")
                     for name, command in sorted(data.items())
                 )
 
                 for i, page in enumerate(pagify(cog_text, page_length=1000, shorten_by=0)):
-                    title = title if i < 1 else _("{title} (continued)").format(title=title)
+                    title = title if i < 1 else _(
+                        "{title} (continued)").format(title=title)
                     field = EmbedField(title, page, False)
                     emb["fields"].append(field)
 
@@ -725,20 +743,23 @@ class RedHelpFormatter(HelpFormatterABC):
                     name=_("{ctx.me.display_name} Help Menu").format(ctx=ctx),
                     icon_url=ctx.me.display_avatar,
                 )
-                tagline = help_settings.tagline or self.get_default_tagline(ctx)
+                tagline = help_settings.tagline or self.get_default_tagline(
+                    ctx)
                 ret.set_footer(text=tagline)
                 await ctx.send(embed=ret)
             else:
                 await ctx.send(ret)
         elif help_settings.verify_exists:
-            ret = _("Help topic for *{command_name}* not found.").format(command_name=help_for)
+            ret = _(
+                "Help topic for *{command_name}* not found.").format(command_name=help_for)
             if use_embeds:
                 ret = discord.Embed(color=(await ctx.embed_color()), description=ret)
                 ret.set_author(
                     name=_("{ctx.me.display_name} Help Menu").format(ctx=ctx),
                     icon_url=ctx.me.display_avatar,
                 )
-                tagline = help_settings.tagline or self.get_default_tagline(ctx)
+                tagline = help_settings.tagline or self.get_default_tagline(
+                    ctx)
                 ret.set_footer(text=tagline)
                 await ctx.send(embed=ret)
             else:
@@ -785,7 +806,8 @@ class RedHelpFormatter(HelpFormatterABC):
                 # swap parsing method to use get_command.
             except (KeyError, AttributeError):
                 if last:
-                    raise NoSubCommand(last=last, not_found=clist[index:]) from None
+                    raise NoSubCommand(
+                        last=last, not_found=clist[index:]) from None
                 else:
                     raise NoCommand() from None
             else:
@@ -853,14 +875,17 @@ class RedHelpFormatter(HelpFormatterABC):
                     await asyncio.sleep(delay)
                     await mass_purge(messages, channel)
 
-                asyncio.create_task(_delete_delay_help(destination, messages, delete_delay))
+                asyncio.create_task(_delete_delay_help(
+                    destination, messages, delete_delay))
         else:
             # Specifically ensuring the menu's message is sent prior to returning
             m = await (ctx.send(embed=pages[0]) if embed else ctx.send(pages[0]))
-            c = menus.DEFAULT_CONTROLS if len(pages) > 1 else {"\N{CROSS MARK}": menus.close_menu}
+            c = menus.DEFAULT_CONTROLS if len(pages) > 1 else {
+                "\N{CROSS MARK}": menus.close_menu}
             # Allow other things to happen during menu timeout/interaction.
             asyncio.create_task(
-                menus.menu(ctx, pages, c, message=m, timeout=help_settings.react_timeout)
+                menus.menu(ctx, pages, c, message=m,
+                           timeout=help_settings.react_timeout)
             )
             # menu needs reactions added manually since we fed it a message
             menus.start_adding_reactions(m, c.keys())

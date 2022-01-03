@@ -13,6 +13,7 @@ class Vibe(commands.Cog):
     flow = None
     flow_generator = None
     """ InspiroBot Flow API client for Red """
+
     def __init__(self, bot):
         self.bot = bot
 
@@ -20,17 +21,17 @@ class Vibe(commands.Cog):
     @commands.bot_has_permissions(embed_links=True)
     async def vibe(self, ctx: commands.Context, speed: str = "normal"):
         """ Start (or stop) vibing
-        
+
         Available speeds: pause/stop, glacial, slow, normal, fast, dizzy """
         # Get the numeric representation for the speed divisor
         numeric_speed = {
-            "pause"     : 0,
-            "stop"      : 0,
-            "glacial"   : 0.2,
-            "slow"      : 0.6,
-            "normal"    : 1.0,
-            "fast"      : 1.4,
-            "dizzy"     : 1.8
+            "pause": 0,
+            "stop": 0,
+            "glacial": 0.2,
+            "slow": 0.6,
+            "normal": 1.0,
+            "fast": 1.4,
+            "dizzy": 1.8
         }.get(speed, 1.0)
         # Speeds greater than 0 start the flow
         if numeric_speed > 0:
@@ -61,7 +62,7 @@ class Vibe(commands.Cog):
         # Ship it!
         await ctx.send(embed=embed)
         # Sleep until next wave, enforcing a minimum wave duration
-        await asyncio.sleep(max(6/speed, wave.duration)/speed)
+        await asyncio.sleep(max(6 / speed, wave.duration) / speed)
 
     async def infinite_flow(self):
         """ Infinite flow wave generator """

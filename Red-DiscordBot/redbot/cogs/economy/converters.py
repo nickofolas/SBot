@@ -16,7 +16,9 @@ else:
         try:
             ret = int(arg)
         except ValueError:
-            raise BadArgument(_("{arg} is not an integer.").format(arg=inline(arg)))
+            raise BadArgument(
+                _("{arg} is not an integer.").format(arg=inline(arg)))
         if ret <= 0:
-            raise BadArgument(_("{arg} is not a positive integer.").format(arg=inline(arg)))
+            raise BadArgument(
+                _("{arg} is not a positive integer.").format(arg=inline(arg)))
         return ret

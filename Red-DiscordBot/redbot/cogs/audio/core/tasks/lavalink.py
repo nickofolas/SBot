@@ -27,7 +27,8 @@ class LavalinkTasks(MixinMeta, metaclass=CompositeMetaClass):
         self._restore_task = None
         lavalink.register_event_listener(self.lavalink_event_handler)
         lavalink.register_update_listener(self.lavalink_update_handler)
-        self.lavalink_connect_task = self.bot.loop.create_task(self.lavalink_attempt_connect())
+        self.lavalink_connect_task = self.bot.loop.create_task(
+            self.lavalink_attempt_connect())
 
     async def lavalink_attempt_connect(self, timeout: int = 50) -> None:
         self.lavalink_connection_aborted = False
@@ -65,7 +66,8 @@ class LavalinkTasks(MixinMeta, metaclass=CompositeMetaClass):
                         self.lavalink_connection_aborted = True
                         raise
                 except asyncio.CancelledError:
-                    log.exception("Invalid machine architecture, cannot run Lavalink.")
+                    log.exception(
+                        "Invalid machine architecture, cannot run Lavalink.")
                     raise
                 except Exception as exc:
                     log.exception(

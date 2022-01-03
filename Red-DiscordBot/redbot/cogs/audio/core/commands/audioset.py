@@ -99,7 +99,8 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
                 pages.append(box(text, lang="ini"))
         embed_colour = await ctx.embed_colour()
         pages = list(
-            discord.Embed(title=_("Global Whitelist"), description=page, colour=embed_colour)
+            discord.Embed(title=_("Global Whitelist"),
+                          description=page, colour=embed_colour)
             for page in pages
         )
         await menu(ctx, pages, DEFAULT_CONTROLS)
@@ -193,7 +194,8 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
                 pages.append(box(text, lang="ini"))
         embed_colour = await ctx.embed_colour()
         pages = list(
-            discord.Embed(title=_("Global Blacklist"), description=page, colour=embed_colour)
+            discord.Embed(title=_("Global Blacklist"),
+                          description=page, colour=embed_colour)
             for page in pages
         )
         await menu(ctx, pages, DEFAULT_CONTROLS)
@@ -289,7 +291,8 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
                 pages.append(box(text, lang="ini"))
         embed_colour = await ctx.embed_colour()
         pages = list(
-            discord.Embed(title=_("Whitelist"), description=page, colour=embed_colour)
+            discord.Embed(title=_("Whitelist"),
+                          description=page, colour=embed_colour)
             for page in pages
         )
         await menu(ctx, pages, DEFAULT_CONTROLS)
@@ -382,7 +385,8 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
                 pages.append(box(text, lang="ini"))
         embed_colour = await ctx.embed_colour()
         pages = list(
-            discord.Embed(title=_("Blacklist"), description=page, colour=embed_colour)
+            discord.Embed(title=_("Blacklist"),
+                          description=page, colour=embed_colour)
             for page in pages
         )
         await menu(ctx, pages, DEFAULT_CONTROLS)
@@ -495,7 +499,8 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
             return await self.send_embed_msg(
                 ctx,
                 title=_("Playlists Are Not Available"),
-                description=_("The playlist section of Audio is currently unavailable"),
+                description=_(
+                    "The playlist section of Audio is currently unavailable"),
                 footer=discord.Embed.Empty
                 if not await self.bot.is_owner(ctx.author)
                 else _("Check your logs."),
@@ -514,7 +519,8 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
             return await self.send_embed_msg(
                 ctx,
                 title=_("No Playlist Found"),
-                description=_("Could not match '{arg}' to a playlist").format(arg=playlist_arg),
+                description=_("Could not match '{arg}' to a playlist").format(
+                    arg=playlist_arg),
             )
         try:
             tracks = playlist.tracks
@@ -522,9 +528,11 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
                 return await self.send_embed_msg(
                     ctx,
                     title=_("No Tracks Found"),
-                    description=_("Playlist {name} has no tracks.").format(name=playlist.name),
+                    description=_("Playlist {name} has no tracks.").format(
+                        name=playlist.name),
                 )
-            playlist_data = dict(enabled=True, id=playlist.id, name=playlist.name, scope=scope)
+            playlist_data = dict(enabled=True, id=playlist.id,
+                                 name=playlist.name, scope=scope)
             await self.config.guild(ctx.guild).autoplaylist.set(playlist_data)
         except RuntimeError:
             return await self.send_embed_msg(
@@ -538,7 +546,8 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
             return await self.send_embed_msg(
                 ctx,
                 title=_("Missing Arguments"),
-                description=_("You need to specify the Guild ID for the guild to lookup."),
+                description=_(
+                    "You need to specify the Guild ID for the guild to lookup."),
             )
         else:
             return await self.send_embed_msg(
@@ -569,7 +578,8 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
         return await self.send_embed_msg(
             ctx,
             title=_("Setting Changed"),
-            description=_("Set auto-play playlist to play recently played tracks."),
+            description=_(
+                "Set auto-play playlist to play recently played tracks."),
         )
 
     @command_audioset.command(name="globaldailyqueue")
@@ -588,7 +598,8 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
             ctx,
             title=_("Setting Changed"),
             description=_("Global daily queues: {true_or_false}.").format(
-                true_or_false=_("Enabled") if not daily_playlists else _("Disabled")
+                true_or_false=_(
+                    "Enabled") if not daily_playlists else _("Disabled")
             ),
         )
 
@@ -609,7 +620,8 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
             ctx,
             title=_("Setting Changed"),
             description=_("Daily queues: {true_or_false}.").format(
-                true_or_false=_("Enabled") if not daily_playlists else _("Disabled")
+                true_or_false=_(
+                    "Enabled") if not daily_playlists else _("Disabled")
             ),
         )
 
@@ -749,7 +761,8 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
             ctx,
             title=_("Setting Changed"),
             description=_("Prefer tracks with lyrics: {true_or_false}.").format(
-                true_or_false=_("Enabled") if not prefer_lyrics else _("Disabled")
+                true_or_false=_(
+                    "Enabled") if not prefer_lyrics else _("Disabled")
             ),
         )
 
@@ -828,7 +841,8 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
             with contextlib.suppress(discord.HTTPException):
                 await info.delete()
             return
-        temp = LocalPath(local_path, self.local_folder_current_path, forced=True)
+        temp = LocalPath(
+            local_path, self.local_folder_current_path, forced=True)
         if not temp.exists() or not temp.is_dir():
             return await self.send_embed_msg(
                 ctx,
@@ -912,7 +926,8 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
             ctx,
             title=_("Setting Changed"),
             description=_("Auto Deafen: {true_or_false}.").format(
-                true_or_false=_("Enabled") if not auto_deafen else _("Disabled")
+                true_or_false=_(
+                    "Enabled") if not auto_deafen else _("Disabled")
             ),
         )
 
@@ -950,7 +965,8 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
         await self.send_embed_msg(
             ctx,
             title=_("Settings Changed"),
-            description=_("DJ role set to: {role.name}.").format(role=dj_role_obj),
+            description=_("DJ role set to: {role.name}.").format(
+                role=dj_role_obj),
         )
 
     @command_audioset.command(name="settings", aliases=["info"])
@@ -979,10 +995,12 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
         current_level = CacheLevel(global_data["cache_level"])
         song_repeat = _("Enabled") if data["repeat"] else _("Disabled")
         song_shuffle = _("Enabled") if data["shuffle"] else _("Disabled")
-        bumpped_shuffle = _("Enabled") if data["shuffle_bumped"] else _("Disabled")
+        bumpped_shuffle = _(
+            "Enabled") if data["shuffle_bumped"] else _("Disabled")
         song_notify = _("Enabled") if data["notify"] else _("Disabled")
         song_status = _("Enabled") if global_data["status"] else _("Disabled")
-        persist_queue = _("Enabled") if data["persist_queue"] else _("Disabled")
+        persist_queue = _(
+            "Enabled") if data["persist_queue"] else _("Disabled")
 
         countrycode = data["country_code"]
 
@@ -999,7 +1017,8 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
         msg += _("Auto-deafen:      [{auto_deafen}]\n").format(
             auto_deafen=auto_deafen,
         )
-        msg += _("Auto-disconnect:  [{dc}]\n").format(dc=_("Enabled") if dc else _("Disabled"))
+        msg += _("Auto-disconnect:  [{dc}]\n").format(
+            dc=_("Enabled") if dc else _("Disabled"))
         msg += _("Auto-play:        [{autoplay}]\n").format(
             autoplay=_("Enabled") if autoplay else _("Disabled")
         )
@@ -1014,7 +1033,8 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
         if dj_enabled and dj_role_obj:
             msg += _("DJ Role:          [{role.name}]\n").format(role=dj_role_obj)
         if jukebox:
-            msg += _("Jukebox:          [{jukebox_name}]\n").format(jukebox_name=jukebox)
+            msg += _("Jukebox:          [{jukebox_name}]\n").format(
+                jukebox_name=jukebox)
             msg += _("Command price:    [{jukebox_price}]\n").format(
                 jukebox_price=humanize_number(jukebox_price)
             )
@@ -1092,9 +1112,12 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
                 + _("Local Lavalink cache:   [{lavalink_status}]\n")
             ).format(
                 max_age=str(await self.config.cache_age()) + " " + _("days"),
-                spotify_status=_("Enabled") if has_spotify_cache else _("Disabled"),
-                youtube_status=_("Enabled") if has_youtube_cache else _("Disabled"),
-                lavalink_status=_("Enabled") if has_lavalink_cache else _("Disabled"),
+                spotify_status=_(
+                    "Enabled") if has_spotify_cache else _("Disabled"),
+                youtube_status=_(
+                    "Enabled") if has_youtube_cache else _("Disabled"),
+                lavalink_status=_(
+                    "Enabled") if has_lavalink_cache else _("Disabled"),
             )
         msg += (
             "\n---"
@@ -1134,7 +1157,8 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
                 jv_exec=self.player_manager.path,
             )
         if is_owner:
-            msg += _("Localtracks path:       [{localpath}]\n").format(**global_data)
+            msg += _("Localtracks path:       [{localpath}]\n").format(
+                **global_data)
 
         await self.send_embed_msg(ctx, description=box(msg, lang="ini"))
 
@@ -1225,14 +1249,16 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
             await self.send_embed_msg(
                 ctx,
                 title=_("Setting Changed"),
-                description=_("Voting disabled. All users can use queue management commands."),
+                description=_(
+                    "Voting disabled. All users can use queue management commands."),
             )
         else:
             enabled = True
             await self.send_embed_msg(
                 ctx,
                 title=_("Setting Changed"),
-                description=_("Vote percentage set to {percent}%.").format(percent=percent),
+                description=_("Vote percentage set to {percent}%.").format(
+                    percent=percent),
             )
 
         await self.config.guild(ctx.guild).vote_percent.set(percent)
@@ -1292,7 +1318,8 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
         await self.send_embed_msg(
             ctx,
             title=_("Setting Changed"),
-            description=_("Country Code set to {country}.").format(country=country),
+            description=_("Country Code set to {country}.").format(
+                country=country),
         )
 
         await self.config.guild(ctx.guild).country_code.set(country)
@@ -1314,7 +1341,8 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
         await self.send_embed_msg(
             ctx,
             title=_("Setting Changed"),
-            description=_("Country Code set to {country}.").format(country=country),
+            description=_("Country Code set to {country}.").format(
+                country=country),
         )
 
         await self.config.user(ctx.author).country_code.set(country)
@@ -1350,9 +1378,12 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
                 + _("Lavalink cache:   [{lavalink_status}]\n")
             ).format(
                 max_age=str(await self.config.cache_age()) + " " + _("days"),
-                spotify_status=_("Enabled") if has_spotify_cache else _("Disabled"),
-                youtube_status=_("Enabled") if has_youtube_cache else _("Disabled"),
-                lavalink_status=_("Enabled") if has_lavalink_cache else _("Disabled"),
+                spotify_status=_(
+                    "Enabled") if has_spotify_cache else _("Disabled"),
+                youtube_status=_(
+                    "Enabled") if has_youtube_cache else _("Disabled"),
+                lavalink_status=_(
+                    "Enabled") if has_lavalink_cache else _("Disabled"),
             )
             await self.send_embed_msg(
                 ctx, title=_("Cache Settings"), description=box(msg, lang="ini")
@@ -1395,9 +1426,12 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
             + _("Lavalink cache:   [{lavalink_status}]\n")
         ).format(
             max_age=str(await self.config.cache_age()) + " " + _("days"),
-            spotify_status=_("Enabled") if has_spotify_cache else _("Disabled"),
-            youtube_status=_("Enabled") if has_youtube_cache else _("Disabled"),
-            lavalink_status=_("Enabled") if has_lavalink_cache else _("Disabled"),
+            spotify_status=_(
+                "Enabled") if has_spotify_cache else _("Disabled"),
+            youtube_status=_(
+                "Enabled") if has_youtube_cache else _("Disabled"),
+            lavalink_status=_(
+                "Enabled") if has_lavalink_cache else _("Disabled"),
         )
 
         await self.send_embed_msg(ctx, title=_("Cache Settings"), description=box(msg, lang="ini"))
@@ -1439,7 +1473,8 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
             ctx,
             title=_("Setting Changed"),
             description=_("Persisting queues: {true_or_false}.").format(
-                true_or_false=_("Enabled") if not persist_cache else _("Disabled")
+                true_or_false=_(
+                    "Enabled") if not persist_cache else _("Disabled")
             ),
         )
 
@@ -1457,7 +1492,8 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
             await self.send_embed_msg(
                 ctx,
                 title=_("Restarting Lavalink"),
-                description=_("It can take a couple of minutes for Lavalink to fully start up."),
+                description=_(
+                    "It can take a couple of minutes for Lavalink to fully start up."),
             )
 
     @command_audioset.command(usage="<maximum volume>", name="maxvolume")

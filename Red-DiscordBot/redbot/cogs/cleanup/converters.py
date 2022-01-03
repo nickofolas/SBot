@@ -14,7 +14,8 @@ class RawMessageIds(Converter):
         if argument.isnumeric() and len(argument) >= 17 and int(argument) < SNOWFLAKE_THRESHOLD:
             return int(argument)
 
-        raise BadArgument(_("{} doesn't look like a valid message ID.").format(argument))
+        raise BadArgument(
+            _("{} doesn't look like a valid message ID.").format(argument))
 
 
 PositiveInt = NewType("PositiveInt", int)
@@ -26,7 +27,9 @@ else:
         try:
             ret = int(arg)
         except ValueError:
-            raise BadArgument(_("{arg} is not an integer.").format(arg=inline(arg)))
+            raise BadArgument(
+                _("{arg} is not an integer.").format(arg=inline(arg)))
         if ret <= 0:
-            raise BadArgument(_("{arg} is not a positive integer.").format(arg=inline(arg)))
+            raise BadArgument(
+                _("{arg} is not a positive integer.").format(arg=inline(arg)))
         return ret

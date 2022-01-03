@@ -65,7 +65,8 @@ __all__ = ["RedBase", "Red", "ExitCodes"]
 
 NotMessage = namedtuple("NotMessage", "guild")
 
-DataDeletionResults = namedtuple("DataDeletionResults", "failed_modules failed_cogs unhandled")
+DataDeletionResults = namedtuple(
+    "DataDeletionResults", "failed_modules failed_cogs unhandled")
 
 PreInvokeCoroutine = Callable[[commands.Context], Awaitable[Any]]
 T_BIC = TypeVar("T_BIC", bound=PreInvokeCoroutine)
@@ -187,7 +188,8 @@ class RedBase(
             kwargs["command_prefix"] = prefix_manager
 
         if "owner_id" in kwargs:
-            raise RuntimeError("Red doesn't accept owner_id kwarg, use owner_ids instead.")
+            raise RuntimeError(
+                "Red doesn't accept owner_id kwarg, use owner_ids instead.")
 
         if "intents" not in kwargs:
             intents = discord.Intents.all()
@@ -207,7 +209,8 @@ class RedBase(
             kwargs["command_not_found"] = "Command {} not found.\n{}"
 
         if "allowed_mentions" not in kwargs:
-            kwargs["allowed_mentions"] = discord.AllowedMentions(everyone=False, roles=False)
+            kwargs["allowed_mentions"] = discord.AllowedMentions(
+                everyone=False, roles=False)
 
         message_cache_size = cli_flags.message_cache_size
         if cli_flags.no_message_cache:
@@ -234,7 +237,8 @@ class RedBase(
         self._red_ready = asyncio.Event()
         self._red_before_invoke_objs: Set[PreInvokeCoroutine] = set()
 
-        self._deletion_requests: MutableMapping[int, asyncio.Lock] = weakref.WeakValueDictionary()
+        self._deletion_requests: MutableMapping[int,
+                                                asyncio.Lock] = weakref.WeakValueDictionary()
 
     def set_help_formatter(self, formatter: commands.help.HelpFormatterABC):
         """
@@ -334,7 +338,8 @@ class RedBase(
         """
         signature = inspect.signature(value)
         if len(signature.parameters) != 1:
-            raise ValueError("Callable must take exactly one argument for context")
+            raise ValueError(
+                "Callable must take exactly one argument for context")
         dev = self.get_cog("Dev")
         if dev is None:
             return
@@ -353,7 +358,8 @@ class RedBase(
             "__name__",
             "__builtins__",
         ]:
-            raise RuntimeError(f"The name {name} is reserved for default environment.")
+            raise RuntimeError(
+                f"The name {name} is reserved for default environment.")
         if name in dev.env_extensions:
             raise RuntimeError(f"The name {name} is already used.")
         dev.env_extensions[name] = value
@@ -398,7 +404,8 @@ class RedBase(
 
     async def _red_before_invoke_method(self, ctx):
         await self.wait_until_red_ready()
-        return_exceptions = isinstance(ctx.command, commands.commands._RuleDropper)
+        return_exceptions = isinstance(
+            ctx.command, commands.commands._RuleDropper)
         if self._red_before_invoke_objs:
             await asyncio.gather(
                 *(coro(ctx) for coro in self._red_before_invoke_objs),
@@ -487,7 +494,8 @@ class RedBase(
 
     @property
     def cog_mgr(self) -> NoReturn:
-        raise AttributeError("Please don't mess with the cog manager internals.")
+        raise AttributeError(
+            "Please don't mess with the cog manager internals.")
 
     @property
     def uptime(self) -> datetime:
@@ -517,11 +525,13 @@ class RedBase(
 
     @property
     def color(self) -> NoReturn:
-        raise AttributeError("Please fetch the embed color with `get_embed_color`")
+        raise AttributeError(
+            "Please fetch the embed color with `get_embed_color`")
 
     @property
     def colour(self) -> NoReturn:
-        raise AttributeError("Please fetch the embed colour with `get_embed_colour`")
+        raise AttributeError(
+            "Please fetch the embed colour with `get_embed_colour`")
 
     @property
     def max_messages(self) -> Optional[int]:
@@ -570,7 +580,8 @@ class RedBase(
         TypeError
             The values passed were not of the proper type.
         """
-        to_remove: Set[int] = {getattr(uor, "id", uor) for uor in users_or_roles}
+        to_remove: Set[int] = {getattr(uor, "id", uor)
+                               for uor in users_or_roles}
         await self._whiteblacklist_cache.remove_from_blacklist(guild, to_remove)
 
     async def get_blacklist(self, guild: Optional[discord.Guild] = None) -> Set[int]:
@@ -645,7 +656,8 @@ class RedBase(
         TypeError
             The passed values were not of the proper type.
         """
-        to_remove: Set[int] = {getattr(uor, "id", uor) for uor in users_or_roles}
+        to_remove: Set[int] = {getattr(uor, "id", uor)
+                               for uor in users_or_roles}
         await self._whiteblacklist_cache.remove_from_whitelist(guild, to_remove)
 
     async def get_whitelist(self, guild: Optional[discord.Guild] = None):
@@ -747,7 +759,8 @@ class RedBase(
         mocked = False  # used for an accurate delayed role id expansion later.
         if not who:
             if not who_id:
-                raise TypeError("Must provide a value for either `who` or `who_id`")
+                raise TypeError(
+                    "Must provide a value for either `who` or `who_id`")
             mocked = True
             who = discord.Object(id=who_id)
             if guild_id:
@@ -800,7 +813,8 @@ class RedBase(
                 # This uses member._roles (getattr is for the user case)
                 # If this is removed upstream (undocumented)
                 # there is a silent failure potential, and role blacklist/whitelists will break.
-                ids = {i for i in (who.id, *(getattr(who, "_roles", []))) if i != guild.id}
+                ids = {i for i in (
+                    who.id, *(getattr(who, "_roles", []))) if i != guild.id}
 
             guild_whitelist = await self.get_whitelist(guild)
             if guild_whitelist:
@@ -844,7 +858,8 @@ class RedBase(
             return False
 
         if guild:
-            assert isinstance(channel, (discord.abc.GuildChannel, discord.Thread))  # nosec
+            assert isinstance(
+                channel, (discord.abc.GuildChannel, discord.Thread))  # nosec
             if not channel.permissions_for(guild.me).send_messages:
                 return False
             if not (await self.ignored_channel_or_guild(message)):
@@ -1042,7 +1057,8 @@ class RedBase(
         log.info("Moving shared API tokens to a custom group")
         all_shared_api_tokens = await self._config.get_raw("api_tokens", default={})
         for service_name, token_mapping in all_shared_api_tokens.items():
-            service_partial = self._config.custom(SHARED_API_TOKENS, service_name)
+            service_partial = self._config.custom(
+                SHARED_API_TOKENS, service_name)
             async with service_partial.all() as basically_bulk_update:
                 basically_bulk_update.update(token_mapping)
 
@@ -1180,10 +1196,12 @@ class RedBase(
                         continue
                     await asyncio.wait_for(self.load_extension(spec), 30)
                 except asyncio.TimeoutError:
-                    log.exception("Failed to load package %s (timeout)", package)
+                    log.exception(
+                        "Failed to load package %s (timeout)", package)
                     to_remove.append(package)
                 except Exception as e:
-                    log.exception("Failed to load package %s", package, exc_info=e)
+                    log.exception("Failed to load package %s",
+                                  package, exc_info=e)
                     await self.remove_loaded_package(package)
                     to_remove.append(package)
             for package in to_remove:
@@ -1243,7 +1261,8 @@ class RedBase(
         async def get_command_setting(guild_id: int) -> Optional[bool]:
             if command is None:
                 return None
-            scope = self._config.custom(COMMAND_SCOPE, command.qualified_name, guild_id)
+            scope = self._config.custom(
+                COMMAND_SCOPE, command.qualified_name, guild_id)
             return await scope.embeds()
 
         if isinstance(channel, discord.abc.PrivateChannel):
@@ -1419,7 +1438,8 @@ class RedBase(
 
         async with self._config.custom(SHARED_API_TOKENS, service_name).all() as group:
             group.update(tokens)
-        self.dispatch("red_api_tokens_update", service_name, MappingProxyType(group))
+        self.dispatch("red_api_tokens_update",
+                      service_name, MappingProxyType(group))
 
     async def remove_shared_api_tokens(self, service_name: str, *token_names: str):
         """
@@ -1441,7 +1461,8 @@ class RedBase(
         async with self._config.custom(SHARED_API_TOKENS, service_name).all() as group:
             for name in token_names:
                 group.pop(name, None)
-        self.dispatch("red_api_tokens_update", service_name, MappingProxyType(group))
+        self.dispatch("red_api_tokens_update",
+                      service_name, MappingProxyType(group))
 
     async def remove_shared_api_services(self, *service_names: str):
         """
@@ -1463,7 +1484,8 @@ class RedBase(
                 group.pop(service, None)
         # dispatch needs to happen *after* it actually updates
         for service in service_names:
-            self.dispatch("red_api_tokens_update", service, MappingProxyType({}))
+            self.dispatch("red_api_tokens_update",
+                          service, MappingProxyType({}))
 
     async def get_context(self, message, *, cls=commands.Context):
         return await super().get_context(message, cls=cls)
@@ -1518,7 +1540,8 @@ class RedBase(
 
         if not hasattr(lib, "setup"):
             del lib
-            raise discord.ClientException(f"extension {name} does not have a setup function")
+            raise discord.ClientException(
+                f"extension {name} does not have a setup function")
 
         try:
             if asyncio.iscoroutinefunction(lib.setup):
@@ -1586,7 +1609,8 @@ class RedBase(
                 # webhook messages are a user not member,
                 # cheaper than isinstance
                 if author.bot and author.discriminator == "0000":
-                    return True  # webhooks require significant permissions to enable.
+                    # webhooks require significant permissions to enable.
+                    return True
             else:
                 ids_to_check.append(author.id)
 
@@ -1641,7 +1665,8 @@ class RedBase(
                 f"the cog to adhere to this requirement."
             )
         if cog.__cog_name__ in self.cogs:
-            raise RuntimeError(f"There is already a cog named {cog.__cog_name__} loaded.")
+            raise RuntimeError(
+                f"There is already a cog named {cog.__cog_name__} loaded.")
         if not hasattr(cog, "requires"):
             commands.Cog.__init__(cog)
 
@@ -1676,7 +1701,8 @@ class RedBase(
 
     def add_command(self, command: commands.Command) -> None:
         if not isinstance(command, commands.Command):
-            raise RuntimeError("Commands must be instances of `redbot.core.commands.Command`")
+            raise RuntimeError(
+                "Commands must be instances of `redbot.core.commands.Command`")
 
         super().add_command(command)
 
@@ -1993,13 +2019,17 @@ class RedBase(
                 log.warning(f"{stype}.{sname} did not handle data deletion ")
                 failures["unhandled"].append(sname)
             except Exception as exc:
-                log.exception(f"{stype}.{sname} errored when handling data deletion ")
+                log.exception(
+                    f"{stype}.{sname} errored when handling data deletion ")
                 failures[stype].append(sname)
 
         handlers = [
-            *(wrapper(coro, "extension", name) for name, coro in extension_handlers.items()),
-            *(wrapper(coro, "cog", name) for name, coro in cog_handlers.items()),
-            *(wrapper(coro, "extension", name) for name, coro in special_handlers.items()),
+            *(wrapper(coro, "extension", name)
+              for name, coro in extension_handlers.items()),
+            *(wrapper(coro, "cog", name)
+              for name, coro in cog_handlers.items()),
+            *(wrapper(coro, "extension", name)
+              for name, coro in special_handlers.items()),
         ]
 
         await asyncio.gather(*handlers)

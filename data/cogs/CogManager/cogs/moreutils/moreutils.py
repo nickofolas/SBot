@@ -16,7 +16,7 @@ except ImportError:
 
 
 T_ = Translator("MoreUtils", __file__)
-_ = lambda s: s
+def _(s): return s
 
 DISCORD_STATUS_NAMES = {
     "none": _("OK"),

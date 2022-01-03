@@ -24,7 +24,8 @@ from .converters import finite_float
 from .log import LOG
 from .session import TriviaSession
 
-__all__ = ("Trivia", "UNIQUE_ID", "InvalidListError", "get_core_lists", "get_list")
+__all__ = ("Trivia", "UNIQUE_ID", "InvalidListError",
+           "get_core_lists", "get_list")
 
 UNIQUE_ID = 0xB3C0E453
 TRIVIA_LIST_SCHEMA = Schema(
@@ -58,7 +59,8 @@ class Trivia(commands.Cog):
     def __init__(self):
         super().__init__()
         self.trivia_sessions = []
-        self.config = Config.get_conf(self, identifier=UNIQUE_ID, force_registration=True)
+        self.config = Config.get_conf(
+            self, identifier=UNIQUE_ID, force_registration=True)
 
         self.config.register_guild(
             max_score=10,
@@ -238,7 +240,8 @@ class Trivia(commands.Cog):
     @triviaset_custom.command(name="list")
     async def custom_trivia_list(self, ctx: commands.Context):
         """List uploaded custom trivia."""
-        personal_lists = sorted([p.resolve().stem for p in cog_data_path(self).glob("*.yaml")])
+        personal_lists = sorted(
+            [p.resolve().stem for p in cog_data_path(self).glob("*.yaml")])
         no_lists_uploaded = _("No custom Trivia lists uploaded.")
 
         if not personal_lists:
@@ -262,7 +265,8 @@ class Trivia(commands.Cog):
             )
         else:
             msg = box(
-                bold(_("Uploaded trivia lists")) + "\n\n" + ", ".join(sorted(personal_lists))
+                bold(_("Uploaded trivia lists")) + "\n\n" +
+                ", ".join(sorted(personal_lists))
             )
             if len(msg) > 1000:
                 await ctx.author.send(msg)
@@ -296,7 +300,8 @@ class Trivia(commands.Cog):
             await ctx.send(
                 _("There was an error parsing the trivia list. See logs for more info.")
             )
-            LOG.exception("Custom Trivia file %s failed to upload", parsedfile.filename)
+            LOG.exception("Custom Trivia file %s failed to upload",
+                          parsedfile.filename)
         except SchemaError as e:
             await ctx.send(
                 _(
@@ -394,7 +399,8 @@ class Trivia(commands.Cog):
                 )
             )
         else:
-            msg = box(bold(_("Available trivia lists")) + "\n\n" + ", ".join(sorted(lists)))
+            msg = box(bold(_("Available trivia lists")) +
+                      "\n\n" + ", ".join(sorted(lists)))
             if len(msg) > 1000:
                 await ctx.author.send(msg)
             else:
@@ -553,7 +559,8 @@ class Trivia(commands.Cog):
             _("Total Score"),
             _("Average Score"),
         )
-        lines = [" | ".join(headers), " | ".join(("-" * len(h) for h in headers))]
+        lines = [" | ".join(headers), " | ".join(
+            ("-" * len(h) for h in headers))]
         # Header underlines
         for rank, tup in enumerate(items, 1):
             member, m_data = tup
@@ -571,7 +578,8 @@ class Trivia(commands.Cog):
                     ),
                 )
             )
-            padding = [" " * (len(h) - len(f)) for h, f in zip(headers, fields)]
+            padding = [" " * (len(h) - len(f))
+                       for h, f in zip(headers, fields)]
             fields = tuple(f + padding[i] for i, f in enumerate(fields))
             lines.append(" | ".join(fields))
             if rank == top:
@@ -592,7 +600,8 @@ class Trivia(commands.Cog):
 
         """
         channel = session.ctx.channel
-        LOG.debug("Ending trivia session; #%s in %s", channel, channel.guild.id)
+        LOG.debug("Ending trivia session; #%s in %s",
+                  channel, channel.guild.id)
         if session in self.trivia_sessions:
             self.trivia_sessions.remove(session)
         if session.scores:
@@ -635,7 +644,8 @@ class Trivia(commands.Cog):
         try:
             path = next(p for p in self._all_lists() if p.stem == category)
         except StopIteration:
-            raise FileNotFoundError("Could not find the `{}` category.".format(category))
+            raise FileNotFoundError(
+                "Could not find the `{}` category.".format(category))
 
         return get_list(path)
 
@@ -683,7 +693,8 @@ class Trivia(commands.Cog):
                 start_adding_reactions(
                     overwrite_message_object, ReactionPredicate.YES_OR_NO_EMOJIS
                 )
-                pred = ReactionPredicate.yes_or_no(overwrite_message_object, ctx.author)
+                pred = ReactionPredicate.yes_or_no(
+                    overwrite_message_object, ctx.author)
                 event = "reaction_add"
             else:
                 pred = MessagePredicate.yes_or_no(ctx=ctx)
@@ -713,7 +724,8 @@ class Trivia(commands.Cog):
         )
 
     def _all_lists(self) -> List[pathlib.Path]:
-        personal_lists = [p.resolve() for p in cog_data_path(self).glob("*.yaml")]
+        personal_lists = [p.resolve()
+                          for p in cog_data_path(self).glob("*.yaml")]
 
         return personal_lists + get_core_lists()
 
@@ -748,5 +760,6 @@ def get_list(path: pathlib.Path) -> Dict[str, Any]:
     try:
         TRIVIA_LIST_SCHEMA.validate(trivia_dict)
     except SchemaError as exc:
-        raise InvalidListError("The list does not adhere to the schema.") from exc
+        raise InvalidListError(
+            "The list does not adhere to the schema.") from exc
     return trivia_dict

@@ -18,6 +18,7 @@ class SelfRole(commands.Converter):
 
         if role.id not in selfroles:
             raise commands.BadArgument(
-                _('The role "{role_name}" is not a valid selfrole.').format(role_name=role.name)
+                _('The role "{role_name}" is not a valid selfrole.').format(
+                    role_name=role.name)
             )
         return role

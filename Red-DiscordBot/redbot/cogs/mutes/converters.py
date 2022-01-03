@@ -19,7 +19,8 @@ TIME_RE_STRING = r"|".join(
         r"((?P<weeks>\d+?)\s?(weeks?|w))",
         r"((?P<days>\d+?)\s?(days?|d))",
         r"((?P<hours>\d+?)\s?(hours?|hrs|hr?))",
-        r"((?P<minutes>\d+?)\s?(minutes?|mins?|m(?!o)))",  # prevent matching "months"
+        # prevent matching "months"
+        r"((?P<minutes>\d+?)\s?(minutes?|mins?|m(?!o)))",
         r"((?P<seconds>\d+?)\s?(seconds?|secs?|s))",
     ]
 )

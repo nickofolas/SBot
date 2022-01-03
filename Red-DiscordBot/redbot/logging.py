@@ -104,7 +104,8 @@ class RotatingFileHandler(logging.handlers.RotatingFileHandler):
             initial_path.replace(self.directory / f"{self.baseStem}-part1.log")
 
         match = re.match(
-            rf"{self.baseStem}(?:-part(?P<part>\d))?\.log", pathlib.Path(self.baseFilename).name
+            rf"{self.baseStem}(?:-part(?P<part>\d))?\.log", pathlib.Path(
+                self.baseFilename).name
         )
         latest_part_num = int(match.groupdict(default="1").get("part", "1"))
         if self.backupCount < 1:
@@ -121,7 +122,8 @@ class RotatingFileHandler(logging.handlers.RotatingFileHandler):
         else:
             # Simply start a new file
             self.baseFilename = str(
-                self.directory / f"{self.baseStem}-part{latest_part_num + 1}.log"
+                self.directory /
+                f"{self.baseStem}-part{latest_part_num + 1}.log"
             )
 
         self.stream = self._open()
@@ -174,7 +176,8 @@ class RedLogRender(LogRender):
         output = Text()
         if self.show_time:
             log_time = log_time or console.get_datetime()
-            log_time_display = log_time.strftime(time_format or self.time_format)
+            log_time_display = log_time.strftime(
+                time_format or self.time_format)
             if log_time_display == self._last_time:
                 output.append(" " * (len(log_time_display) + 1))
             else:
@@ -191,7 +194,8 @@ class RedLogRender(LogRender):
         output.append(*renderables)
         if self.show_path and path:
             path_text = Text()
-            path_text.append(path, style=f"link file://{link_path}" if link_path else "")
+            path_text.append(
+                path, style=f"link file://{link_path}" if link_path else "")
             if line_no:
                 path_text.append(f":{line_no}")
             output.append(path_text)
@@ -251,7 +255,8 @@ class RedRichHandler(RichHandler):
             )
             message = record.getMessage()
 
-        use_markup = getattr(record, "markup") if hasattr(record, "markup") else self.markup
+        use_markup = getattr(record, "markup") if hasattr(
+            record, "markup") else self.markup
         if use_markup:
             message_text = Text.from_markup(message)
         else:
@@ -321,7 +326,8 @@ def init_logging(level: int, location: pathlib.Path, cli_flags: argparse.Namespa
         "[{asctime}] [{levelname}] {name}: {message}", datefmt="%Y-%m-%d %H:%M:%S", style="{"
     )
     if enable_rich_logging is True:
-        rich_formatter = logging.Formatter("{message}", datefmt="[%X]", style="{")
+        rich_formatter = logging.Formatter(
+            "{message}", datefmt="[%X]", style="{")
 
         stdout_handler = RedRichHandler(
             rich_tracebacks=True,

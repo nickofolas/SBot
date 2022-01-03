@@ -28,7 +28,8 @@ def encode_identifier_data(
         id_data.cog_name,
         id_data.uuid,
         id_data.category,
-        ["0"] if id_data.category == ConfigCategory.GLOBAL else list(id_data.primary_key),
+        ["0"] if id_data.category == ConfigCategory.GLOBAL else list(
+            id_data.primary_key),
         list(id_data.identifiers),
         1 if id_data.category == ConfigCategory.GLOBAL else id_data.primary_key_len,
         id_data.is_custom,
@@ -165,7 +166,8 @@ class PostgresDriver(BaseDriver):
     async def clear(self, identifier_data: IdentifierData):
         try:
             await self._execute(
-                "SELECT red_config.clear($1)", encode_identifier_data(identifier_data)
+                "SELECT red_config.clear($1)", encode_identifier_data(
+                    identifier_data)
             )
         except asyncpg.UndefinedTableError:
             pass

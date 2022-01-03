@@ -68,7 +68,8 @@ async def _process_data_deletion(
         async for guild_id_str, guild_cases in AsyncIter(all_cases.items(), steps=100):
             async for case_num_str, case in AsyncIter(guild_cases.items(), steps=100):
                 for keyname in ("user", "moderator", "amended_by"):
-                    if (case.get(keyname, 0) or 0) == user_id:  # this could be None...
+                    # this could be None...
+                    if (case.get(keyname, 0) or 0) == user_id:
                         key_paths.append((guild_id_str, case_num_str))
 
         async with _config.custom(_CASES).all() as all_cases:
@@ -110,7 +111,8 @@ async def _init(bot: Red):
         when = datetime.utcnow()
         before = when + timedelta(minutes=1)
         after = when - timedelta(minutes=1)
-        await asyncio.sleep(10)  # prevent small delays from causing a 5 minute delay on entry
+        # prevent small delays from causing a 5 minute delay on entry
+        await asyncio.sleep(10)
 
         attempts = 0
         # wait up to an hour to find a matching case
@@ -147,7 +149,8 @@ async def _init(bot: Red):
         when = datetime.utcnow()
         before = when + timedelta(minutes=1)
         after = when - timedelta(minutes=1)
-        await asyncio.sleep(10)  # prevent small delays from causing a 5 minute delay on entry
+        # prevent small delays from causing a 5 minute delay on entry
+        await asyncio.sleep(10)
 
         attempts = 0
         # wait up to an hour to find a matching case
@@ -309,7 +312,8 @@ class Case:
         reason: Optional[str] = None,
         until: Optional[int] = None,
         channel: Optional[Union[discord.abc.GuildChannel, int]] = None,
-        amended_by: Optional[Union[discord.Object, discord.abc.User, int]] = None,
+        amended_by: Optional[Union[discord.Object,
+                                   discord.abc.User, int]] = None,
         modified_at: Optional[int] = None,
         message: Optional[discord.Message] = None,
         last_known_username: Optional[str] = None,
@@ -414,7 +418,8 @@ class Case:
         """
         casetype = await get_casetype(self.action_type)
         title = "{}".format(
-            _("Case #{} | {} {}").format(self.case_number, casetype.case_str, casetype.image)
+            _("Case #{} | {} {}").format(
+                self.case_number, casetype.case_str, casetype.image)
         )
         reason = _("**Reason:** Use the `reason` command to add it")
 
@@ -428,7 +433,8 @@ class Case:
                 translated = _("Unknown or Deleted User")
                 moderator = f"[{translated}] ({self.moderator})"
         else:
-            moderator = escape_spoilers(f"{self.moderator} ({self.moderator.id})")
+            moderator = escape_spoilers(
+                f"{self.moderator} ({self.moderator.id})")
         until = None
         duration = None
         if self.until:
@@ -450,7 +456,8 @@ class Case:
                 translated = _("Unknown or Deleted User")
                 amended_by = f"[{translated}] ({self.amended_by})"
         else:
-            amended_by = escape_spoilers(f"{self.amended_by} ({self.amended_by.id})")
+            amended_by = escape_spoilers(
+                f"{self.amended_by} ({self.amended_by.id})")
 
         last_modified = None
         if self.modified_at:
@@ -494,11 +501,13 @@ class Case:
             if isinstance(self.channel, int):
                 emb.add_field(
                     name=_("Channel"),
-                    value=_("{channel} (deleted)").format(channel=self.channel),
+                    value=_("{channel} (deleted)").format(
+                        channel=self.channel),
                     inline=False,
                 )
             elif self.channel is not None:
-                emb.add_field(name=_("Channel"), value=self.channel.name, inline=False)
+                emb.add_field(name=_("Channel"),
+                              value=self.channel.name, inline=False)
             if amended_by:
                 emb.add_field(name=_("Amended by"), value=amended_by)
             if last_modified:
@@ -519,7 +528,8 @@ class Case:
                         )
                         + "..."
                     )
-            user = filter_mass_mentions(filter_urls(user))  # Further sanitization outside embeds
+            # Further sanitization outside embeds
+            user = filter_mass_mentions(filter_urls(user))
             case_text = ""
             case_text += "{}\n".format(title)
             case_text += _("**User:** {}\n").format(user)
@@ -637,7 +647,8 @@ class Case:
                     user_object = bot.get_user(user_id) or user_id
             user_objects[user_key] = user_object
 
-        channel = kwargs.get("channel") or guild.get_channel(data["channel"]) or data["channel"]
+        channel = kwargs.get("channel") or guild.get_channel(
+            data["channel"]) or data["channel"]
         case_guild = kwargs.get("guild") or bot.get_guild(data["guild"])
         return cls(
             bot=bot,
@@ -695,7 +706,8 @@ class CaseType:
                 "Got outdated key in casetype: audit_type"
             )
         if kwargs:
-            log.warning("Got unexpected key(s) in casetype: %s", ",".join(kwargs.keys()))
+            log.warning("Got unexpected key(s) in casetype: %s",
+                        ",".join(kwargs.keys()))
 
     async def to_json(self):
         """Transforms the case type into a dict and saves it"""
@@ -787,7 +799,8 @@ async def get_case(case_number: int, guild: discord.Guild, bot: Red) -> Case:
 
     case = await _config.custom(_CASES, str(guild.id), str(case_number)).all()
     if not case:
-        raise RuntimeError("That case does not exist for guild {}".format(guild.name))
+        raise RuntimeError(
+            "That case does not exist for guild {}".format(guild.name))
     mod_channel = await get_modlog_channel(guild)
     return await Case.from_json(mod_channel, bot, case_number, case)
 
@@ -873,7 +886,8 @@ async def get_cases_for_member(
     cases = await _config.custom(_CASES, str(guild.id)).all()
 
     if not (member_id or member):
-        raise ValueError("Expected a member or a member id to be provided.") from None
+        raise ValueError(
+            "Expected a member or a member id to be provided.") from None
 
     if not member_id:
         member_id = member.id

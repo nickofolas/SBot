@@ -57,7 +57,8 @@ class MessagePredicate(Callable[[discord.Message], bool]):
     """
 
     def __init__(self, predicate: Callable[["MessagePredicate", discord.Message], bool]) -> None:
-        self._pred: Callable[["MessagePredicate", discord.Message], bool] = predicate
+        self._pred: Callable[["MessagePredicate",
+                              discord.Message], bool] = predicate
         self.result = None
 
     def __call__(self, message: discord.Message) -> bool:
@@ -67,7 +68,8 @@ class MessagePredicate(Callable[[discord.Message], bool]):
     def same_context(
         cls,
         ctx: Optional[commands.Context] = None,
-        channel: Optional[Union[discord.TextChannel, discord.DMChannel]] = None,
+        channel: Optional[Union[discord.TextChannel,
+                                discord.DMChannel]] = None,
         user: Optional[discord.abc.User] = None,
     ) -> "MessagePredicate":
         """Match if the message fits the described context.
@@ -104,7 +106,8 @@ class MessagePredicate(Callable[[discord.Message], bool]):
     def cancelled(
         cls,
         ctx: Optional[commands.Context] = None,
-        channel: Optional[Union[discord.TextChannel, discord.DMChannel]] = None,
+        channel: Optional[Union[discord.TextChannel,
+                                discord.DMChannel]] = None,
         user: Optional[discord.abc.User] = None,
     ) -> "MessagePredicate":
         """Match if the message is ``[p]cancel``.
@@ -126,14 +129,16 @@ class MessagePredicate(Callable[[discord.Message], bool]):
         """
         same_context = cls.same_context(ctx, channel, user)
         return cls(
-            lambda self, m: (same_context(m) and m.content.lower() == f"{ctx.prefix}cancel")
+            lambda self, m: (same_context(
+                m) and m.content.lower() == f"{ctx.prefix}cancel")
         )
 
     @classmethod
     def yes_or_no(
         cls,
         ctx: Optional[commands.Context] = None,
-        channel: Optional[Union[discord.TextChannel, discord.DMChannel]] = None,
+        channel: Optional[Union[discord.TextChannel,
+                                discord.DMChannel]] = None,
         user: Optional[discord.abc.User] = None,
     ) -> "MessagePredicate":
         """Match if the message is "yes"/"y" or "no"/"n".
@@ -176,7 +181,8 @@ class MessagePredicate(Callable[[discord.Message], bool]):
     def valid_int(
         cls,
         ctx: Optional[commands.Context] = None,
-        channel: Optional[Union[discord.TextChannel, discord.DMChannel]] = None,
+        channel: Optional[Union[discord.TextChannel,
+                                discord.DMChannel]] = None,
         user: Optional[discord.abc.User] = None,
     ) -> "MessagePredicate":
         """Match if the response is an integer.
@@ -216,7 +222,8 @@ class MessagePredicate(Callable[[discord.Message], bool]):
     def valid_float(
         cls,
         ctx: Optional[commands.Context] = None,
-        channel: Optional[Union[discord.TextChannel, discord.DMChannel]] = None,
+        channel: Optional[Union[discord.TextChannel,
+                                discord.DMChannel]] = None,
         user: Optional[discord.abc.User] = None,
     ) -> "MessagePredicate":
         """Match if the response is a float.
@@ -256,7 +263,8 @@ class MessagePredicate(Callable[[discord.Message], bool]):
     def positive(
         cls,
         ctx: Optional[commands.Context] = None,
-        channel: Optional[Union[discord.TextChannel, discord.DMChannel]] = None,
+        channel: Optional[Union[discord.TextChannel,
+                                discord.DMChannel]] = None,
         user: Optional[discord.abc.User] = None,
     ) -> "MessagePredicate":
         """Match if the response is a positive number.
@@ -375,7 +383,8 @@ class MessagePredicate(Callable[[discord.Message], bool]):
             if not same_context(m):
                 return False
 
-            match = _ID_RE.match(m.content) or _USER_MENTION_RE.match(m.content)
+            match = _ID_RE.match(
+                m.content) or _USER_MENTION_RE.match(m.content)
             if match:
                 result = guild.get_member(int(match.group(1)))
             else:
@@ -423,7 +432,8 @@ class MessagePredicate(Callable[[discord.Message], bool]):
             if not same_context(m):
                 return False
 
-            match = _ID_RE.match(m.content) or _CHAN_MENTION_RE.match(m.content)
+            match = _ID_RE.match(
+                m.content) or _CHAN_MENTION_RE.match(m.content)
             if match:
                 result = guild.get_channel(int(match.group(1)))
             else:
@@ -492,7 +502,8 @@ class MessagePredicate(Callable[[discord.Message], bool]):
         cls,
         value: str,
         ctx: Optional[commands.Context] = None,
-        channel: Optional[Union[discord.TextChannel, discord.DMChannel]] = None,
+        channel: Optional[Union[discord.TextChannel,
+                                discord.DMChannel]] = None,
         user: Optional[discord.abc.User] = None,
     ) -> "MessagePredicate":
         """Match if the response is equal to the specified value.
@@ -522,7 +533,8 @@ class MessagePredicate(Callable[[discord.Message], bool]):
         cls,
         value: str,
         ctx: Optional[commands.Context] = None,
-        channel: Optional[Union[discord.TextChannel, discord.DMChannel]] = None,
+        channel: Optional[Union[discord.TextChannel,
+                                discord.DMChannel]] = None,
         user: Optional[discord.abc.User] = None,
     ) -> "MessagePredicate":
         """Match if the response *as lowercase* is equal to the specified value.
@@ -552,7 +564,8 @@ class MessagePredicate(Callable[[discord.Message], bool]):
         cls,
         value: Union[int, float],
         ctx: Optional[commands.Context] = None,
-        channel: Optional[Union[discord.TextChannel, discord.DMChannel]] = None,
+        channel: Optional[Union[discord.TextChannel,
+                                discord.DMChannel]] = None,
         user: Optional[discord.abc.User] = None,
     ) -> "MessagePredicate":
         """Match if the response is less than the specified value.
@@ -583,7 +596,8 @@ class MessagePredicate(Callable[[discord.Message], bool]):
         cls,
         value: Union[int, float],
         ctx: Optional[commands.Context] = None,
-        channel: Optional[Union[discord.TextChannel, discord.DMChannel]] = None,
+        channel: Optional[Union[discord.TextChannel,
+                                discord.DMChannel]] = None,
         user: Optional[discord.abc.User] = None,
     ) -> "MessagePredicate":
         """Match if the response is greater than the specified value.
@@ -614,7 +628,8 @@ class MessagePredicate(Callable[[discord.Message], bool]):
         cls,
         length: int,
         ctx: Optional[commands.Context] = None,
-        channel: Optional[Union[discord.TextChannel, discord.DMChannel]] = None,
+        channel: Optional[Union[discord.TextChannel,
+                                discord.DMChannel]] = None,
         user: Optional[discord.abc.User] = None,
     ) -> "MessagePredicate":
         """Match if the response's length is less than the specified length.
@@ -644,7 +659,8 @@ class MessagePredicate(Callable[[discord.Message], bool]):
         cls,
         length: int,
         ctx: Optional[commands.Context] = None,
-        channel: Optional[Union[discord.TextChannel, discord.DMChannel]] = None,
+        channel: Optional[Union[discord.TextChannel,
+                                discord.DMChannel]] = None,
         user: Optional[discord.abc.User] = None,
     ) -> "MessagePredicate":
         """Match if the response's length is greater than the specified length.
@@ -674,7 +690,8 @@ class MessagePredicate(Callable[[discord.Message], bool]):
         cls,
         collection: Sequence[str],
         ctx: Optional[commands.Context] = None,
-        channel: Optional[Union[discord.TextChannel, discord.DMChannel]] = None,
+        channel: Optional[Union[discord.TextChannel,
+                                discord.DMChannel]] = None,
         user: Optional[discord.abc.User] = None,
     ) -> "MessagePredicate":
         """Match if the response is contained in the specified collection.
@@ -718,7 +735,8 @@ class MessagePredicate(Callable[[discord.Message], bool]):
         cls,
         collection: Sequence[str],
         ctx: Optional[commands.Context] = None,
-        channel: Optional[Union[discord.TextChannel, discord.DMChannel]] = None,
+        channel: Optional[Union[discord.TextChannel,
+                                discord.DMChannel]] = None,
         user: Optional[discord.abc.User] = None,
     ) -> "MessagePredicate":
         """Same as :meth:`contained_in`, but the response is set to lowercase before matching.
@@ -759,7 +777,8 @@ class MessagePredicate(Callable[[discord.Message], bool]):
         cls,
         pattern: Union[Pattern[str], str],
         ctx: Optional[commands.Context] = None,
-        channel: Optional[Union[discord.TextChannel, discord.DMChannel]] = None,
+        channel: Optional[Union[discord.TextChannel,
+                                discord.DMChannel]] = None,
         user: Optional[discord.abc.User] = None,
     ) -> "MessagePredicate":
         """Match if the response matches the specified regex pattern.

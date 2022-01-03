@@ -3,9 +3,11 @@ Contains generic mod action casetypes for use in Red and 3rd party cogs.
 These do not need to be registered to the modlog, as it is done for you.
 """
 
-ban = {"name": "ban", "default_setting": True, "image": "\N{HAMMER}", "case_str": "Ban"}
+ban = {"name": "ban", "default_setting": True,
+       "image": "\N{HAMMER}", "case_str": "Ban"}
 
-kick = {"name": "kick", "default_setting": True, "image": "\N{WOMANS BOOTS}", "case_str": "Kick"}
+kick = {"name": "kick", "default_setting": True,
+        "image": "\N{WOMANS BOOTS}", "case_str": "Kick"}
 
 hackban = {
     "name": "hackban",

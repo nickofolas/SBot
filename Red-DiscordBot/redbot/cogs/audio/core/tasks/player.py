@@ -37,7 +37,8 @@ class PlayerTasks(MixinMeta, metaclass=CompositeMetaClass):
                         try:
                             await p.pause(False)
                         except Exception as err:
-                            debug_exc_log(log, err, "Exception raised in Audio's unpausing %r.", p)
+                            debug_exc_log(
+                                log, err, "Exception raised in Audio's unpausing %r.", p)
                     pause_times.pop(server.id, None)
             servers = stop_times.copy()
             servers.update(pause_times)

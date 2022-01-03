@@ -67,11 +67,16 @@ class PlaylistWrapper:
     async def init(self) -> None:
         """Initialize the Playlist table."""
         with concurrent.futures.ThreadPoolExecutor(max_workers=1) as executor:
-            executor.submit(self.database.cursor().execute, self.statement.pragma_temp_store)
-            executor.submit(self.database.cursor().execute, self.statement.pragma_journal_mode)
-            executor.submit(self.database.cursor().execute, self.statement.pragma_read_uncommitted)
-            executor.submit(self.database.cursor().execute, self.statement.create_table)
-            executor.submit(self.database.cursor().execute, self.statement.create_index)
+            executor.submit(self.database.cursor().execute,
+                            self.statement.pragma_temp_store)
+            executor.submit(self.database.cursor().execute,
+                            self.statement.pragma_journal_mode)
+            executor.submit(self.database.cursor().execute,
+                            self.statement.pragma_read_uncommitted)
+            executor.submit(self.database.cursor().execute,
+                            self.statement.create_table)
+            executor.submit(self.database.cursor().execute,
+                            self.statement.create_index)
 
     @staticmethod
     def get_scope_type(scope: str) -> int:
@@ -107,7 +112,8 @@ class PlaylistWrapper:
                 try:
                     row_result = future.result()
                 except Exception as exc:
-                    debug_exc_log(log, exc, "Failed to completed playlist fetch from database")
+                    debug_exc_log(
+                        log, exc, "Failed to completed playlist fetch from database")
             row = row_result.fetchone()
             if row:
                 row = PlaylistFetchResult(*row)
@@ -139,7 +145,8 @@ class PlaylistWrapper:
                     try:
                         row_result = future.result()
                     except Exception as exc:
-                        debug_exc_log(log, exc, "Failed to completed playlist fetch from database")
+                        debug_exc_log(
+                            log, exc, "Failed to completed playlist fetch from database")
                         return []
             else:
                 for future in concurrent.futures.as_completed(
@@ -154,7 +161,8 @@ class PlaylistWrapper:
                     try:
                         row_result = future.result()
                     except Exception as exc:
-                        debug_exc_log(log, exc, "Failed to completed playlist fetch from database")
+                        debug_exc_log(
+                            log, exc, "Failed to completed playlist fetch from database")
                         return []
         async for row in AsyncIter(row_result):
             output.append(PlaylistFetchResult(*row))
@@ -191,7 +199,8 @@ class PlaylistWrapper:
                 try:
                     row_result = future.result()
                 except Exception as exc:
-                    debug_exc_log(log, exc, "Failed to completed fetch from database")
+                    debug_exc_log(
+                        log, exc, "Failed to completed fetch from database")
 
             async for row in AsyncIter(row_result):
                 output.append(PlaylistFetchResult(*row))
@@ -204,13 +213,15 @@ class PlaylistWrapper:
             executor.submit(
                 self.database.cursor().execute,
                 self.statement.delete,
-                ({"playlist_id": playlist_id, "scope_id": scope_id, "scope_type": scope_type}),
+                ({"playlist_id": playlist_id,
+                 "scope_id": scope_id, "scope_type": scope_type}),
             )
 
     async def delete_scheduled(self):
         """Clean up database from all deleted playlists."""
         with concurrent.futures.ThreadPoolExecutor(max_workers=1) as executor:
-            executor.submit(self.database.cursor().execute, self.statement.delete_scheduled)
+            executor.submit(self.database.cursor().execute,
+                            self.statement.delete_scheduled)
 
     async def drop(self, scope: str):
         """Delete all playlists in a scope."""
@@ -225,7 +236,8 @@ class PlaylistWrapper:
     async def create_table(self):
         """Create the playlist table."""
         with concurrent.futures.ThreadPoolExecutor(max_workers=1) as executor:
-            executor.submit(self.database.cursor().execute, PLAYLIST_CREATE_TABLE)
+            executor.submit(self.database.cursor().execute,
+                            PLAYLIST_CREATE_TABLE)
 
     async def upsert(
         self,

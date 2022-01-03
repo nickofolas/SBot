@@ -132,7 +132,8 @@ class CommandObj:
         if await self.db(ctx.guild).commands.get_raw(command, default=None):
             raise AlreadyExists()
         # test to raise
-        ctx.cog.prepare_args(response if isinstance(response, str) else response[0])
+        ctx.cog.prepare_args(response if isinstance(
+            response, str) else response[0])
         author = ctx.message.author
         ccinfo = {
             "author": {"id": author.id, "name": str(author)},
@@ -186,7 +187,8 @@ class CommandObj:
 
         if response:
             # test to raise
-            ctx.cog.prepare_args(response if isinstance(response, str) else response[0])
+            ctx.cog.prepare_args(response if isinstance(
+                response, str) else response[0])
             ccinfo["response"] = response
 
         if cooldowns:
@@ -433,7 +435,8 @@ class CustomCommands(commands.Cog):
                 cooldown = []
                 for per, rate in cooldowns.items():
                     cooldown.append(
-                        _("A {} may call this command every {} seconds").format(per, rate)
+                        _("A {} may call this command every {} seconds").format(
+                            per, rate)
                     )
                 return await ctx.send("\n".join(cooldown))
             else:
@@ -517,7 +520,8 @@ class CustomCommands(commands.Cog):
             )
             return
 
-        results = self.prepare_command_list(ctx, sorted(cc_dict.items(), key=lambda t: t[0]))
+        results = self.prepare_command_list(
+            ctx, sorted(cc_dict.items(), key=lambda t: t[0]))
 
         if await ctx.embed_requested():
             # We need a space before the newline incase the CC preview ends in link (GH-2295)
@@ -530,12 +534,14 @@ class CustomCommands(commands.Cog):
                     description=page,
                     colour=await ctx.embed_colour(),
                 )
-                embed.set_footer(text=_("Page {num}/{total}").format(num=idx, total=len(pages)))
+                embed.set_footer(
+                    text=_("Page {num}/{total}").format(num=idx, total=len(pages)))
                 embed_pages.append(embed)
             await menus.menu(ctx, embed_pages, menus.DEFAULT_CONTROLS)
         else:
             content = "\n".join(map("{0[0]:<12} : {0[1]}".format, results))
-            pages = list(map(box, pagify(content, page_length=2000, shorten_by=10)))
+            pages = list(
+                map(box, pagify(content, page_length=2000, shorten_by=10)))
             await menus.menu(ctx, pages, menus.DEFAULT_CONTROLS)
 
     @customcom.command(name="show")
@@ -583,7 +589,8 @@ class CustomCommands(commands.Cog):
         if cooldowns:
             cooldown_text = _("Cooldowns:\n")
             for rate, per in cooldowns.items():
-                cooldown_text += _("{num} seconds per {period}\n").format(num=per, period=rate)
+                cooldown_text += _("{num} seconds per {period}\n").format(
+                    num=per, period=rate)
             text += cooldown_text
 
         text += _("Responses:\n")
@@ -691,14 +698,16 @@ class CustomCommands(commands.Cog):
                 _("Arguments must be sequential. Missing arguments: ")
                 + ", ".join(str(i + low) for i in gaps)
             )
-        fin = [Parameter("_" + str(i), Parameter.POSITIONAL_OR_KEYWORD) for i in range(high + 1)]
+        fin = [Parameter("_" + str(i), Parameter.POSITIONAL_OR_KEYWORD)
+               for i in range(high + 1)]
         for arg in args:
             index = int(arg[0]) - low
             anno_raw = arg[1][1:]  # strip initial colon
             if anno_raw.lower().endswith("converter"):
                 anno_raw = anno_raw[:-9]
             if not anno_raw or anno_raw.startswith("_"):  # public types only
-                name = "{}_{}".format("text", index if index < high else "final")
+                name = "{}_{}".format(
+                    "text", index if index < high else "final")
                 fin[index] = fin[index].replace(name=name)
                 continue
             # allow type hinting only for discord.py and builtin types

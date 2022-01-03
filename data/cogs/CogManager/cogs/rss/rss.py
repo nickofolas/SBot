@@ -582,7 +582,7 @@ class RSS(commands.Cog):
             except NoFeedContent as e:
                 await ctx.send(str(e))
                 return
-              
+
             if valid_url:
                 await self._add_feed(ctx, feed_name.lower(), channel, url)
             else:
@@ -1126,7 +1126,7 @@ class RSS(commands.Cog):
             feed_data[feed_name]["allowed_tags"] = allowed_tags
 
         await ctx.send(f"{bold(await self._title_case(tag))} was added to the list of allowed tags for {bold(feed_name)}. "
-                        "If a feed post's `$tags` does not include this value, the feed will not post.")
+                       "If a feed post's `$tags` does not include this value, the feed will not post.")
 
     @_rss_tag.command(name="allowlist")
     async def _rss_tag_allowlist(self, ctx, feed_name: str, channel: Optional[discord.TextChannel] = None):
@@ -1547,6 +1547,6 @@ class RSS(commands.Cog):
 class NoFeedContent(Exception):
     def __init__(self, m):
         self.message = m
-    
+
     def __str__(self):
         return self.message

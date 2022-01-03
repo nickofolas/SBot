@@ -80,7 +80,8 @@ class Dev(commands.Cog):
         if e.text is None:
             return cls.get_pages("{0.__class__.__name__}: {0}".format(e))
         return cls.get_pages(
-            "{0.text}\n{1:>{0.offset}}\n{2}: {0}".format(e, "^", type(e).__name__)
+            "{0.text}\n{1:>{0.offset}}\n{2}: {0}".format(
+                e, "^", type(e).__name__)
         )
 
     @staticmethod
@@ -264,7 +265,8 @@ class Dev(commands.Cog):
             if cleaned.count("\n") == 0:
                 # single statement, potentially 'eval'
                 try:
-                    code = self.async_compile(cleaned, "<repl session>", "eval")
+                    code = self.async_compile(
+                        cleaned, "<repl session>", "eval")
                 except SyntaxError:
                     pass
                 else:
@@ -272,7 +274,8 @@ class Dev(commands.Cog):
 
             if executor is None:
                 try:
-                    code = self.async_compile(cleaned, "<repl session>", "exec")
+                    code = self.async_compile(
+                        cleaned, "<repl session>", "exec")
                 except SyntaxError as e:
                     await ctx.send_interactive(self.get_syntax_error(e), box_lang="py")
                     continue

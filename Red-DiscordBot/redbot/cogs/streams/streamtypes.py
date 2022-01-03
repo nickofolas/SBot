@@ -89,7 +89,8 @@ class Stream:
                 channel = self._bot.get_channel(msg_data["channel"])
 
             data["partial_message"] = (
-                channel.get_partial_message(data["message"]) if channel is not None else None
+                channel.get_partial_message(
+                    data["message"]) if channel is not None else None
             )
             yield data
 
@@ -158,7 +159,8 @@ class YoutubeStream(Stream):
                     try:
                         self._check_api_errors(data)
                     except InvalidYoutubeCredentials:
-                        log.error("The YouTube API key is either invalid or has not been set.")
+                        log.error(
+                            "The YouTube API key is either invalid or has not been set.")
                         break
                     except YoutubeQuotaExceeded:
                         log.error("YouTube quota has been exceeded.")
@@ -179,7 +181,8 @@ class YoutubeStream(Stream):
                         and stream_data != "None"
                         and stream_data.get("actualEndTime", None) is None
                     ):
-                        actual_start_time = stream_data.get("actualStartTime", None)
+                        actual_start_time = stream_data.get(
+                            "actualStartTime", None)
                         scheduled = stream_data.get("scheduledStartTime", None)
                         if scheduled is not None and actual_start_time is None:
                             scheduled = parse_time(scheduled)
@@ -220,12 +223,14 @@ class YoutubeStream(Stream):
         is_schedule = False
         if vid_data["liveStreamingDetails"].get("scheduledStartTime", None) is not None:
             if "actualStartTime" not in vid_data["liveStreamingDetails"]:
-                start_time = parse_time(vid_data["liveStreamingDetails"]["scheduledStartTime"])
+                start_time = parse_time(
+                    vid_data["liveStreamingDetails"]["scheduledStartTime"])
                 start_in = start_time - datetime.now(timezone.utc)
                 if start_in.total_seconds() > 0:
                     embed.description = _("This stream will start in {time}").format(
                         time=humanize_timedelta(
-                            timedelta=timedelta(minutes=start_in.total_seconds() // 60)
+                            timedelta=timedelta(
+                                minutes=start_in.total_seconds() // 60)
                         )  # getting rid of seconds
                     )
                 else:
@@ -333,7 +338,8 @@ class TwitchStream(Stream):
         https://github.com/TrustyJAID/Trusty-cogs/blob/master/twitch/twitch_api.py
         """
         current_time = int(time.time())
-        self._rate_limit_resets = {x for x in self._rate_limit_resets if x > current_time}
+        self._rate_limit_resets = {
+            x for x in self._rate_limit_resets if x > current_time}
         if self._rate_limit_remaining == 0:
 
             if self._rate_limit_resets:
@@ -360,7 +366,8 @@ class TwitchStream(Stream):
 
                     if resp.status == 429:
                         log.info(
-                            "Ratelimited. Trying again at %s.", datetime.fromtimestamp(int(reset))
+                            "Ratelimited. Trying again at %s.", datetime.fromtimestamp(
+                                int(reset))
                         )
                         resp.release()
                         return await self.get_data(url)
@@ -370,7 +377,8 @@ class TwitchStream(Stream):
 
                     return resp.status, await resp.json(encoding="utf-8")
             except (aiohttp.ClientConnectionError, asyncio.TimeoutError) as exc:
-                log.warning("Connection error occurred when fetching Twitch stream", exc_info=exc)
+                log.warning(
+                    "Connection error occurred when fetching Twitch stream", exc_info=exc)
                 return None, {}
 
     async def is_online(self):
@@ -389,7 +397,8 @@ class TwitchStream(Stream):
                 user_profile_data = await self._fetch_user_profile()
 
             final_data = dict.fromkeys(
-                ("game_name", "followers", "login", "profile_image_url", "view_count")
+                ("game_name", "followers", "login",
+                 "profile_image_url", "view_count")
             )
 
             if user_profile_data is not None:
@@ -448,11 +457,14 @@ class TwitchStream(Stream):
             status += _(" - Rerun")
         embed = discord.Embed(title=status, url=url, color=0x6441A4)
         embed.set_author(name=data["user_name"])
-        embed.add_field(name=_("Followers"), value=humanize_number(data["followers"]))
-        embed.add_field(name=_("Total views"), value=humanize_number(data["view_count"]))
+        embed.add_field(name=_("Followers"),
+                        value=humanize_number(data["followers"]))
+        embed.add_field(name=_("Total views"),
+                        value=humanize_number(data["view_count"]))
         embed.set_thumbnail(url=logo)
         if data["thumbnail_url"]:
-            embed.set_image(url=rnd(data["thumbnail_url"].format(width=320, height=180)))
+            embed.set_image(
+                url=rnd(data["thumbnail_url"].format(width=320, height=180)))
         if data["game_name"]:
             embed.set_footer(text=_("Playing: ") + data["game_name"])
         return embed
@@ -489,15 +501,18 @@ class PicartoStream(Stream):
 
     def make_embed(self, data):
         avatar = rnd(
-            "https://picarto.tv/user_data/usrimg/{}/dsdefault.jpg".format(data["name"].lower())
+            "https://picarto.tv/user_data/usrimg/{}/dsdefault.jpg".format(
+                data["name"].lower())
         )
         url = "https://picarto.tv/" + data["name"]
         thumbnail = data["thumbnails"]["web"]
         embed = discord.Embed(title=data["title"], url=url, color=0x4C90F3)
         embed.set_author(name=data["name"])
         embed.set_image(url=rnd(thumbnail))
-        embed.add_field(name=_("Followers"), value=humanize_number(data["followers"]))
-        embed.add_field(name=_("Total views"), value=humanize_number(data["viewers_total"]))
+        embed.add_field(name=_("Followers"),
+                        value=humanize_number(data["followers"]))
+        embed.add_field(name=_("Total views"),
+                        value=humanize_number(data["viewers_total"]))
         embed.set_thumbnail(url=avatar)
         data["tags"] = ", ".join(data["tags"])
 
@@ -509,5 +524,6 @@ class PicartoStream(Stream):
         else:
             data["adult"] = ""
 
-        embed.set_footer(text=_("{adult}Category: {category} | Tags: {tags}").format(**data))
+        embed.set_footer(
+            text=_("{adult}Category: {category} | Tags: {tags}").format(**data))
         return embed

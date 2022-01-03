@@ -71,7 +71,8 @@ def get_regional_format() -> str:
 
 def set_regional_format(regional_format: Optional[str]) -> None:
     global _current_regional_format
-    _current_regional_format = ContextVar("_current_regional_format", default=regional_format)
+    _current_regional_format = ContextVar(
+        "_current_regional_format", default=regional_format)
 
 
 def set_contextual_regional_format(regional_format: Optional[str]) -> None:
@@ -172,7 +173,8 @@ def _parse(translation_file: io.TextIOWrapper) -> Dict[str, str]:
             # New msgid
             if step is IN_MSGSTR and translated:
                 # Store the last translation
-                translations[locale][_unescape(untranslated)] = _unescape(translated)
+                translations[locale][_unescape(
+                    untranslated)] = _unescape(translated)
             step = IN_MSGID
             untranslated = line[len(MSGID): -1]
         elif line.startswith('"') and line.endswith('"'):
@@ -294,7 +296,8 @@ def _get_babel_locale(red_locale: str) -> babel.core.Locale:
             # Lets handle it silently and default to "en_US"
             try:
                 # Try to find a babel locale that's close to the one used by red
-                babel_locale = Locale(Locale.negotiate([red_locale], supported_locales, sep="-"))
+                babel_locale = Locale(Locale.negotiate(
+                    [red_locale], supported_locales, sep="-"))
             except (ValueError, TypeError, babel.core.UnknownLocaleError):
                 # If we fail to get a close match we will then default to "en_US"
                 babel_locale = Locale("en", "US")

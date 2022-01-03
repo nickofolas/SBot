@@ -37,7 +37,8 @@ class QueueUtilities(MixinMeta, metaclass=CompositeMetaClass):
         queue_idx_start = (page_num - 1) * 10
         queue_idx_end = queue_idx_start + 10
         if len(player.queue) > 500:
-            queue_list = _("__Too many songs in the queue, only showing the first 500__.\n\n")
+            queue_list = _(
+                "__Too many songs in the queue, only showing the first 500__.\n\n")
         else:
             queue_list = ""
 
@@ -49,19 +50,22 @@ class QueueUtilities(MixinMeta, metaclass=CompositeMetaClass):
         else:
             dur = self.format_time(player.current.length)
 
-        query = Query.process_input(player.current, self.local_folder_current_path)
+        query = Query.process_input(
+            player.current, self.local_folder_current_path)
         current_track_description = await self.get_track_description(
             player.current, self.local_folder_current_path
         )
         if query.is_stream:
             queue_list += _("**Currently livestreaming:**\n")
             queue_list += f"{current_track_description}\n"
-            queue_list += _("Requested by: **{user}**").format(user=player.current.requester)
+            queue_list += _("Requested by: **{user}**").format(
+                user=player.current.requester)
             queue_list += f"\n\n{arrow}`{pos}`/`{dur}`\n\n"
         else:
             queue_list += _("Playing: ")
             queue_list += f"{current_track_description}\n"
-            queue_list += _("Requested by: **{user}**").format(user=player.current.requester)
+            queue_list += _("Requested by: **{user}**").format(
+                user=player.current.requester)
             queue_list += f"\n\n{arrow}`{pos}`/`{dur}`\n\n"
 
         async for i, track in AsyncIter(queue[queue_idx_start:queue_idx_end]).enumerate(
@@ -77,7 +81,8 @@ class QueueUtilities(MixinMeta, metaclass=CompositeMetaClass):
 
         embed = discord.Embed(
             colour=await ctx.embed_colour(),
-            title=_("Queue for __{guild_name}__").format(guild_name=ctx.guild.name),
+            title=_("Queue for __{guild_name}__").format(
+                guild_name=ctx.guild.name),
             description=queue_list,
         )
 
@@ -119,7 +124,8 @@ class QueueUtilities(MixinMeta, metaclass=CompositeMetaClass):
         track_list = []
         async for queue_idx, track in AsyncIter(queue_list).enumerate(start=1):
             if not self.match_url(track.uri):
-                query = Query.process_input(track, self.local_folder_current_path)
+                query = Query.process_input(
+                    track, self.local_folder_current_path)
                 if (
                     query.is_local
                     and query.local_track_path is not None
@@ -153,8 +159,10 @@ class QueueUtilities(MixinMeta, metaclass=CompositeMetaClass):
         ):
             track_idx = i + 1
             if type(track) is str:
-                track_location = LocalPath(track, self.local_folder_current_path).to_string_user()
-                track_match += "`{}.` **{}**\n".format(track_idx, track_location)
+                track_location = LocalPath(
+                    track, self.local_folder_current_path).to_string_user()
+                track_match += "`{}.` **{}**\n".format(
+                    track_idx, track_location)
             else:
                 track_match += "`{}.` **{}**\n".format(track[0], track[1])
         embed = discord.Embed(

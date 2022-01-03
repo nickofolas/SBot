@@ -68,7 +68,8 @@ class ValidationUtilities(MixinMeta, metaclass=CompositeMetaClass):
         if ctx_or_channel:
             guild = ctx_or_channel.guild
             channel = (
-                ctx_or_channel.channel if isinstance(ctx_or_channel, Context) else ctx_or_channel
+                ctx_or_channel.channel if isinstance(
+                    ctx_or_channel, Context) else ctx_or_channel
             )
             query = query.lower().strip()
         else:

@@ -67,7 +67,8 @@ TIME_RE_STRING = r"\s?".join(
         r"((?P<weeks>\d+?)\s?(weeks?|w))?",
         r"((?P<days>\d+?)\s?(days?|d))?",
         r"((?P<hours>\d+?)\s?(hours?|hrs|hr?))?",
-        r"((?P<minutes>\d+?)\s?(minutes?|mins?|m(?!o)))?",  # prevent matching "months"
+        # prevent matching "months"
+        r"((?P<minutes>\d+?)\s?(minutes?|mins?|m(?!o)))?",
         r"((?P<seconds>\d+?)\s?(seconds?|secs?|s))?",
     ]
 )
@@ -81,11 +82,13 @@ def _parse_and_match(string_to_match: str, allowed_units: List[str]) -> Optional
     """
     matches = TIME_RE.match(string_to_match)
     if matches:
-        params = {k: int(v) for k, v in matches.groupdict().items() if v is not None}
+        params = {k: int(v)
+                  for k, v in matches.groupdict().items() if v is not None}
         for k in params.keys():
             if k not in allowed_units:
                 raise BadArgument(
-                    _("`{unit}` is not a valid unit of time for this command").format(unit=k)
+                    _("`{unit}` is not a valid unit of time for this command").format(
+                        unit=k)
                 )
         return params
     return None
@@ -268,7 +271,8 @@ else:
         def __init__(self, *expected_keys: str, delims: Optional[List[str]] = None):
             self.expected_keys = expected_keys
             self.delims = delims or [" "]
-            self.pattern = re.compile(r"|".join(re.escape(d) for d in self.delims))
+            self.pattern = re.compile(r"|".join(re.escape(d)
+                                      for d in self.delims))
 
         async def convert(self, ctx: "Context", argument: str) -> Dict[str, str]:
             ret: Dict[str, str] = {}
@@ -281,7 +285,8 @@ else:
 
             for key in iterator:
                 if self.expected_keys and key not in self.expected_keys:
-                    raise BadArgument(_("Unexpected key {key}").format(key=key))
+                    raise BadArgument(
+                        _("Unexpected key {key}").format(key=key))
 
                 ret[key] = next(iterator)
 
@@ -450,7 +455,8 @@ else:
             if self.default_unit and argument.isdecimal():
                 argument = argument + self.default_unit
 
-            delta = parse_relativedelta(argument, allowed_units=self.allowed_units)
+            delta = parse_relativedelta(
+                argument, allowed_units=self.allowed_units)
 
             if delta is not None:
                 return delta
@@ -515,7 +521,8 @@ if not TYPE_CHECKING:
         async def convert(self, ctx, arg):
             if arg in self.valid_names:
                 return arg
-            raise BadArgument(_("Expected one of: {}").format(humanize_list(self.valid_names)))
+            raise BadArgument(_("Expected one of: {}").format(
+                humanize_list(self.valid_names)))
 
         def __class_getitem__(cls, k):
             if not k:
@@ -538,7 +545,8 @@ else:
             arg = argument.strip()
             command = ctx.bot.get_command(arg)
             if not command:
-                raise BadArgument(_('Command "{arg}" not found.').format(arg=arg))
+                raise BadArgument(
+                    _('Command "{arg}" not found.').format(arg=arg))
             return command
 
     class CogConverter(dpy_commands.Converter):

@@ -12,7 +12,7 @@ real_send = commands.Context.send
 def chunks(l, n):
     """Yield successive n-sized chunks from l."""
     for i in range(0, len(l), n):
-        yield l[i : i + n]
+        yield l[i: i + n]
 
 
 # from: https://docs.python.org/3/library/stdtypes.html#str.format_map

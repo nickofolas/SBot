@@ -17,7 +17,8 @@ class TunnelMeta(type):
     """
 
     def __call__(cls, *args, **kwargs):
-        lockout_tuple = ((kwargs.get("sender"), kwargs.get("origin")), kwargs.get("recipient"))
+        lockout_tuple = ((kwargs.get("sender"), kwargs.get(
+            "origin")), kwargs.get("recipient"))
 
         if lockout_tuple in _instances:
             return _instances[lockout_tuple]
@@ -73,7 +74,8 @@ class Tunnel(metaclass=TunnelMeta):
 
     async def react_close(self, *, uid: int, message: str = ""):
         send_to = self.recipient if uid == self.sender.id else self.origin
-        closer = next(filter(lambda x: x.id == uid, (self.sender, self.recipient)), None)
+        closer = next(filter(lambda x: x.id == uid,
+                      (self.sender, self.recipient)), None)
         await send_to.send(filter_mass_mentions(message.format(closer=closer)))
 
     @property
@@ -186,7 +188,8 @@ class Tunnel(metaclass=TunnelMeta):
             The message to send to both ends of the tunnel.
         """
 
-        tasks = [destination.send(close_message) for destination in (self.recipient, self.origin)]
+        tasks = [destination.send(close_message)
+                 for destination in (self.recipient, self.origin)]
         await asyncio.gather(*tasks, return_exceptions=True)
 
     async def communicate(
@@ -227,7 +230,8 @@ class Tunnel(metaclass=TunnelMeta):
             return None
 
         if not skip_message_content:
-            content = "\n".join((topic, message.content)) if topic else message.content
+            content = "\n".join((topic, message.content)
+                                ) if topic else message.content
         else:
             content = topic
 

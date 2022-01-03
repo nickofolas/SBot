@@ -51,6 +51,7 @@ def _distance(point_a: tuple, point_b: tuple):
     # final distance
     return sqrt(dx**2 + dy**2 + dz**2)
 
+
 def _linear_nearest_neighbour(all_points: list, pivot: tuple):
     """
     Check distance against all points from the pivot and return the distance and nearest point.

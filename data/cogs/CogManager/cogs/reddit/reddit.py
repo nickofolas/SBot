@@ -178,7 +178,7 @@ class Reddit(commands.Cog):
             await post_menu(ctx, resp_json, page=0, timeout=30)
 
     @_subreddit.command(name="top")
-    async def subreddit_top(self, ctx: commands.Context, subreddit: str, time_frame: str="week", post_count: int = 3):
+    async def subreddit_top(self, ctx: commands.Context, subreddit: str, time_frame: str = "week", post_count: int = 3):
         """Command for getting subreddit's top posts"""
         if post_count <= 0 or post_count > 100:
             await ctx.send("Sorry, I can't do that")
@@ -206,7 +206,7 @@ class Reddit(commands.Cog):
 
     @_subreddit.command(name="controversial")
     async def subreddit_controversial(
-        self, ctx: commands.Context, subreddit: str, time_frame: str="week", post_count: int = 3
+        self, ctx: commands.Context, subreddit: str, time_frame: str = "week", post_count: int = 3
     ):
         """Command for getting subreddit's controversial posts"""
         if post_count <= 0 or post_count > 100:
@@ -254,12 +254,12 @@ class Reddit(commands.Cog):
         Sets the credentials needed to access Reddit's API
 
         NOTE: This command should be done in a DM with the bot.
-        
+
         You can obtain your client id and secret by 
         creating an app at https://www.reddit.com/prefs/apps 
         Set the application url to http://127.0.0.1 and set 
         the app type to script.
-        
+
         The username and password are the username and password 
         for the account you created the app (using the above 
         instructions) on. Be sure to enter them in the correct 

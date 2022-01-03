@@ -171,7 +171,7 @@ class FixedVarious(commands.Cog):
                     join_days, born_days = (now - join).days, (now - born).days
                     pre_days = (join - born).days
 
-                    csv_w.writerow([n+1, username, userid, join,
+                    csv_w.writerow([n + 1, username, userid, join,
                                    born, join_days, born_days, pre_days])
 
             await ctx.send(content="Here is a csv file with the member list.", file=discord.File(csv_name))

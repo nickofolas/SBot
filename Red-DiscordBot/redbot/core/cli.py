@@ -80,7 +80,8 @@ def non_negative_int(arg: str) -> int:
     except ValueError:
         raise argparse.ArgumentTypeError("The argument has to be a number.")
     if x < 0:
-        raise argparse.ArgumentTypeError("The argument has to be a non-negative integer.")
+        raise argparse.ArgumentTypeError(
+            "The argument has to be a non-negative integer.")
     if x > sys.maxsize:
         raise argparse.ArgumentTypeError(
             f"The argument has to be lower than or equal to {sys.maxsize}."
@@ -101,8 +102,10 @@ def parse_cli_flags(args):
     parser = argparse.ArgumentParser(
         description="Red - Discord Bot", usage="redbot <instance_name> [arguments]"
     )
-    parser.add_argument("--version", "-V", action="store_true", help="Show Red's current version")
-    parser.add_argument("--debuginfo", action="store_true", help="Show debug information.")
+    parser.add_argument("--version", "-V", action="store_true",
+                        help="Show Red's current version")
+    parser.add_argument("--debuginfo", action="store_true",
+                        help="Show debug information.")
     parser.add_argument(
         "--list-instances",
         action="store_true",
@@ -193,7 +196,8 @@ def parse_cli_flags(args):
         default=logging.INFO,
         help="Sets the loggers level as debug",
     )
-    parser.add_argument("--dev", action="store_true", help="Enables developer mode")
+    parser.add_argument("--dev", action="store_true",
+                        help="Enables developer mode")
     parser.add_argument(
         "--mentionable",
         action="store_true",
@@ -210,7 +214,8 @@ def parse_cli_flags(args):
         default=6133,
         help="The port of the built-in RPC server to use. Default to 6133.",
     )
-    parser.add_argument("--token", type=str, help="Run Red with the given token.")
+    parser.add_argument("--token", type=str,
+                        help="Run Red with the given token.")
     parser.add_argument(
         "--no-instance",
         action="store_true",

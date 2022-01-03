@@ -130,7 +130,8 @@ class Bank(commands.Cog):
                 )
             )
         await ctx.send(
-            _("Maximum balance has been set to: {amount}").format(amount=humanize_number(amount))
+            _("Maximum balance has been set to: {amount}").format(
+                amount=humanize_number(amount))
         )
 
     # ENDSECTION

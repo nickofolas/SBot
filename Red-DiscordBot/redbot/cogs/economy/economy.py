@@ -42,6 +42,8 @@ class SMReel(Enum):
 
 
 def _(s): return s
+
+
 PAYOUTS = {
     (SMReel.two, SMReel.two, SMReel.six): {
         "payout": lambda x: x * 50,
@@ -465,7 +467,8 @@ class Economy(commands.Cog):
                             "Please spend some more \N{GRIMACING FACE}\n\n"
                             "You currently have {new_balance} {currency}."
                         ).format(
-                            currency=credits_name, new_balance=humanize_number(exc.max_balance)
+                            currency=credits_name, new_balance=humanize_number(
+                                exc.max_balance)
                         )
                     )
                     return
@@ -520,7 +523,8 @@ class Economy(commands.Cog):
                             "Please spend some more \N{GRIMACING FACE}\n\n"
                             "You currently have {new_balance} {currency}."
                         ).format(
-                            currency=credits_name, new_balance=humanize_number(exc.max_balance)
+                            currency=credits_name, new_balance=humanize_number(
+                                exc.max_balance)
                         )
                     )
                     return
@@ -582,7 +586,8 @@ class Economy(commands.Cog):
         if show_global and await bank.is_global():
             # show_global is only applicable if bank is global
             bank_sorted = await bank.get_leaderboard(positions=top, guild=None)
-            base_embed.set_author(name=ctx.bot.user.name, icon_url=ctx.bot.user.display_avatar)
+            base_embed.set_author(name=ctx.bot.user.name,
+                                  icon_url=ctx.bot.user.display_avatar)
         else:
             bank_sorted = await bank.get_leaderboard(positions=top, guild=guild)
             if guild:
@@ -667,7 +672,8 @@ class Economy(commands.Cog):
             await menu(
                 ctx,
                 highscores,
-                DEFAULT_CONTROLS if len(highscores) > 1 else {"\N{CROSS MARK}": close_menu},
+                DEFAULT_CONTROLS if len(highscores) > 1 else {
+                    "\N{CROSS MARK}": close_menu},
             )
         else:
             await ctx.send(_("No balances found."))
@@ -751,7 +757,8 @@ class Economy(commands.Cog):
         payout = PAYOUTS.get(rows[1])
         if not payout:
             # Checks for two-consecutive-symbols special rewards
-            payout = PAYOUTS.get((rows[1][0], rows[1][1]), PAYOUTS.get((rows[1][1], rows[1][2])))
+            payout = PAYOUTS.get(
+                (rows[1][0], rows[1][1]), PAYOUTS.get((rows[1][1], rows[1][2])))
         if not payout:
             # Still nothing. Let's check for 3 generic same symbols
             # or 2 consecutive symbols

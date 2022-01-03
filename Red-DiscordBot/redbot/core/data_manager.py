@@ -109,7 +109,8 @@ def load_basic_configuration(instance_name_: str):
 
 def _base_data_path() -> Path:
     if basic_config is None:
-        raise RuntimeError("You must load the basic config before you can get the base data path.")
+        raise RuntimeError(
+            "You must load the basic config before you can get the base data path.")
     path = basic_config["DATA_PATH"]
     return Path(path).resolve()
 
@@ -200,7 +201,8 @@ def bundled_data_path(cog_instance: commands.Cog) -> Path:
         If no bundled data folder exists.
 
     """
-    bundled_path = Path(inspect.getfile(cog_instance.__class__)).parent / "data"
+    bundled_path = Path(inspect.getfile(
+        cog_instance.__class__)).parent / "data"
 
     if not bundled_path.is_dir():
         raise FileNotFoundError("No such directory {}".format(bundled_path))

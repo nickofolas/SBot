@@ -79,7 +79,8 @@ def debug_info():
     dpy_version = discord.__version__
     if IS_WINDOWS:
         os_info = platform.uname()
-        osver = "{} {} (version {})".format(os_info.system, os_info.release, os_info.version)
+        osver = "{} {} (version {})".format(
+            os_info.system, os_info.release, os_info.version)
     elif IS_MAC:
         os_info = platform.mac_ver()
         osver = "Mac OSX {} {}".format(os_info[0], os_info[2])
@@ -136,7 +137,8 @@ async def edit_instance(red, cli_flags):
     await _edit_owner(red, owner, no_prompt)
 
     data = deepcopy(data_manager.basic_config)
-    name = _edit_instance_name(old_name, new_name, confirm_overwrite, no_prompt)
+    name = _edit_instance_name(
+        old_name, new_name, confirm_overwrite, no_prompt)
     _edit_data_path(data, name, data_path, copy_data, no_prompt)
 
     save_config(name, data)
@@ -266,7 +268,8 @@ def _edit_data_path(data, instance_name, data_path, copy_data, no_prompt):
                 )
         data["DATA_PATH"] = data_path
         if copy_data and not _copy_data(data):
-            print("Can't copy data to non-empty location. Data location will remain unchanged.")
+            print(
+                "Can't copy data to non-empty location. Data location will remain unchanged.")
             data["DATA_PATH"] = data_manager.basic_config["DATA_PATH"]
     elif not no_prompt and confirm("Would you like to change the data location?", default=False):
         data["DATA_PATH"] = get_data_dir(instance_name)
@@ -303,7 +306,8 @@ def handle_edit(cli_flags: Namespace):
     red = Red(cli_flags=cli_flags, description="Red V3", dm_help=None)
     try:
         driver_cls = drivers.get_driver_class()
-        loop.run_until_complete(driver_cls.initialize(**data_manager.storage_details()))
+        loop.run_until_complete(driver_cls.initialize(
+            **data_manager.storage_details()))
         loop.run_until_complete(edit_instance(red, cli_flags))
         loop.run_until_complete(driver_cls.teardown())
     except (KeyboardInterrupt, EOFError):
@@ -438,7 +442,8 @@ async def shutdown_handler(red, signal_type=None, exit_code=None):
         await red.close()
     finally:
         # Then cancels all outstanding tasks other than ourselves
-        pending = [t for t in asyncio.all_tasks() if t is not asyncio.current_task()]
+        pending = [t for t in asyncio.all_tasks(
+        ) if t is not asyncio.current_task()]
         [task.cancel() for task in pending]
         await asyncio.gather(*pending, return_exceptions=True)
 
@@ -475,7 +480,8 @@ def red_exception_handler(red, red_task: asyncio.Future):
     except (SystemExit, KeyboardInterrupt, asyncio.CancelledError):
         pass  # Handled by the global_exception_handler, or cancellation
     except Exception as exc:
-        log.critical("The main bot task didn't handle an exception and has crashed", exc_info=exc)
+        log.critical(
+            "The main bot task didn't handle an exception and has crashed", exc_info=exc)
         log.warning("Attempting to die as gracefully as possible...")
         red.loop.create_task(shutdown_handler(red))
 
@@ -511,7 +517,8 @@ def main():
             signals = (signal.SIGHUP, signal.SIGTERM, signal.SIGINT)
             for s in signals:
                 loop.add_signal_handler(
-                    s, lambda s=s: asyncio.create_task(shutdown_handler(red, s))
+                    s, lambda s=s: asyncio.create_task(
+                        shutdown_handler(red, s))
                 )
 
         exc_handler = functools.partial(global_exception_handler, red)
@@ -525,7 +532,8 @@ def main():
         loop.run_forever()
     except KeyboardInterrupt:
         # We still have to catch this here too. (*joy*)
-        log.warning("Please do not use Ctrl+C to Shutdown Red! (attempting to die gracefully...)")
+        log.warning(
+            "Please do not use Ctrl+C to Shutdown Red! (attempting to die gracefully...)")
         log.error("Received KeyboardInterrupt, treating as interrupt")
         if red is not None:
             loop.run_until_complete(shutdown_handler(red, signal.SIGINT))
@@ -539,7 +547,8 @@ def main():
     except Exception as exc:  # Non standard case.
         log.exception("Unexpected exception (%s): ", type(exc), exc_info=exc)
         if red is not None:
-            loop.run_until_complete(shutdown_handler(red, None, ExitCodes.CRITICAL))
+            loop.run_until_complete(shutdown_handler(
+                red, None, ExitCodes.CRITICAL))
     finally:
         # Allows transports to close properly, and prevent new ones from being opened.
         # Transports may still not be closed correctly on windows, see below

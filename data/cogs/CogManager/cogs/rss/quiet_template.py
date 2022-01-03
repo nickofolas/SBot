@@ -14,6 +14,7 @@ class QuietTemplate(Template):
         elif kws:
             mapping = ChainMap(kws, mapping)
         # Helper function for .sub()
+
         def convert(mo):
             named = mo.group('named') or mo.group('braced')
             if named is not None:

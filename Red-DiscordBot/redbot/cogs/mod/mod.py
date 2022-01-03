@@ -65,7 +65,8 @@ class Mod(
 
     default_channel_settings = {"ignored": False}
 
-    default_member_settings = {"past_nicks": [], "perms_cache": {}, "banned_until": False}
+    default_member_settings = {"past_nicks": [],
+                               "perms_cache": {}, "banned_until": False}
 
     default_user_settings = {"past_names": []}
 
@@ -73,14 +74,16 @@ class Mod(
         super().__init__()
         self.bot = bot
 
-        self.config = Config.get_conf(self, 4961522000, force_registration=True)
+        self.config = Config.get_conf(
+            self, 4961522000, force_registration=True)
         self.config.register_global(**self.default_global_settings)
         self.config.register_guild(**self.default_guild_settings)
         self.config.register_channel(**self.default_channel_settings)
         self.config.register_member(**self.default_member_settings)
         self.config.register_user(**self.default_user_settings)
         self.cache: dict = {}
-        self.tban_expiry_task = asyncio.create_task(self.tempban_expirations_task())
+        self.tban_expiry_task = asyncio.create_task(
+            self.tempban_expirations_task())
         self.last_case: dict = defaultdict(dict)
 
         self._ready = asyncio.Event()
@@ -134,7 +137,8 @@ class Mod(
                 else:
                     val = -1
                 await self.config.guild_from_id(guild_id).delete_repeats.set(val)
-            await self.config.version.set("1.0.0")  # set version of last update
+            # set version of last update
+            await self.config.version.set("1.0.0")
         if await self.config.version() < "1.1.0":
             message_sent = False
             async for e in AsyncIter((await self.config.all_channels()).values(), steps=25):
@@ -143,7 +147,8 @@ class Mod(
                         "Ignored guilds and channels have been moved. "
                         "Please use `[p]moveignoredchannels` to migrate the old settings."
                     )
-                    self.bot.loop.create_task(send_to_owners_with_prefix_replaced(self.bot, msg))
+                    self.bot.loop.create_task(
+                        send_to_owners_with_prefix_replaced(self.bot, msg))
                     message_sent = True
                     break
             if message_sent is False:
@@ -165,7 +170,8 @@ class Mod(
                         "Delete delay settings have been moved. "
                         "Please use `[p]movedeletedelay` to migrate the old settings."
                     )
-                    self.bot.loop.create_task(send_to_owners_with_prefix_replaced(self.bot, msg))
+                    self.bot.loop.create_task(
+                        send_to_owners_with_prefix_replaced(self.bot, msg))
                     break
             await self.config.version.set("1.2.0")
         if await self.config.version() < "1.3.0":

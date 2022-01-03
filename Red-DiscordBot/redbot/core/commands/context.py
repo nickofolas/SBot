@@ -257,7 +257,8 @@ class Context(DPYContext):
         else:
             return await self.send(
                 message,
-                allowed_mentions=discord.AllowedMentions(everyone=False, roles=False, users=False),
+                allowed_mentions=discord.AllowedMentions(
+                    everyone=False, roles=False, users=False),
             )
 
     @property

@@ -30,7 +30,8 @@ class Reports(commands.Cog):
     gets a DM. Both can be used to communicate.
     """
 
-    default_guild_settings = {"output_channel": None, "active": False, "next_ticket": 1}
+    default_guild_settings = {"output_channel": None,
+                              "active": False, "next_ticket": 1}
 
     default_report = {"report": {}}
 
@@ -50,7 +51,8 @@ class Reports(commands.Cog):
     def __init__(self, bot: Red):
         super().__init__()
         self.bot = bot
-        self.config = Config.get_conf(self, 78631113035100160, force_registration=True)
+        self.config = Config.get_conf(
+            self, 78631113035100160, force_registration=True)
         self.config.register_guild(**self.default_guild_settings)
         self.config.init_custom("REPORT", 2)
         self.config.register_custom("REPORT", **self.default_report)
@@ -176,7 +178,8 @@ class Reports(commands.Cog):
         try:
             message = await self.bot.wait_for(
                 "message",
-                check=MessagePredicate.same_context(channel=author.dm_channel, user=author),
+                check=MessagePredicate.same_context(
+                    channel=author.dm_channel, user=author),
                 timeout=45,
             )
         except asyncio.TimeoutError:
@@ -211,7 +214,8 @@ class Reports(commands.Cog):
             em = discord.Embed(description=report, colour=await ctx.embed_colour())
             em.set_author(
                 name=_("Report from {author}{maybe_nick}").format(
-                    author=author, maybe_nick=(f" ({author.nick})" if author.nick else "")
+                    author=author, maybe_nick=(
+                        f" ({author.nick})" if author.nick else "")
                 ),
                 icon_url=author.display_avatar,
             )
@@ -247,7 +251,8 @@ class Reports(commands.Cog):
         guild = ctx.guild
         if guild is None:
             guild = await self.discover_guild(
-                author, prompt=_("Select a server to make a report in by number.")
+                author, prompt=_(
+                    "Select a server to make a report in by number.")
             )
         if guild is None:
             return
@@ -294,7 +299,8 @@ class Reports(commands.Cog):
             try:
                 message = await self.bot.wait_for(
                     "message",
-                    check=MessagePredicate.same_context(ctx, channel=author.dm_channel),
+                    check=MessagePredicate.same_context(
+                        ctx, channel=author.dm_channel),
                     timeout=180,
                 )
             except asyncio.TimeoutError:
@@ -342,7 +348,8 @@ class Reports(commands.Cog):
             return
 
         _id = payload.message_id
-        t = next(filter(lambda x: _id in x[1]["msgs"], self.tunnel_store.items()), None)
+        t = next(
+            filter(lambda x: _id in x[1]["msgs"], self.tunnel_store.items()), None)
 
         if t is None:
             return
@@ -351,7 +358,8 @@ class Reports(commands.Cog):
         if payload.user_id in [x.id for x in tun.members]:
             await set_contextual_locales_from_guild(self.bot, guild)
             await tun.react_close(
-                uid=payload.user_id, message=_("{closer} has closed the correspondence")
+                uid=payload.user_id, message=_(
+                    "{closer} has closed the correspondence")
             )
             self.tunnel_store.pop(t[0], None)
 

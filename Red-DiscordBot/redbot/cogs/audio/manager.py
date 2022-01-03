@@ -30,13 +30,18 @@ LAVALINK_DOWNLOAD_URL: Final[str] = (
     f"{JAR_VERSION}_{JAR_BUILD}/"
     "Lavalink.jar"
 )
-LAVALINK_DOWNLOAD_DIR: Final[pathlib.Path] = data_manager.cog_data_path(raw_name="Audio")
+LAVALINK_DOWNLOAD_DIR: Final[pathlib.Path] = data_manager.cog_data_path(
+    raw_name="Audio")
 LAVALINK_JAR_FILE: Final[pathlib.Path] = LAVALINK_DOWNLOAD_DIR / "Lavalink.jar"
-BUNDLED_APP_YML: Final[pathlib.Path] = pathlib.Path(__file__).parent / "data" / "application.yml"
-LAVALINK_APP_YML: Final[pathlib.Path] = LAVALINK_DOWNLOAD_DIR / "application.yml"
+BUNDLED_APP_YML: Final[pathlib.Path] = pathlib.Path(
+    __file__).parent / "data" / "application.yml"
+LAVALINK_APP_YML: Final[pathlib.Path] = LAVALINK_DOWNLOAD_DIR / \
+    "application.yml"
 
-_RE_READY_LINE: Final[Pattern] = re.compile(rb"Started Launcher in \S+ seconds")
-_FAILED_TO_START: Final[Pattern] = re.compile(rb"Web server failed to start\. (.*)")
+_RE_READY_LINE: Final[Pattern] = re.compile(
+    rb"Started Launcher in \S+ seconds")
+_FAILED_TO_START: Final[Pattern] = re.compile(
+    rb"Web server failed to start\. (.*)")
 _RE_BUILD_LINE: Final[Pattern] = re.compile(rb"Build:\s+(?P<build>\d+)")
 
 # Version regexes
@@ -79,10 +84,13 @@ _RE_JAVA_VERSION_LINE_223: Final[Pattern] = re.compile(
     r'version "(?P<major>\d+)(?:\.(?P<minor>\d+))?(?:\.\d+)*(\-[a-zA-Z0-9]+)?"'
 )
 
-LAVALINK_BRANCH_LINE: Final[Pattern] = re.compile(rb"Branch\s+(?P<branch>[\w\-\d_.]+)")
+LAVALINK_BRANCH_LINE: Final[Pattern] = re.compile(
+    rb"Branch\s+(?P<branch>[\w\-\d_.]+)")
 LAVALINK_JAVA_LINE: Final[Pattern] = re.compile(rb"JVM:\s+(?P<jvm>\d+[.\d+]*)")
-LAVALINK_LAVAPLAYER_LINE: Final[Pattern] = re.compile(rb"Lavaplayer\s+(?P<lavaplayer>\d+[.\d+]*)")
-LAVALINK_BUILD_TIME_LINE: Final[Pattern] = re.compile(rb"Build time:\s+(?P<build_time>\d+[.\d+]*)")
+LAVALINK_LAVAPLAYER_LINE: Final[Pattern] = re.compile(
+    rb"Lavaplayer\s+(?P<lavaplayer>\d+[.\d+]*)")
+LAVALINK_BUILD_TIME_LINE: Final[Pattern] = re.compile(
+    rb"Build time:\s+(?P<build_time>\d+[.\d+]*)")
 
 
 class ServerManager:
@@ -140,9 +148,11 @@ class ServerManager:
 
         if self._proc is not None:
             if self._proc.returncode is None:
-                raise RuntimeError("Internal Lavalink server is already running")
+                raise RuntimeError(
+                    "Internal Lavalink server is already running")
             elif self._shutdown:
-                raise RuntimeError("Server manager has already been used - create another one")
+                raise RuntimeError(
+                    "Server manager has already been used - create another one")
 
         await self.maybe_download_jar()
 
@@ -164,7 +174,8 @@ class ServerManager:
         try:
             await asyncio.wait_for(self._wait_for_launcher(), timeout=120)
         except asyncio.TimeoutError:
-            log.warning("Timeout occurred whilst waiting for internal Lavalink server to be ready")
+            log.warning(
+                "Timeout occurred whilst waiting for internal Lavalink server to be ready")
 
         self._monitor_task = asyncio.create_task(self._monitor())
         self._monitor_task.add_done_callback(task_callback)
@@ -225,7 +236,8 @@ class ServerManager:
 
             return major, minor
 
-        raise RuntimeError(f"The output of `{self._java_exc} -version` was unexpected.")
+        raise RuntimeError(
+            f"The output of `{self._java_exc} -version` was unexpected.")
 
     async def _wait_for_launcher(self) -> None:
         log.debug("Waiting for Lavalink server to be ready")
@@ -237,7 +249,8 @@ class ServerManager:
                 log.info("Internal Lavalink server is ready to receive requests.")
                 break
             if _FAILED_TO_START.search(line):
-                raise RuntimeError(f"Lavalink failed to start: {line.decode().strip()}")
+                raise RuntimeError(
+                    f"Lavalink failed to start: {line.decode().strip()}")
             if self._proc.returncode is not None and lastmessage + 2 < time.time():
                 # Avoid Console spam only print once every 2 seconds
                 lastmessage = time.time()
@@ -263,7 +276,8 @@ class ServerManager:
             )
 
     def _has_java_error(self) -> bool:
-        poss_error_file = LAVALINK_DOWNLOAD_DIR / "hs_err_pid{}.log".format(self._proc.pid)
+        poss_error_file = LAVALINK_DOWNLOAD_DIR / \
+            "hs_err_pid{}.log".format(self._proc.pid)
         return poss_error_file.exists()
 
     async def shutdown(self) -> None:
@@ -293,15 +307,18 @@ class ServerManager:
                     )
                 elif 400 <= response.status < 600:
                     # Other bad responses should be raised but we should retry just incase
-                    raise LavalinkDownloadFailed(response=response, should_retry=True)
+                    raise LavalinkDownloadFailed(
+                        response=response, should_retry=True)
                 fd, path = tempfile.mkstemp()
                 file = open(fd, "wb")
                 nbytes = 0
                 with rich.progress.Progress(
                     rich.progress.SpinnerColumn(),
-                    rich.progress.TextColumn("[progress.description]{task.description}"),
+                    rich.progress.TextColumn(
+                        "[progress.description]{task.description}"),
                     rich.progress.BarColumn(),
-                    rich.progress.TextColumn("[progress.percentage]{task.percentage:>3.0f}%"),
+                    rich.progress.TextColumn(
+                        "[progress.percentage]{task.percentage:>3.0f}%"),
                     rich.progress.TimeRemainingColumn(),
                     rich.progress.TimeElapsedColumn(),
                 ) as progress:
@@ -313,15 +330,18 @@ class ServerManager:
                         while chunk:
                             chunk_size = file.write(chunk)
                             nbytes += chunk_size
-                            progress.update(progress_task_id, advance=chunk_size)
+                            progress.update(progress_task_id,
+                                            advance=chunk_size)
                             chunk = await response.content.read(1024)
                         file.flush()
                     finally:
                         file.close()
 
-                shutil.move(path, str(LAVALINK_JAR_FILE), copy_function=shutil.copyfile)
+                shutil.move(path, str(LAVALINK_JAR_FILE),
+                            copy_function=shutil.copyfile)
 
-        log.info("Successfully downloaded Lavalink.jar (%s bytes written)", format(nbytes, ","))
+        log.info(
+            "Successfully downloaded Lavalink.jar (%s bytes written)", format(nbytes, ","))
         await self._is_up_to_date()
 
     async def _is_up_to_date(self):

@@ -113,7 +113,8 @@ class VoiceMutes(MixinMeta):
                 else:
                     default_duration = await self.config.guild(ctx.guild).default_time()
                     if default_duration:
-                        until = datetime.now(timezone.utc) + timedelta(seconds=default_duration)
+                        until = datetime.now(
+                            timezone.utc) + timedelta(seconds=default_duration)
                         time = _(" for {duration}").format(
                             duration=humanize_timedelta(
                                 timedelta=timedelta(seconds=default_duration)
@@ -157,7 +158,8 @@ class VoiceMutes(MixinMeta):
             if len(success_list) > 1:
                 msg = _("{users} have been muted in this channel{time}.")
             await ctx.send(
-                msg.format(users=humanize_list([f"{u}" for u in success_list]), time=time)
+                msg.format(users=humanize_list(
+                    [f"{u}" for u in success_list]), time=time)
             )
         if issue_list:
             msg = _("The following users could not be muted\n")

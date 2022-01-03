@@ -68,7 +68,8 @@ RESERVED_COMMAND_NAMES = (
 )
 
 _ = Translator("commands.commands", __file__)
-DisablerDictType = MutableMapping[discord.Guild, Callable[["Context"], Awaitable[bool]]]
+DisablerDictType = MutableMapping[discord.Guild,
+                                  Callable[["Context"], Awaitable[bool]]]
 
 
 class RedUnhandledAPI(Exception):
@@ -184,7 +185,8 @@ class CogCommandMixin:
             rules, use ``0``.
 
         """
-        self.requires.set_rule(model_id, PermState.ACTIVE_ALLOW, guild_id=guild_id)
+        self.requires.set_rule(
+            model_id, PermState.ACTIVE_ALLOW, guild_id=guild_id)
 
     def deny_to(self, model_id: Union[int, str], guild_id: int) -> None:
         """Actively deny this command to the given model.
@@ -201,9 +203,11 @@ class CogCommandMixin:
         """
         cur_rule = self.requires.get_rule(model_id, guild_id=guild_id)
         if cur_rule is PermState.PASSIVE_ALLOW:
-            self.requires.set_rule(model_id, PermState.CAUTIOUS_ALLOW, guild_id=guild_id)
+            self.requires.set_rule(
+                model_id, PermState.CAUTIOUS_ALLOW, guild_id=guild_id)
         else:
-            self.requires.set_rule(model_id, PermState.ACTIVE_DENY, guild_id=guild_id)
+            self.requires.set_rule(
+                model_id, PermState.ACTIVE_DENY, guild_id=guild_id)
 
     def clear_rule_for(
         self, model_id: Union[int, str], guild_id: int
@@ -293,7 +297,8 @@ class Command(CogCommandMixin, DPYCommand):
             return self.callback(*args, **kwargs)
 
     def __init__(self, *args, **kwargs):
-        self.ignore_optional_for_conversion = kwargs.pop("ignore_optional_for_conversion", False)
+        self.ignore_optional_for_conversion = kwargs.pop(
+            "ignore_optional_for_conversion", False)
         super().__init__(*args, **kwargs)
         self._help_override = kwargs.pop("help_override", None)
         self.translator = kwargs.pop("i18n", None)
@@ -353,7 +358,8 @@ class Command(CogCommandMixin, DPYCommand):
 
             # fail early for when someone passes an unparameterized Greedy type
             if value.annotation is Greedy:
-                raise TypeError("Unparameterized Greedy[...] is disallowed in signature.")
+                raise TypeError(
+                    "Unparameterized Greedy[...] is disallowed in signature.")
 
             if not self.ignore_optional_for_conversion:
                 continue  # reduces indentation compared to alternative
@@ -370,11 +376,13 @@ class Command(CogCommandMixin, DPYCommand):
                             # 1 prevents this from becoming 0
                             # we need to prevent 2 become 1
                             # (Don't change that to becoming, it's intentional :musical_note:)
-                            self.params[key] = value = value.replace(annotation=args[0])
+                            self.params[key] = value = value.replace(
+                                annotation=args[0])
                         else:
                             # and mypy wretches at the correct Union[args]
                             temp_type = type if TYPE_CHECKING else Union[args]
-                            self.params[key] = value = value.replace(annotation=temp_type)
+                            self.params[key] = value = value.replace(
+                                annotation=temp_type)
             except AttributeError:
                 continue
 
@@ -483,7 +491,8 @@ class Command(CogCommandMixin, DPYCommand):
             raise DisabledCommand(f"{self.name} command is disabled")
 
         if not await self.can_run(ctx, change_permission_state=True):
-            raise CheckFailure(f"The check functions for command {self.qualified_name} failed.")
+            raise CheckFailure(
+                f"The check functions for command {self.qualified_name} failed.")
 
         if self._max_concurrency is not None:
             await self._max_concurrency.acquire(ctx)
@@ -525,12 +534,15 @@ class Command(CogCommandMixin, DPYCommand):
         try:
             return await super().do_conversion(ctx, converter, argument, param)
         except BadArgument as exc:
-            raise ConversionFailure(converter, argument, param, *exc.args) from exc
+            raise ConversionFailure(
+                converter, argument, param, *exc.args) from exc
         except ValueError as exc:
             # Some common converters need special treatment...
             if converter in (int, float):
-                message = _('"{argument}" is not a number.').format(argument=argument)
-                raise ConversionFailure(converter, argument, param, message) from exc
+                message = _('"{argument}" is not a number.').format(
+                    argument=argument)
+                raise ConversionFailure(
+                    converter, argument, param, message) from exc
 
             # We should expose anything which might be a bug in the converter
             raise exc
@@ -618,9 +630,11 @@ class Command(CogCommandMixin, DPYCommand):
         for parent in parents:
             cur_rule = parent.requires.get_rule(model_id, guild_id=guild_id)
             if cur_rule is PermState.NORMAL:
-                parent.requires.set_rule(model_id, PermState.PASSIVE_ALLOW, guild_id=guild_id)
+                parent.requires.set_rule(
+                    model_id, PermState.PASSIVE_ALLOW, guild_id=guild_id)
             elif cur_rule is PermState.ACTIVE_DENY:
-                parent.requires.set_rule(model_id, PermState.CAUTIOUS_ALLOW, guild_id=guild_id)
+                parent.requires.set_rule(
+                    model_id, PermState.CAUTIOUS_ALLOW, guild_id=guild_id)
 
     def clear_rule_for(
         self, model_id: Union[int, str], guild_id: int
@@ -631,7 +645,8 @@ class Command(CogCommandMixin, DPYCommand):
             if self.cog is not None:
                 parents.append(self.cog)
             for parent in parents:
-                should_continue = parent.reevaluate_rules_for(model_id, guild_id=guild_id)[1]
+                should_continue = parent.reevaluate_rules_for(
+                    model_id, guild_id=guild_id)[1]
                 if not should_continue:
                     break
         return old_rule, new_rule
@@ -768,18 +783,22 @@ class CogGroupMixin:
             # Remaining states can be changed if there exists no actively-allowed
             # subcommand (this includes subcommands multiple levels below)
 
-            all_commands: Dict[str, Command] = getattr(self, "all_commands", {})
+            all_commands: Dict[str, Command] = getattr(
+                self, "all_commands", {})
 
             if any(
-                cmd.requires.get_rule(model_id, guild_id=guild_id) in PermStateAllowedStates
+                cmd.requires.get_rule(
+                    model_id, guild_id=guild_id) in PermStateAllowedStates
                 for cmd in all_commands.values()
             ):
                 return cur_rule, False
             elif cur_rule is PermState.PASSIVE_ALLOW:
-                self.requires.set_rule(model_id, PermState.NORMAL, guild_id=guild_id)
+                self.requires.set_rule(
+                    model_id, PermState.NORMAL, guild_id=guild_id)
                 return PermState.NORMAL, True
             elif cur_rule is PermState.CAUTIOUS_ALLOW:
-                self.requires.set_rule(model_id, PermState.ACTIVE_DENY, guild_id=guild_id)
+                self.requires.set_rule(
+                    model_id, PermState.ACTIVE_DENY, guild_id=guild_id)
                 return PermState.ACTIVE_DENY, True
 
         # Default return value

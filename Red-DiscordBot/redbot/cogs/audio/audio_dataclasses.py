@@ -30,7 +30,8 @@ _ = Translator("Audio", Path(__file__))
 _RE_REMOVE_START: Final[Pattern] = re.compile(r"^(sc|list) ")
 _RE_YOUTUBE_TIMESTAMP: Final[Pattern] = re.compile(r"[&|?]t=(\d+)s?")
 _RE_YOUTUBE_INDEX: Final[Pattern] = re.compile(r"&index=(\d+)")
-_RE_SPOTIFY_URL: Final[Pattern] = re.compile(r"(http[s]?://)?(open\.spotify\.com)/")
+_RE_SPOTIFY_URL: Final[Pattern] = re.compile(
+    r"(http[s]?://)?(open\.spotify\.com)/")
 _RE_SPOTIFY_TIMESTAMP: Final[Pattern] = re.compile(r"#(\d+):(\d+)")
 _RE_SOUNDCLOUD_TIMESTAMP: Final[Pattern] = re.compile(r"#t=(\d+):(\d+)s?")
 _RE_TWITCH_TIMESTAMP: Final[Pattern] = re.compile(r"\?t=(\d+)h(\d+)m(\d+)s")
@@ -100,7 +101,8 @@ class LocalPath:
             path = str(path)
 
         self.cwd = Path.cwd()
-        _lt_folder = Path(self._localtrack_folder) if self._localtrack_folder else self.cwd
+        _lt_folder = Path(
+            self._localtrack_folder) if self._localtrack_folder else self.cwd
         _path = Path(path) if path else self.cwd
         if _lt_folder.parts[-1].lower() == "localtracks" and not kwargs.get("forced"):
             self.localtrack_folder = _lt_folder
@@ -122,7 +124,8 @@ class LocalPath:
                     path = path.replace(f"localtracks{sep}{sep}", "", 1)
                 elif path and path.startswith(f"localtracks{sep}"):
                     path = path.replace(f"localtracks{sep}", "", 1)
-            self.path = self.localtrack_folder.joinpath(path) if path else self.localtrack_folder
+            self.path = self.localtrack_folder.joinpath(
+                path) if path else self.localtrack_folder
 
         try:
             if self.path.is_file():
@@ -219,7 +222,8 @@ class LocalPath:
 
     def to_string_user(self, arg: str = None):
         string = str(self.absolute()).replace(
-            (str(self.localtrack_folder.absolute()) + os.sep) if arg is None else arg, ""
+            (str(self.localtrack_folder.absolute()) +
+             os.sep) if arg is None else arg, ""
         )
         chunked = False
         while len(string) > 145 and os.sep in string:
@@ -237,7 +241,8 @@ class LocalPath:
                 if track.path.parent != self.localtrack_folder and track.path.relative_to(
                     self.path
                 ):
-                    tracks.append(Query.process_input(track, self._localtrack_folder))
+                    tracks.append(Query.process_input(
+                        track, self._localtrack_folder))
         return sorted(tracks, key=lambda x: x.to_string_user().lower())
 
     async def subfolders_in_tree(self):
@@ -260,7 +265,8 @@ class LocalPath:
                 if track.path.parent != self.localtrack_folder and track.path.relative_to(
                     self.path
                 ):
-                    tracks.append(Query.process_input(track, self._localtrack_folder))
+                    tracks.append(Query.process_input(
+                        track, self._localtrack_folder))
         return sorted(tracks, key=lambda x: x.to_string_user().lower())
 
     async def subfolders(self):
@@ -441,7 +447,8 @@ class Query:
             query = query.uri
 
         possible_values.update(dict(**kwargs))
-        possible_values.update(cls._parse(query, _local_folder_current_path, **kwargs))
+        possible_values.update(cls._parse(
+            query, _local_folder_current_path, **kwargs))
         return cls(query, _local_folder_current_path, **possible_values)
 
     @staticmethod
@@ -475,7 +482,8 @@ class Query:
                 if "#" in _id:
                     match = re.search(_RE_SPOTIFY_TIMESTAMP, track)
                     if match:
-                        returning["start_time"] = (int(match.group(1)) * 60) + int(match.group(2))
+                        returning["start_time"] = (
+                            int(match.group(1)) * 60) + int(match.group(2))
                 returning["uri"] = track
                 return returning
             if track.startswith("sc ") or track.startswith("list "):
@@ -506,7 +514,8 @@ class Query:
                     returning["is_url"] = True
                     url_domain = ".".join(query_url.netloc.split(".")[-2:])
                     if not query_url.netloc:
-                        url_domain = ".".join(query_url.path.split("/")[0].split(".")[-2:])
+                        url_domain = ".".join(
+                            query_url.path.split("/")[0].split(".")[-2:])
                     if url_domain in ["youtube.com", "youtu.be"]:
                         returning["youtube"] = True
                         _has_index = "&index=" in track
@@ -517,7 +526,8 @@ class Query:
                         if _has_index:
                             match = re.search(_RE_YOUTUBE_INDEX, track)
                             if match:
-                                returning["track_index"] = int(match.group(1)) - 1
+                                returning["track_index"] = int(
+                                    match.group(1)) - 1
                         if all(k in track for k in ["&list=", "watch?"]):
                             returning["track_index"] = 0
                             returning["playlist"] = True
@@ -539,7 +549,8 @@ class Query:
                             returning["album"] = True
                         elif "/track/" in track:
                             returning["single"] = True
-                        val = re.sub(_RE_SPOTIFY_URL, "", track).replace("/", ":")
+                        val = re.sub(_RE_SPOTIFY_URL, "",
+                                     track).replace("/", ":")
                         if "user:" in val:
                             val = val.split(":", 2)[-1]
                         _id = val.split(":", 1)[-1]

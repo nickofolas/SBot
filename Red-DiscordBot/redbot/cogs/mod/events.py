@@ -26,7 +26,8 @@ class Events(MixinMeta):
             repeats = await self.config.guild(guild).delete_repeats()
             if repeats == -1:
                 return False
-            guild_cache = self.cache[guild.id] = defaultdict(lambda: deque(maxlen=repeats))
+            guild_cache = self.cache[guild.id] = defaultdict(
+                lambda: deque(maxlen=repeats))
 
         if not message.content:
             return False

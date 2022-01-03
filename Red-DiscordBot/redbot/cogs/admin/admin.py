@@ -16,6 +16,8 @@ T_ = Translator("Admin", __file__)
 
 
 def _(s): return s
+
+
 GENERIC_FORBIDDEN = _(
     "I attempted to do something that Discord denied me permissions for."
     " Your command failed to successfully complete."
@@ -74,7 +76,8 @@ class Admin(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-        self.config = Config.get_conf(self, 8237492837454039, force_registration=True)
+        self.config = Config.get_conf(
+            self, 8237492837454039, force_registration=True)
 
         self.config.register_global(serverlocked=False, schema_version=0)
 
@@ -272,7 +275,8 @@ class Admin(commands.Cog):
             `[p]editrole colour Test #ff9900`
         """
         author = ctx.author
-        reason = "{}({}) changed the colour of role '{}'".format(author.name, author.id, role.name)
+        reason = "{}({}) changed the colour of role '{}'".format(
+            author.name, author.id, role.name)
 
         if not self.pass_user_hierarchy_check(ctx, role):
             await ctx.send(_(ROLE_USER_HIERARCHY_ISSUE).format(role=role))
@@ -366,7 +370,8 @@ class Admin(commands.Cog):
             channel = ctx.channel
         await self.config.guild(ctx.guild).announce_channel.set(channel.id)
         await ctx.send(
-            _("The announcement channel has been set to {channel.mention}").format(channel=channel)
+            _("The announcement channel has been set to {channel.mention}").format(
+                channel=channel)
         )
 
     @announceset.command(name="clearchannel")
@@ -441,7 +446,8 @@ class Admin(commands.Cog):
             await ctx.send("There are currently no selfroles.")
             return
 
-        msg = _("Available Selfroles:\n{selfroles}").format(selfroles=fmt_selfroles)
+        msg = _("Available Selfroles:\n{selfroles}").format(
+            selfroles=fmt_selfroles)
         await ctx.send(box(msg, "diff"))
 
     @commands.group()
@@ -471,7 +477,8 @@ class Admin(commands.Cog):
                 current_selfroles.append(role.id)
             else:
                 await ctx.send(
-                    _('The role "{role.name}" is already a selfrole.').format(role=role)
+                    _('The role "{role.name}" is already a selfrole.').format(
+                        role=role)
                 )
                 return
 
@@ -532,7 +539,8 @@ class Admin(commands.Cog):
                     "temporarily disable serverlock by starting up the bot with the --no-cogs flag."
                 )
             else:
-                log.info(f"Leaving guild '{guild.name}' ({guild.id}) due to serverlock.")
+                log.info(
+                    f"Leaving guild '{guild.name}' ({guild.id}) due to serverlock.")
             await guild.leave()
 
 

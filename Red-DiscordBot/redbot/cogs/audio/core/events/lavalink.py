@@ -85,7 +85,8 @@ class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):
                     guild=guild, player=player, extra=extra, deafen=deafen, disconnect=disconnect
                 )
             except Exception:
-                log.exception("Error in WEBSOCKET_CLOSED handling for guild: %s", player.guild.id)
+                log.exception(
+                    "Error in WEBSOCKET_CLOSED handling for guild: %s", player.guild.id)
             return
 
         await set_contextual_locales_from_guild(self.bot, guild)
@@ -93,7 +94,8 @@ class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):
         current_stream = self.rgetattr(current_track, "is_stream", None)
         current_length = self.rgetattr(current_track, "length", None)
         current_thumbnail = self.rgetattr(current_track, "thumbnail", None)
-        current_id = self.rgetattr(current_track, "_info", {}).get("identifier")
+        current_id = self.rgetattr(
+            current_track, "_info", {}).get("identifier")
 
         repeat = guild_data["repeat"]
         notify = guild_data["notify"]
@@ -102,7 +104,8 @@ class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):
             current_track, self.local_folder_current_path
         )
         status = await self.config.status()
-        log.debug("Received a new lavalink event for %d: %s: %r", guild_id, event_type, extra)
+        log.debug("Received a new lavalink event for %d: %s: %r",
+                  guild_id, event_type, extra)
         prev_song: lavalink.Track = player.fetch("prev_song")
         await self.maybe_reset_error_counter(player)
 
@@ -114,7 +117,8 @@ class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):
             player.store("prev_requester", requester)
             player.store("playing_song", current_track)
             player.store("requester", current_requester)
-            self.bot.dispatch("red_audio_track_start", guild, current_track, current_requester)
+            self.bot.dispatch("red_audio_track_start", guild,
+                              current_track, current_requester)
             if guild_id and current_track:
                 await self.api_interface.persistent_queue_api.played(
                     guild_id=guild_id, track_id=current_track.track_identifier
@@ -130,11 +134,13 @@ class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):
                 )
         if event_type == lavalink.LavalinkEvents.TRACK_END:
             prev_requester = player.fetch("prev_requester")
-            self.bot.dispatch("red_audio_track_end", guild, prev_song, prev_requester)
+            self.bot.dispatch("red_audio_track_end", guild,
+                              prev_song, prev_requester)
             player.store("resume_attempts", 0)
         if event_type == lavalink.LavalinkEvents.QUEUE_END:
             prev_requester = player.fetch("prev_requester")
-            self.bot.dispatch("red_audio_queue_end", guild, prev_song, prev_requester)
+            self.bot.dispatch("red_audio_queue_end", guild,
+                              prev_song, prev_requester)
             if guild_id:
                 await self.api_interface.persistent_queue_api.drop(guild_id)
             if player.is_auto_playing or (
@@ -151,7 +157,8 @@ class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):
                     notify_channel = self.bot.get_channel(notify_channel_id)
                     if notify_channel and self._has_notify_perms(notify_channel):
                         await self.send_embed_msg(
-                            notify_channel, title=_("Couldn't get a valid track.")
+                            notify_channel, title=_(
+                                "Couldn't get a valid track.")
                         )
                     return
                 except TrackEnqueueError:
@@ -287,11 +294,13 @@ class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):
                         embed = discord.Embed(
                             title=_("Track Error"),
                             colour=await self.bot.get_embed_color(message_channel),
-                            description="{}\n{}".format(extra.replace("\n", ""), description),
+                            description="{}\n{}".format(
+                                extra.replace("\n", ""), description),
                         )
                         if current_id:
                             asyncio.create_task(
-                                self.api_interface.global_cache_api.report_invalid(current_id)
+                                self.api_interface.global_cache_api.report_invalid(
+                                    current_id)
                             )
                     await message_channel.send(embed=embed)
             await player.skip()
@@ -336,7 +345,8 @@ class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):
                     reason,
                     player,
                 )
-                self._ws_op_codes[guild_id]._init(self._ws_op_codes[guild_id]._maxsize)
+                self._ws_op_codes[guild_id]._init(
+                    self._ws_op_codes[guild_id]._maxsize)
                 return
             if player.channel:
                 has_perm = self.can_join_and_speak(player.channel)
@@ -348,7 +358,8 @@ class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):
                 ws_audio_log.info(
                     "Player resumed | Reason: Error code %d & %s, %r", code, reason, player
                 )
-                self._ws_op_codes[guild_id]._init(self._ws_op_codes[guild_id]._maxsize)
+                self._ws_op_codes[guild_id]._init(
+                    self._ws_op_codes[guild_id]._maxsize)
                 return
 
             if voice_ws.socket._closing or voice_ws.socket.closed or not voice_ws.open:
@@ -533,5 +544,6 @@ class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):
         except Exception:
             log.exception("Error in task")
         finally:
-            self._ws_op_codes[guild_id]._init(self._ws_op_codes[guild_id]._maxsize)
+            self._ws_op_codes[guild_id]._init(
+                self._ws_op_codes[guild_id]._maxsize)
             self._ws_resume[guild_id].set()

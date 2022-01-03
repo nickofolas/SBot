@@ -51,9 +51,11 @@ class Downloader(commands.Cog):
         super().__init__()
         self.bot = bot
 
-        self.config = Config.get_conf(self, identifier=998240343, force_registration=True)
+        self.config = Config.get_conf(
+            self, identifier=998240343, force_registration=True)
 
-        self.config.register_global(schema_version=0, installed_cogs={}, installed_libraries={})
+        self.config.register_global(
+            schema_version=0, installed_cogs={}, installed_libraries={})
 
         self.already_agreed = False
 
@@ -365,8 +367,10 @@ class Downloader(commands.Cog):
             try:
                 repo_by_commit = repos[cog.repo_name]
             except KeyError:
-                cog.repo = cast(Repo, cog.repo)  # docstring specifies this already
-                repo_by_commit = repos[cog.repo_name] = (cog.repo, defaultdict(list))
+                # docstring specifies this already
+                cog.repo = cast(Repo, cog.repo)
+                repo_by_commit = repos[cog.repo_name] = (
+                    cog.repo, defaultdict(list))
             cogs_by_commit = repo_by_commit[1]
             cogs_by_commit[cog.commit].append(cog)
         installed = []
@@ -404,8 +408,10 @@ class Downloader(commands.Cog):
             try:
                 repo_by_commit = repos[lib.repo_name]
             except KeyError:
-                lib.repo = cast(Repo, lib.repo)  # docstring specifies this already
-                repo_by_commit = repos[lib.repo_name] = (lib.repo, defaultdict(set))
+                # docstring specifies this already
+                lib.repo = cast(Repo, lib.repo)
+                repo_by_commit = repos[lib.repo_name] = (
+                    lib.repo, defaultdict(set))
             libs_by_commit = repo_by_commit[1]
             libs_by_commit[lib.commit].add(lib)
 
@@ -440,8 +446,10 @@ class Downloader(commands.Cog):
         """
 
         # Reduces requirements to a single list with no repeats
-        requirements = {requirement for cog in cogs for requirement in cog.requirements}
-        repos: List[Tuple[Repo, List[str]]] = [(repo, []) for repo in self._repo_manager.repos]
+        requirements = {
+            requirement for cog in cogs for requirement in cog.requirements}
+        repos: List[Tuple[Repo, List[str]]] = [
+            (repo, []) for repo in self._repo_manager.repos]
 
         # This for loop distributes the requirements across all repos
         # which will allow us to concurrently install requirements
@@ -645,9 +653,11 @@ class Downloader(commands.Cog):
         """
         made_by = ", ".join(repo.author) or _("Missing from info.json")
 
-        information = _("Repo url: {repo_url}\n").format(repo_url=repo.clean_url)
+        information = _("Repo url: {repo_url}\n").format(
+            repo_url=repo.clean_url)
         if repo.branch:
-            information += _("Branch: {branch_name}\n").format(branch_name=repo.branch)
+            information += _("Branch: {branch_name}\n").format(
+                branch_name=repo.branch)
         information += _("Made by: {author}\nDescription:\n{description}").format(
             author=made_by, description=repo.description or ""
         )
@@ -681,7 +691,8 @@ class Downloader(commands.Cog):
 
             if updated:
                 message = _("Repo update completed successfully.")
-                message += _("\nUpdated: ") + humanize_list(tuple(map(inline, updated)))
+                message += _("\nUpdated: ") + \
+                    humanize_list(tuple(map(inline, updated)))
             elif not repos:
                 message = _("All installed repos are already up to date.")
             else:
@@ -847,7 +858,8 @@ class Downloader(commands.Cog):
 
             deprecation_notice = ""
             if repo.available_libraries:
-                deprecation_notice = DEPRECATION_NOTICE.format(repo_list=inline(repo.name))
+                deprecation_notice = DEPRECATION_NOTICE.format(
+                    repo_list=inline(repo.name))
             installed_libs, failed_libs = await repo.install_libraries(
                 target_dir=self.SHAREDLIB_PATH, req_target_dir=self.LIB_PATH
             )
@@ -899,7 +911,8 @@ class Downloader(commands.Cog):
                         " To see end user data statements, you can use {command_2}."
                     ).format(
                         command_1=inline(f"{ctx.clean_prefix}load <cogs...>"),
-                        command_2=inline(f"{ctx.clean_prefix}cog info <repo> <cog>"),
+                        command_2=inline(
+                            f"{ctx.clean_prefix}cog info <repo> <cog>"),
                     )
                     + message
                 )
@@ -961,8 +974,10 @@ class Downloader(commands.Cog):
                             "You may need to remove those files manually if the cogs are still usable."
                             " If so, ensure the cogs have been unloaded with {command_2}."
                         ).format(
-                            command_1=inline(f"{ctx.clean_prefix}cog uninstall"),
-                            command_2=inline(f"{ctx.clean_prefix}unload {' '.join(failed_cogs)}"),
+                            command_1=inline(
+                                f"{ctx.clean_prefix}cog uninstall"),
+                            command_2=inline(
+                                f"{ctx.clean_prefix}unload {' '.join(failed_cogs)}"),
                         )
                     )
                 else:
@@ -977,8 +992,10 @@ class Downloader(commands.Cog):
                             "You may need to remove those files manually if the cog is still usable."
                             " If so, ensure the cog has been unloaded with {command_2}."
                         ).format(
-                            command_1=inline(f"{ctx.clean_prefix}cog uninstall"),
-                            command_2=inline(f"{ctx.clean_prefix}unload {failed_cogs[0]}"),
+                            command_1=inline(
+                                f"{ctx.clean_prefix}cog uninstall"),
+                            command_2=inline(
+                                f"{ctx.clean_prefix}unload {failed_cogs[0]}"),
                         )
                     )
         await self.send_pagified(ctx, message)
@@ -1042,7 +1059,8 @@ class Downloader(commands.Cog):
             await self._save_to_installed(unpinned)
             cognames = [inline(cog.name) for cog in unpinned]
             message += (
-                _("Unpinned cogs: ") if len(unpinned) > 1 else _("Unpinned cog: ")
+                _("Unpinned cogs: ") if len(
+                    unpinned) > 1 else _("Unpinned cog: ")
             ) + humanize_list(cognames)
         if not_pinned:
             message += (
@@ -1056,7 +1074,8 @@ class Downloader(commands.Cog):
     async def _cog_listpinned(self, ctx: commands.Context):
         """List currently pinned cogs."""
         installed = await self.installed_cogs()
-        pinned_list = sorted([cog.name for cog in installed if cog.pinned], key=str.lower)
+        pinned_list = sorted(
+            [cog.name for cog in installed if cog.pinned], key=str.lower)
         if pinned_list:
             message = humanize_list(pinned_list)
         else:
@@ -1064,7 +1083,8 @@ class Downloader(commands.Cog):
         if await ctx.embed_requested():
             embed = discord.Embed(color=(await ctx.embed_colour()))
             for page in pagify(message, delims=[", "], page_length=900):
-                name = _("(continued)") if page.startswith(", ") else _("Pinned Cogs:")
+                name = _("(continued)") if page.startswith(
+                    ", ") else _("Pinned Cogs:")
                 if page.startswith(", "):
                     page = page[2:]
                 embed.add_field(name=name, value=page, inline=False)
@@ -1089,7 +1109,8 @@ class Downloader(commands.Cog):
         async with ctx.typing():
             cogs_to_check, failed = await self._get_cogs_to_check()
             cogs_to_update, libs_to_update = await self._available_updates(cogs_to_check)
-            cogs_to_update, filter_message = self._filter_incorrect_cogs(cogs_to_update)
+            cogs_to_update, filter_message = self._filter_incorrect_cogs(
+                cogs_to_update)
 
             message = ""
             if cogs_to_update:
@@ -1240,7 +1261,8 @@ class Downloader(commands.Cog):
                 cogs_to_update, libs_to_update = await self._available_updates(cogs_to_check)
 
                 updates_available = cogs_to_update or libs_to_update
-                cogs_to_update, filter_message = self._filter_incorrect_cogs(cogs_to_update)
+                cogs_to_update, filter_message = self._filter_incorrect_cogs(
+                    cogs_to_update)
 
                 if updates_available:
                     updated_cognames, message = await self._update_cogs_and_libs(
@@ -1283,7 +1305,8 @@ class Downloader(commands.Cog):
             if module.repo.available_libraries
         }
         if repos_with_libs:
-            message += DEPRECATION_NOTICE.format(repo_list=humanize_list(list(repos_with_libs)))
+            message += DEPRECATION_NOTICE.format(
+                repo_list=humanize_list(list(repos_with_libs)))
 
         await self.send_pagified(ctx, message)
 
@@ -1302,22 +1325,26 @@ class Downloader(commands.Cog):
         - `<repo>` The repo to list cogs from.
         """
         all_installed_cogs = await self.installed_cogs()
-        installed_cogs_in_repo = [cog for cog in all_installed_cogs if cog.repo_name == repo.name]
+        installed_cogs_in_repo = [
+            cog for cog in all_installed_cogs if cog.repo_name == repo.name]
         installed_str = "\n".join(
             "- {}{}".format(i.name, ": {}".format(i.short) if i.short else "")
             for i in installed_cogs_in_repo
         )
 
         if len(installed_cogs_in_repo) > 1:
-            installed_str = _("Installed Cogs:\n{text}").format(text=installed_str)
+            installed_str = _("Installed Cogs:\n{text}").format(
+                text=installed_str)
         elif installed_cogs_in_repo:
-            installed_str = _("Installed Cog:\n{text}").format(text=installed_str)
+            installed_str = _("Installed Cog:\n{text}").format(
+                text=installed_str)
 
         available_cogs = [
             cog for cog in repo.available_cogs if not (cog.hidden or cog in installed_cogs_in_repo)
         ]
         available_str = "\n".join(
-            "+ {}{}".format(cog.name, ": {}".format(cog.short) if cog.short else "")
+            "+ {}{}".format(cog.name, ": {}".format(cog.short)
+                            if cog.short else "")
             for cog in available_cogs
         )
 
@@ -1417,7 +1444,8 @@ class Downloader(commands.Cog):
         name_already_used: List[str] = []
 
         for cog_name in cog_names:
-            cog: Optional[Installable] = discord.utils.get(repo.available_cogs, name=cog_name)
+            cog: Optional[Installable] = discord.utils.get(
+                repo.available_cogs, name=cog_name)
             if cog is None:
                 unavailable_cogs.append(inline(cog_name))
                 continue
@@ -1465,7 +1493,8 @@ class Downloader(commands.Cog):
                 outdated_python_version.append(
                     inline(cog.name)
                     + _(" (Minimum: {min_version})").format(
-                        min_version=".".join([str(n) for n in cog.min_python_version])
+                        min_version=".".join([str(n)
+                                             for n in cog.min_python_version])
                     )
                 )
                 continue
@@ -1540,7 +1569,8 @@ class Downloader(commands.Cog):
                 repos = {repo for repo in repos if repo.name not in failed}
 
             if cogs:
-                cogs_to_check = {cog for cog in cogs if cog.repo is not None and cog.repo in repos}
+                cogs_to_check = {
+                    cog for cog in cogs if cog.repo is not None and cog.repo in repos}
             else:
                 cogs_to_check = {
                     cog
@@ -1557,7 +1587,8 @@ class Downloader(commands.Cog):
         libs_to_update: Iterable[Installable],
         current_cog_versions: Iterable[InstalledModule],
     ) -> Tuple[Set[str], str]:
-        current_cog_versions_map = {cog.name: cog for cog in current_cog_versions}
+        current_cog_versions_map = {
+            cog.name: cog for cog in current_cog_versions}
         failed_reqs = await self._install_requirements(cogs_to_update)
         if failed_reqs:
             return (
@@ -1583,14 +1614,16 @@ class Downloader(commands.Cog):
                 current_eud_statement = current_cog_versions_map[cog.name].end_user_data_statement
                 if current_eud_statement != cog.end_user_data_statement:
                     cogs_with_changed_eud_statement.add(cog.name)
-            message += _("\nUpdated: ") + humanize_list(tuple(map(inline, updated_cognames)))
+            message += _("\nUpdated: ") + \
+                humanize_list(tuple(map(inline, updated_cognames)))
             if cogs_with_changed_eud_statement:
                 if len(cogs_with_changed_eud_statement) > 1:
                     message += (
                         _("\nEnd user data statements of these cogs have changed: ")
                         + humanize_list(tuple(map(inline, cogs_with_changed_eud_statement)))
                         + _("\nYou can use {command} to see the updated statements.\n").format(
-                            command=inline(f"{ctx.clean_prefix}cog info <repo> <cog>")
+                            command=inline(
+                                f"{ctx.clean_prefix}cog info <repo> <cog>")
                         )
                     )
                 else:
@@ -1598,7 +1631,8 @@ class Downloader(commands.Cog):
                         _("\nEnd user data statement of this cog has changed:")
                         + inline(next(iter(cogs_with_changed_eud_statement)))
                         + _("\nYou can use {command} to see the updated statement.\n").format(
-                            command=inline(f"{ctx.clean_prefix}cog info <repo> <cog>")
+                            command=inline(
+                                f"{ctx.clean_prefix}cog info <repo> <cog>")
                         )
                     )
         if failed_cogs:
@@ -1649,7 +1683,8 @@ class Downloader(commands.Cog):
             query: discord.Message = await ctx.send(message)
             if can_react:
                 # noinspection PyAsyncCall
-                start_adding_reactions(query, ReactionPredicate.YES_OR_NO_EMOJIS)
+                start_adding_reactions(
+                    query, ReactionPredicate.YES_OR_NO_EMOJIS)
                 pred = ReactionPredicate.yes_or_no(query, ctx.author)
                 event = "reaction_add"
             else:
@@ -1731,7 +1766,8 @@ class Downloader(commands.Cog):
                     else cog_installable.repo.clean_url
                 )
                 cog_name = cog_installable.name
-            elif cog.__module__.startswith("redbot."):  # core commands or core cog
+            # core commands or core cog
+            elif cog.__module__.startswith("redbot."):
                 made_by = "Cog Creators"
                 repo_url = "https://github.com/Cog-Creators/Red-DiscordBot"
                 cog_name = cog.__class__.__name__
@@ -1746,7 +1782,8 @@ class Downloader(commands.Cog):
 
         if await ctx.embed_requested():
             embed = discord.Embed(color=(await ctx.embed_colour()))
-            embed.add_field(name=_("Command:"), value=command_name, inline=False)
+            embed.add_field(name=_("Command:"),
+                            value=command_name, inline=False)
             embed.add_field(name=_("Cog Name:"), value=cog_name, inline=False)
             embed.add_field(name=_("Made by:"), value=made_by, inline=False)
             embed.add_field(name=_("Repo URL:"), value=repo_url, inline=False)

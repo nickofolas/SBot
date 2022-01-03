@@ -69,7 +69,8 @@ class _RepoCheckoutCtxManager(
         else:
             self.exit_to_rev = exit_to_rev
         self.force_checkout = force_checkout
-        self.coro = repo._checkout(self.rev, force_checkout=self.force_checkout)
+        self.coro = repo._checkout(
+            self.rev, force_checkout=self.force_checkout)
 
     def __await__(self) -> Generator[Any, None, None]:
         return self.coro.__await__()
@@ -180,7 +181,8 @@ class Repo(RepoJSONMixin):
         poss_repo = repo_manager.get_repo(argument)
         if poss_repo is None:
             raise commands.BadArgument(
-                _('Repo by the name "{repo_name}" does not exist.').format(repo_name=argument)
+                _('Repo by the name "{repo_name}" does not exist.').format(
+                    repo_name=argument)
             )
         return poss_repo
 
@@ -227,7 +229,8 @@ class Repo(RepoJSONMixin):
         stderr = p.stderr.decode(**DECODE_PARAMS).strip()
         if stderr.startswith(("fatal: Not a valid object name", "fatal: Not a valid commit name")):
             rev, *__ = stderr[31:].split(maxsplit=1)
-            raise errors.UnknownRevision(f"Revision {rev} cannot be found.", git_command)
+            raise errors.UnknownRevision(
+                f"Revision {rev} cannot be found.", git_command)
 
         raise errors.GitException(
             f"Git failed to determine if commit {maybe_ancestor_rev}"
@@ -278,7 +281,8 @@ class Repo(RepoJSONMixin):
                 f"Git diff failed for repo at path: {self.folder_path}", git_command
             )
 
-        stdout = p.stdout.strip(b"\t\n\x00 ").decode(**DECODE_PARAMS).split("\x00\t")
+        stdout = p.stdout.strip(b"\t\n\x00 ").decode(
+            **DECODE_PARAMS).split("\x00\t")
         ret = {}
 
         for filename in stdout:
@@ -487,15 +491,18 @@ class Repo(RepoJSONMixin):
                     pos = len(substring)
                     break
             else:
-                raise errors.UnknownRevision(f"Revision {rev} cannot be found.", git_command)
+                raise errors.UnknownRevision(
+                    f"Revision {rev} cannot be found.", git_command)
             candidates = []
             for match in self.AMBIGUOUS_ERROR_REGEX.finditer(stderr, pos):
-                candidates.append(Candidate(match["rev"], match["type"], match["desc"]))
+                candidates.append(
+                    Candidate(match["rev"], match["type"], match["desc"]))
             if candidates:
                 raise errors.AmbiguousRevision(
                     f"Short SHA1 {rev} is ambiguous.", git_command, candidates
                 )
-            raise errors.UnknownRevision(f"Revision {rev} cannot be found.", git_command)
+            raise errors.UnknownRevision(
+                f"Revision {rev} cannot be found.", git_command)
 
         return p.stdout.decode(**DECODE_PARAMS).strip()
 
@@ -522,7 +529,8 @@ class Repo(RepoJSONMixin):
                 continue
             if is_pkg:
                 curr_modules.append(
-                    Installable(location=self.folder_path / name, repo=self, commit=self.commit)
+                    Installable(location=self.folder_path / name,
+                                repo=self, commit=self.commit)
                 )
         self.available_modules = tuple(curr_modules)
 
@@ -559,10 +567,12 @@ class Repo(RepoJSONMixin):
         async with self._repo_lock:
             p: CompletedProcess = await asyncio.get_running_loop().run_in_executor(
                 self._executor,
-                functools.partial(sp_run, *args, stdout=PIPE, stderr=PIPE, **kwargs),
+                functools.partial(sp_run, *args, stdout=PIPE,
+                                  stderr=PIPE, **kwargs),
             )
             # logging can't use surrogateescape
-            stderr = p.stderr.decode(encoding="utf-8", errors="replace").strip()
+            stderr = p.stderr.decode(
+                encoding="utf-8", errors="replace").strip()
             if stderr:
                 if debug_only or p.returncode in valid_exit_codes:
                     log.debug(stderr)
@@ -582,9 +592,11 @@ class Repo(RepoJSONMixin):
             return
         exists, __ = self._existing_git_repo()
         if not exists:
-            raise errors.MissingGitRepo(f"A git repo does not exist at path: {self.folder_path}")
+            raise errors.MissingGitRepo(
+                f"A git repo does not exist at path: {self.folder_path}")
 
-        git_command = ProcessFormatter().format(self.GIT_CHECKOUT, path=self.folder_path, rev=rev)
+        git_command = ProcessFormatter().format(
+            self.GIT_CHECKOUT, path=self.folder_path, rev=rev)
         p = await self._run(git_command)
 
         if p.returncode != 0:
@@ -644,7 +656,8 @@ class Repo(RepoJSONMixin):
         """
         exists, path = self._existing_git_repo()
         if exists:
-            raise errors.ExistingGitRepo(f"A git repo already exists at path: {path}")
+            raise errors.ExistingGitRepo(
+                f"A git repo already exists at path: {path}")
 
         if self.branch is not None:
             git_command = ProcessFormatter().format(
@@ -659,7 +672,8 @@ class Repo(RepoJSONMixin):
         if p.returncode:
             # Try cleaning up folder
             shutil.rmtree(str(self.folder_path), ignore_errors=True)
-            raise errors.CloningError("Error when running git clone.", git_command)
+            raise errors.CloningError(
+                "Error when running git clone.", git_command)
 
         if self.branch is None:
             self.branch = await self.current_branch()
@@ -679,9 +693,11 @@ class Repo(RepoJSONMixin):
         """
         exists, __ = self._existing_git_repo()
         if not exists:
-            raise errors.MissingGitRepo(f"A git repo does not exist at path: {self.folder_path}")
+            raise errors.MissingGitRepo(
+                f"A git repo does not exist at path: {self.folder_path}")
 
-        git_command = ProcessFormatter().format(self.GIT_CURRENT_BRANCH, path=self.folder_path)
+        git_command = ProcessFormatter().format(
+            self.GIT_CURRENT_BRANCH, path=self.folder_path)
         p = await self._run(git_command)
 
         if p.returncode != 0:
@@ -702,13 +718,16 @@ class Repo(RepoJSONMixin):
         """
         exists, __ = self._existing_git_repo()
         if not exists:
-            raise errors.MissingGitRepo(f"A git repo does not exist at path: {self.folder_path}")
+            raise errors.MissingGitRepo(
+                f"A git repo does not exist at path: {self.folder_path}")
 
-        git_command = ProcessFormatter().format(self.GIT_CURRENT_COMMIT, path=self.folder_path)
+        git_command = ProcessFormatter().format(
+            self.GIT_CURRENT_COMMIT, path=self.folder_path)
         p = await self._run(git_command)
 
         if p.returncode != 0:
-            raise errors.CurrentHashError("Unable to determine commit hash.", git_command)
+            raise errors.CurrentHashError(
+                "Unable to determine commit hash.", git_command)
 
         return p.stdout.decode(**DECODE_PARAMS).strip()
 
@@ -731,7 +750,8 @@ class Repo(RepoJSONMixin):
 
         exists, __ = self._existing_git_repo()
         if not exists:
-            raise errors.MissingGitRepo(f"A git repo does not exist at path: {self.folder_path}")
+            raise errors.MissingGitRepo(
+                f"A git repo does not exist at path: {self.folder_path}")
 
         git_command = ProcessFormatter().format(
             self.GIT_LATEST_COMMIT, path=self.folder_path, branch=branch
@@ -739,7 +759,8 @@ class Repo(RepoJSONMixin):
         p = await self._run(git_command)
 
         if p.returncode != 0:
-            raise errors.CurrentHashError("Unable to determine latest commit hash.", git_command)
+            raise errors.CurrentHashError(
+                "Unable to determine latest commit hash.", git_command)
 
         return p.stdout.decode(**DECODE_PARAMS).strip()
 
@@ -766,11 +787,13 @@ class Repo(RepoJSONMixin):
         if folder is None:
             folder = self.folder_path
 
-        git_command = ProcessFormatter().format(Repo.GIT_DISCOVER_REMOTE_URL, path=folder)
+        git_command = ProcessFormatter().format(
+            Repo.GIT_DISCOVER_REMOTE_URL, path=folder)
         p = await self._run(git_command)
 
         if p.returncode != 0:
-            raise errors.NoRemoteURL("Unable to discover a repo URL.", git_command)
+            raise errors.NoRemoteURL(
+                "Unable to discover a repo URL.", git_command)
 
         return p.stdout.decode(**DECODE_PARAMS).strip()
 
@@ -789,7 +812,8 @@ class Repo(RepoJSONMixin):
         await self.checkout(branch)
         exists, __ = self._existing_git_repo()
         if not exists:
-            raise errors.MissingGitRepo(f"A git repo does not exist at path: {self.folder_path}")
+            raise errors.MissingGitRepo(
+                f"A git repo does not exist at path: {self.folder_path}")
 
         git_command = ProcessFormatter().format(
             self.GIT_HARD_RESET, path=self.folder_path, branch=branch
@@ -855,16 +879,19 @@ class Repo(RepoJSONMixin):
 
         """
         if cog not in self.available_cogs:
-            raise errors.DownloaderException("That cog does not exist in this repo")
+            raise errors.DownloaderException(
+                "That cog does not exist in this repo")
 
         if not target_dir.is_dir():
-            raise ValueError("That target directory is not actually a directory.")
+            raise ValueError(
+                "That target directory is not actually a directory.")
 
         if not target_dir.exists():
             raise ValueError("That target directory does not exist.")
 
         if not await cog.copy_to(target_dir=target_dir):
-            raise errors.CopyingError("There was an issue during copying of cog's files")
+            raise errors.CopyingError(
+                "There was an issue during copying of cog's files")
 
         return InstalledModule.from_installable(cog)
 
@@ -894,7 +921,8 @@ class Repo(RepoJSONMixin):
 
         if libraries:
             if not all([i in self.available_libraries for i in libraries]):
-                raise ValueError("Some given libraries are not available in this repo.")
+                raise ValueError(
+                    "Some given libraries are not available in this repo.")
         else:
             libraries = self.available_libraries
 
@@ -983,7 +1011,8 @@ class Repo(RepoJSONMixin):
         """
         # noinspection PyTypeChecker
         return tuple(
-            [m for m in self.available_modules if m.type == InstallableType.COG and not m.disabled]
+            [m for m in self.available_modules if m.type ==
+                InstallableType.COG and not m.disabled]
         )
 
     @property
@@ -993,12 +1022,14 @@ class Repo(RepoJSONMixin):
         """
         # noinspection PyTypeChecker
         return tuple(
-            [m for m in self.available_modules if m.type == InstallableType.SHARED_LIBRARY]
+            [m for m in self.available_modules if m.type ==
+                InstallableType.SHARED_LIBRARY]
         )
 
     @classmethod
     async def from_folder(cls, folder: Path, branch: str = "") -> Repo:
-        repo = cls(name=folder.stem, url="", branch=branch, commit="", folder_path=folder)
+        repo = cls(name=folder.stem, url="", branch=branch,
+                   commit="", folder_path=folder)
         repo.url = await repo.current_url()
         if branch == "":
             repo.branch = await repo.current_branch()
@@ -1015,7 +1046,8 @@ class RepoManager:
 
     def __init__(self) -> None:
         self._repos: Dict[str, Repo] = {}
-        self.config = Config.get_conf(self, identifier=170708480, force_registration=True)
+        self.config = Config.get_conf(
+            self, identifier=170708480, force_registration=True)
         self.config.register_global(repos={})
 
     async def initialize(self) -> None:
@@ -1131,7 +1163,8 @@ class RepoManager:
         """
         repo = self.get_repo(name)
         if repo is None:
-            raise errors.MissingGitRepo(f"There is no repo with the name {name}")
+            raise errors.MissingGitRepo(
+                f"There is no repo with the name {name}")
 
         safe_delete(repo.folder_path)
 
@@ -1219,9 +1252,11 @@ class RepoManager:
                 if branch == "":
                     await self.config.repos.set_raw(folder.stem, value=ret[folder.stem].branch)
             except errors.NoRemoteURL:
-                log.warning("A remote URL does not exist for repo %s", folder.stem)
+                log.warning(
+                    "A remote URL does not exist for repo %s", folder.stem)
             except errors.DownloaderException as err:
-                log.error("Ignoring repo %s due to error.", folder.stem, exc_info=err)
+                log.error("Ignoring repo %s due to error.",
+                          folder.stem, exc_info=err)
                 # Downloader should NOT remove the repo on generic errors like this one.
                 # We were removing whole repo folder here in the past,
                 # but it's quite destructive for such a generic error.

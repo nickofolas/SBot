@@ -45,7 +45,8 @@ class Warnings(commands.Cog):
         self.config.register_guild(**self.default_guild)
         self.config.register_member(**self.default_member)
         self.bot = bot
-        self.registration_task = self.bot.loop.create_task(self.register_warningtype())
+        self.registration_task = self.bot.loop.create_task(
+            self.register_warningtype())
 
     async def red_delete_data_for_user(
         self,
@@ -79,7 +80,8 @@ class Warnings(commands.Cog):
                         await asyncio.sleep(0)
 
                     if warning.get("mod", 0) == user_id:
-                        grp = self.config.member_from_ids(guild_id, remaining_user)
+                        grp = self.config.member_from_ids(
+                            guild_id, remaining_user)
                         await grp.set_raw("warnings", warn_id, "mod", value=0xDE1)
 
     # We're not utilising modlog yet - no need to register a casetype
@@ -160,7 +162,8 @@ class Warnings(commands.Cog):
         if channel:
             await self.config.guild(guild).warn_channel.set(channel.id)
             await ctx.send(
-                _("The warn channel has been set to {channel}.").format(channel=channel.mention)
+                _("The warn channel has been set to {channel}.").format(
+                    channel=channel.mention)
             )
         else:
             await self.config.guild(guild).warn_channel.set(channel)
@@ -177,7 +180,8 @@ class Warnings(commands.Cog):
         if true_or_false:
             if channel:
                 await ctx.send(
-                    _("Warnings will now be sent to {channel}.").format(channel=channel.mention)
+                    _("Warnings will now be sent to {channel}.").format(
+                        channel=channel.mention)
                 )
             else:
                 await ctx.send(_("Warnings will now be sent in the channel command was used in."))
@@ -227,7 +231,8 @@ class Warnings(commands.Cog):
                 registered_actions.append(to_add)
                 # Sort in descending order by point count for ease in
                 # finding the highest possible action to take
-                registered_actions.sort(key=lambda a: a["points"], reverse=True)
+                registered_actions.sort(
+                    key=lambda a: a["points"], reverse=True)
                 await ctx.send(_("Action {name} has been added.").format(name=name))
 
     @warnaction.command(name="delete", aliases=["del", "remove"])
@@ -332,16 +337,19 @@ class Warnings(commands.Cog):
             for r in registered_actions:
                 if await ctx.embed_requested():
                     em = discord.Embed(
-                        title=_("Action: {name}").format(name=r["action_name"]),
+                        title=_("Action: {name}").format(
+                            name=r["action_name"]),
                         color=await ctx.embed_colour(),
                     )
-                    em.add_field(name=_("Points"), value="{}".format(r["points"]), inline=False)
+                    em.add_field(name=_("Points"), value="{}".format(
+                        r["points"]), inline=False)
                     em.add_field(
                         name=_("Exceed command"),
                         value=r["exceed_command"],
                         inline=False,
                     )
-                    em.add_field(name=_("Drop command"), value=r["drop_command"], inline=False)
+                    em.add_field(name=_("Drop command"),
+                                 value=r["drop_command"], inline=False)
                     msg_list.append(em)
                 else:
                     msg_list.append(
@@ -474,7 +482,8 @@ class Warnings(commands.Cog):
                 if warn_channel.permissions_for(guild.me).send_messages:
                     with contextlib.suppress(discord.HTTPException):
                         await warn_channel.send(
-                            _("{user} has been warned.").format(user=member.mention),
+                            _("{user} has been warned.").format(
+                                user=member.mention),
                             embed=em,
                         )
 
@@ -521,7 +530,8 @@ class Warnings(commands.Cog):
         except AttributeError:
             userid: int = member
             member = ctx.guild.get_member(userid)
-            member = member or namedtuple("Member", "id guild")(userid, ctx.guild)
+            member = member or namedtuple(
+                "Member", "id guild")(userid, ctx.guild)
 
         msg = ""
         member_settings = self.config.member(member)
@@ -535,7 +545,8 @@ class Warnings(commands.Cog):
                         mod = _("Deleted Moderator")
                     else:
                         bot = ctx.bot
-                        mod = bot.get_user(mod_id) or _("Unknown Moderator ({})").format(mod_id)
+                        mod = bot.get_user(mod_id) or _(
+                            "Unknown Moderator ({})").format(mod_id)
                     msg += _(
                         "{num_points} point warning {reason_name} issued by {user} for "
                         "{description}\n"
@@ -548,7 +559,8 @@ class Warnings(commands.Cog):
                 await ctx.send_interactive(
                     pagify(msg, shorten_by=58),
                     box_lang=_("Warnings for {user}").format(
-                        user=member if isinstance(member, discord.Member) else member.id
+                        user=member if isinstance(
+                            member, discord.Member) else member.id
                     ),
                 )
 
@@ -571,7 +583,8 @@ class Warnings(commands.Cog):
                         mod = _("Deleted Moderator")
                     else:
                         bot = ctx.bot
-                        mod = bot.get_user(mod_id) or _("Unknown Moderator ({})").format(mod_id)
+                        mod = bot.get_user(mod_id) or _(
+                            "Unknown Moderator ({})").format(mod_id)
                     msg += _(
                         "{num_points} point warning {reason_name} issued by {user} for "
                         "{description}\n"

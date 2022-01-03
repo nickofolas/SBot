@@ -317,7 +317,7 @@ class TriggerHandler:
     async def on_message(self, message: discord.Message) -> None:
         if message.guild is None:
             return
-        #if message.author.bot:
+        # if message.author.bot:
         #    return
         if version_info >= VersionInfo.from_str("3.4.0"):
             if await self.bot.cog_disabled_in_guild(self, message.guild):
@@ -358,7 +358,7 @@ class TriggerHandler:
             log.info("Could not find channel or message")
             # If we can't find the channel ignore it
             return
-        #if message.author.bot:
+        # if message.author.bot:
             # somehow we got a bot through the previous check :thonk:
         #    return
         await self.check_triggers(message, True)

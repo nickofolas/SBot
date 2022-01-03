@@ -87,7 +87,8 @@ async def fuzzy_command_search(
     ctx: Context,
     term: Optional[str] = None,
     *,
-    commands: Optional[Union[AsyncIterator[Command], Iterator[Command]]] = None,
+    commands: Optional[Union[AsyncIterator[Command],
+                             Iterator[Command]]] = None,
     min_score: int = 80,
 ) -> Optional[List[Command]]:
     """Search for commands which are similar in name to the one invoked.
@@ -194,7 +195,8 @@ async def format_fuzzy_results(
         lines = []
         for cmd in matched_commands:
             short_doc = cmd.format_shortdoc_for_context(ctx)
-            lines.append(f"**{ctx.clean_prefix}{cmd.qualified_name}** {short_doc}")
+            lines.append(
+                f"**{ctx.clean_prefix}{cmd.qualified_name}** {short_doc}")
         return discord.Embed(
             title="Perhaps you wanted one of these?",
             colour=await ctx.embed_colour(),
@@ -204,7 +206,8 @@ async def format_fuzzy_results(
         lines = []
         for cmd in matched_commands:
             short_doc = cmd.format_shortdoc_for_context(ctx)
-            lines.append(f"{ctx.clean_prefix}{cmd.qualified_name} -- {short_doc}")
+            lines.append(
+                f"{ctx.clean_prefix}{cmd.qualified_name} -- {short_doc}")
         return "Perhaps you wanted one of these? " + box("\n".join(lines), lang="vhdl")
 
 
@@ -215,7 +218,8 @@ async def create_backup(dest: Path = Path.home()) -> Optional[Path]:
 
     dest.mkdir(parents=True, exist_ok=True)
     timestr = datetime.utcnow().strftime("%Y-%m-%dT%H-%M-%S")
-    backup_fpath = dest / f"redv3_{data_manager.instance_name}_{timestr}.tar.gz"
+    backup_fpath = dest / \
+        f"redv3_{data_manager.instance_name}_{timestr}.tar.gz"
 
     to_backup = []
     exclusions = [
@@ -234,20 +238,23 @@ async def create_backup(dest: Path = Path.home()) -> Optional[Path]:
     await repo_mgr.initialize()
     repo_output = []
     for repo in repo_mgr.repos:
-        repo_output.append({"url": repo.url, "name": repo.name, "branch": repo.branch})
+        repo_output.append(
+            {"url": repo.url, "name": repo.name, "branch": repo.branch})
     repos_file = data_path / "cogs" / "RepoManager" / "repos.json"
     with repos_file.open("w") as fs:
         json.dump(repo_output, fs, indent=4)
     instance_file = data_path / "instance.json"
     with instance_file.open("w") as fs:
-        json.dump({data_manager.instance_name: data_manager.basic_config}, fs, indent=4)
+        json.dump(
+            {data_manager.instance_name: data_manager.basic_config}, fs, indent=4)
     for f in data_path.glob("**/*"):
         if not any(ex in str(f) for ex in exclusions) and f.is_file():
             to_backup.append(f)
 
     with tarfile.open(str(backup_fpath), "w:gz") as tar:
         for f in to_backup:
-            tar.add(str(f), arcname=str(f.relative_to(data_path)), recursive=False)
+            tar.add(str(f), arcname=str(
+                f.relative_to(data_path)), recursive=False)
     return backup_fpath
 
 
@@ -291,7 +298,8 @@ async def send_to_owners_with_preprocessor(
                 exc_info=_exc,
             )
 
-    sends = [wrapped_send(bot, d, content, content_preprocessor, **kwargs) for d in destinations]
+    sends = [wrapped_send(bot, d, content, content_preprocessor, **kwargs)
+             for d in destinations]
     await asyncio.gather(*sends)
 
 
@@ -306,7 +314,8 @@ async def send_to_owners_with_prefix_replaced(bot: Red, content: str, **kwargs):
     async def preprocessor(bot: Red, destination: discord.abc.Messageable, content: str) -> str:
         prefixes = await bot.get_valid_prefixes(getattr(destination, "guild", None))
         prefix = re.sub(
-            rf"<@!?{bot.user.id}>", f"@{bot.user.name}".replace("\\", r"\\"), prefixes[0]
+            rf"<@!?{bot.user.id}>", f"@{bot.user.name}".replace(
+                "\\", r"\\"), prefixes[0]
         )
         return content.replace("[p]", prefix)
 

@@ -178,7 +178,7 @@ class Otherbot(commands.Cog):
     async def channel(self, ctx: commands.Context, channel: discord.TextChannel = None):
         """
         Sets the channel to report in.
-        
+
         Default to the current one.
         """
         if not channel:

@@ -42,7 +42,8 @@ class LavalinkSetupCommands(MixinMeta, metaclass=CompositeMetaClass):
             await self.send_embed_msg(
                 ctx,
                 title=_("Java Executable Reset"),
-                description=_("Audio will now use `java` to run your Lavalink.jar"),
+                description=_(
+                    "Audio will now use `java` to run your Lavalink.jar"),
             )
         else:
             exc = Path(java_path)
@@ -98,7 +99,8 @@ class LavalinkSetupCommands(MixinMeta, metaclass=CompositeMetaClass):
             embed = discord.Embed(
                 title=_("Setting Changed"),
                 description=_("External Lavalink server: {true_or_false}.").format(
-                    true_or_false=_("Enabled") if not external else _("Disabled")
+                    true_or_false=_(
+                        "Enabled") if not external else _("Disabled")
                 ),
             )
             await self.send_embed_msg(ctx, embed=embed)
@@ -115,7 +117,8 @@ class LavalinkSetupCommands(MixinMeta, metaclass=CompositeMetaClass):
                         "For it to take effect please reload "
                         "Audio (`{prefix}reload audio`)."
                     ).format(
-                        true_or_false=_("Enabled") if not external else _("Disabled"),
+                        true_or_false=_(
+                            "Enabled") if not external else _("Disabled"),
                         prefix=ctx.prefix,
                     ),
                 )
@@ -124,7 +127,8 @@ class LavalinkSetupCommands(MixinMeta, metaclass=CompositeMetaClass):
                     ctx,
                     title=_("Setting Changed"),
                     description=_("External Lavalink server: {true_or_false}.").format(
-                        true_or_false=_("Enabled") if not external else _("Disabled")
+                        true_or_false=_(
+                            "Enabled") if not external else _("Disabled")
                     ),
                 )
         try:
@@ -172,7 +176,8 @@ class LavalinkSetupCommands(MixinMeta, metaclass=CompositeMetaClass):
         await self.send_embed_msg(
             ctx,
             title=_("Setting Changed"),
-            description=_("Server password set to {password}.").format(password=password),
+            description=_("Server password set to {password}.").format(
+                password=password),
             footer=footer,
         )
 
@@ -197,7 +202,8 @@ class LavalinkSetupCommands(MixinMeta, metaclass=CompositeMetaClass):
         await self.send_embed_msg(
             ctx,
             title=_("Setting Changed"),
-            description=_("Websocket port set to {port}.").format(port=ws_port),
+            description=_("Websocket port set to {port}.").format(
+                port=ws_port),
             footer=footer,
         )
 

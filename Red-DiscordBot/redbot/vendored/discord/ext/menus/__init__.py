@@ -109,7 +109,9 @@ class First(Position):
     def __init__(self, number=0):
         super().__init__(number, bucket=0)
 
-_custom_emoji = re.compile(r'<?(?P<animated>a)?:?(?P<name>[A-Za-z0-9\_]+):(?P<id>[0-9]{13,21})>?')
+
+_custom_emoji = re.compile(
+    r'<?(?P<animated>a)?:?(?P<name>[A-Za-z0-9\_]+):(?P<id>[0-9]{13,21})>?')
 
 
 def _cast_emoji(obj, *, _custom_emoji=_custom_emoji):
@@ -183,7 +185,8 @@ class Button:
         else:
             # Unfurl the method to not be bound
             if not isinstance(menu_self, Menu):
-                raise TypeError('skip_if bound method must be from Menu not %r' % menu_self)
+                raise TypeError(
+                    'skip_if bound method must be from Menu not %r' % menu_self)
 
             self._skip_if = value.__func__
 
@@ -200,7 +203,8 @@ class Button:
         else:
             # Unfurl the method to not be bound
             if not isinstance(menu_self, Menu):
-                raise TypeError('action bound method must be from Menu not %r' % menu_self)
+                raise TypeError(
+                    'action bound method must be from Menu not %r' % menu_self)
 
             value = value.__func__
 
@@ -571,8 +575,10 @@ class Menu(metaclass=_MenuMeta):
             tasks = []
             while self._running:
                 tasks = [
-                    asyncio.ensure_future(self.bot.wait_for('raw_reaction_add', check=self.reaction_check)),
-                    asyncio.ensure_future(self.bot.wait_for('raw_reaction_remove', check=self.reaction_check))
+                    asyncio.ensure_future(self.bot.wait_for(
+                        'raw_reaction_add', check=self.reaction_check)),
+                    asyncio.ensure_future(self.bot.wait_for(
+                        'raw_reaction_remove', check=self.reaction_check))
                 ]
                 done, pending = await asyncio.wait(tasks, timeout=self.timeout, return_when=asyncio.FIRST_COMPLETED)
                 for task in pending:
@@ -925,7 +931,8 @@ class MenuPages(Menu):
         """
 
         if not isinstance(source, PageSource):
-            raise TypeError('Expected {0!r} not {1.__class__!r}.'.format(PageSource, source))
+            raise TypeError(
+                'Expected {0!r} not {1.__class__!r}.'.format(PageSource, source))
 
         self._source = source
         self.current_page = 0
@@ -1068,6 +1075,7 @@ class ListPageSource(PageSource):
             base = page_number * self.per_page
             return self.entries[base:base + self.per_page]
 
+
 _GroupByEntry = namedtuple('_GroupByEntry', 'key items')
 
 
@@ -1103,7 +1111,8 @@ class GroupByPageSource(ListPageSource):
             size = len(g)
 
             # Chunk the nested pages
-            nested.extend(_GroupByEntry(key=k, items=g[i:i + per_page]) for i in range(0, size, per_page))
+            nested.extend(_GroupByEntry(
+                key=k, items=g[i:i + per_page]) for i in range(0, size, per_page))
 
         super().__init__(nested, per_page=1)
 
@@ -1139,11 +1148,13 @@ def _aiter(obj, *, _isasync=inspect.iscoroutinefunction):
     try:
         async_iter = cls.__aiter__
     except AttributeError:
-        raise TypeError('{0.__name__!r} object is not an async iterable'.format(cls))
+        raise TypeError(
+            '{0.__name__!r} object is not an async iterable'.format(cls))
 
     async_iter = async_iter(obj)
     if _isasync(async_iter):
-        raise TypeError('{0.__name__!r} object is not an async iterable'.format(cls))
+        raise TypeError(
+            '{0.__name__!r} object is not an async iterable'.format(cls))
     return async_iter
 
 

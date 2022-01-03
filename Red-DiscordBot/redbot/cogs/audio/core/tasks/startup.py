@@ -43,9 +43,11 @@ class StartUpTasks(MixinMeta, metaclass=CompositeMetaClass):
                 str(cog_data_path(self.bot.get_cog("Audio")) / "Audio.db")
             )
             self.api_interface = AudioAPIInterface(
-                self.bot, self.config, self.session, self.db_conn, self.bot.get_cog("Audio")
+                self.bot, self.config, self.session, self.db_conn, self.bot.get_cog(
+                    "Audio")
             )
-            self.playlist_api = PlaylistWrapper(self.bot, self.config, self.db_conn)
+            self.playlist_api = PlaylistWrapper(
+                self.bot, self.config, self.db_conn)
             await self.playlist_api.init()
             await self.api_interface.initialize()
             self.global_api_user = await self.api_interface.global_cache_api.get_perms()
@@ -61,7 +63,8 @@ class StartUpTasks(MixinMeta, metaclass=CompositeMetaClass):
             )
             self.player_automated_timer_task.add_done_callback(task_callback)
         except Exception as err:
-            log.exception("Audio failed to start up, please report this issue.", exc_info=err)
+            log.exception(
+                "Audio failed to start up, please report this issue.", exc_info=err)
             raise err
 
         self.cog_ready_event.set()
@@ -73,7 +76,8 @@ class StartUpTasks(MixinMeta, metaclass=CompositeMetaClass):
             await asyncio.sleep(1)
             tries += 1
             if tries > 60:
-                log.exception("Unable to restore players, couldn't connect to Lavalink.")
+                log.exception(
+                    "Unable to restore players, couldn't connect to Lavalink.")
                 return
         metadata = {}
         all_guilds = await self.config.all_guilds()
@@ -155,13 +159,15 @@ class StartUpTasks(MixinMeta, metaclass=CompositeMetaClass):
                     await player.set_volume(volume)
                 for track in track_data:
                     track = track.track_object
-                    player.add(guild.get_member(track.extras.get("requester")) or guild.me, track)
+                    player.add(guild.get_member(
+                        track.extras.get("requester")) or guild.me, track)
                 player.maybe_shuffle()
                 if not player.is_playing:
                     await player.play()
                 log.info("Restored %r", player)
             except Exception as err:
-                debug_exc_log(log, err, "Error restoring player in %d", guild_id)
+                debug_exc_log(
+                    log, err, "Error restoring player in %d", guild_id)
                 await self.api_interface.persistent_queue_api.drop(guild_id)
 
         for guild_id, (notify_channel_id, vc_id) in metadata.items():
@@ -205,7 +211,8 @@ class StartUpTasks(MixinMeta, metaclass=CompositeMetaClass):
                         tries += 1
                     except Exception as exc:
                         tries += 1
-                        debug_exc_log(log, exc, "Failed to restore music voice channel %s", vc_id)
+                        debug_exc_log(
+                            log, exc, "Failed to restore music voice channel %s", vc_id)
                         if vc is None:
                             break
                         else:
@@ -228,7 +235,8 @@ class StartUpTasks(MixinMeta, metaclass=CompositeMetaClass):
                         notify_channel = self.bot.get_channel(notify_channel)
                         if notify_channel:
                             await self.send_embed_msg(
-                                notify_channel, title=_("Couldn't get a valid track.")
+                                notify_channel, title=_(
+                                    "Couldn't get a valid track.")
                             )
                         return
                     except TrackEnqueueError:

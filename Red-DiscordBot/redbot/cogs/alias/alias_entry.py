@@ -61,7 +61,8 @@ class AliasEntry:
             prev = view.index
             word = view.get_quoted_word()
             if len(word) < view.index - prev:
-                word = "".join((view.buffer[prev], word, view.buffer[view.index - 1]))
+                word = "".join(
+                    (view.buffer[prev], word, view.buffer[view.index - 1]))
             extra.append(word)
             view.skip_ws()
         return extra
@@ -78,7 +79,8 @@ class AliasEntry:
 
     @classmethod
     def from_json(cls, data: dict):
-        ret = cls(data["name"], data["command"], data["creator"], data["guild"])
+        ret = cls(data["name"], data["command"],
+                  data["creator"], data["guild"])
         ret.uses = data.get("uses", 0)
         return ret
 
@@ -97,7 +99,8 @@ class AliasCache:
                 if a.get("creator", 0) == user_id:
                     a["creator"] = 0xDE1
                     if self._cache_enabled:
-                        self._aliases[None][a["name"]] = AliasEntry.from_json(a)
+                        self._aliases[None][a["name"]
+                                            ] = AliasEntry.from_json(a)
 
         all_guilds = await self.config.all_guilds()
         async for guild_id, guild_data in AsyncIter(all_guilds.items(), steps=100):
@@ -112,7 +115,8 @@ class AliasCache:
                     if a.get("creator", 0) == user_id:
                         a["creator"] = 0xDE1
                         if self._cache_enabled:
-                            self._aliases[guild_id][a["name"]] = AliasEntry.from_json(a)
+                            self._aliases[guild_id][a["name"]
+                                                    ] = AliasEntry.from_json(a)
 
     async def load_aliases(self):
         if not self._cache_enabled:
@@ -126,7 +130,8 @@ class AliasCache:
             if guild_id not in self._aliases:
                 self._aliases[guild_id] = {}
             for alias in guild_data["entries"]:
-                self._aliases[guild_id][alias["name"]] = AliasEntry.from_json(alias)
+                self._aliases[guild_id][alias["name"]
+                                        ] = AliasEntry.from_json(alias)
         self._loaded = True
 
     async def get_aliases(self, ctx: commands.Context) -> List[AliasEntry]:
@@ -196,7 +201,8 @@ class AliasCache:
             try:
                 indices = [int(a[0]) for a in indices]
             except IndexError:
-                raise ArgParseError(_("Arguments must be specified with a number."))
+                raise ArgParseError(
+                    _("Arguments must be specified with a number."))
             low = min(indices)
             indices = [a - low for a in indices]
             high = max(indices)
@@ -206,7 +212,8 @@ class AliasCache:
                     _("Arguments must be sequential. Missing arguments: ")
                     + ", ".join(str(i + low) for i in gaps)
                 )
-            command = command.format(*(f"{{{i}}}" for i in range(-low, high + low + 1)))
+            command = command.format(
+                *(f"{{{i}}}" for i in range(-low, high + low + 1)))
         return command
 
     async def add_alias(
@@ -220,7 +227,8 @@ class AliasCache:
             if self._cache_enabled:
                 self._aliases[None][alias.name] = alias
         else:
-            alias = AliasEntry(alias_name, command, ctx.author.id, ctx.guild.id)
+            alias = AliasEntry(alias_name, command,
+                               ctx.author.id, ctx.guild.id)
             settings = self.config.guild(ctx.guild)
             if self._cache_enabled:
                 if ctx.guild.id not in self._aliases:

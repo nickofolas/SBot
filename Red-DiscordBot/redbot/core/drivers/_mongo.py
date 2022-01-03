@@ -50,12 +50,14 @@ class MongoDriver(BaseDriver):
 
         if user is not None and password is not None:
             url = "{}://{}:{}@{}{}/{}".format(
-                uri, quote_plus(user), quote_plus(password), host, ports, database
+                uri, quote_plus(user), quote_plus(
+                    password), host, ports, database
             )
         else:
             url = "{}://{}{}/{}".format(uri, host, ports, database)
 
-        cls._conn = motor.motor_asyncio.AsyncIOMotorClient(url, retryWrites=True)
+        cls._conn = motor.motor_asyncio.AsyncIOMotorClient(
+            url, retryWrites=True)
 
     @classmethod
     async def teardown(cls) -> None:
@@ -157,7 +159,8 @@ class MongoDriver(BaseDriver):
         mongo_collection = self.get_collection(identifier_data.category)
 
         pkey_filter = self.generate_primary_key_filter(identifier_data)
-        escaped_identifiers = list(map(self._escape_key, identifier_data.identifiers))
+        escaped_identifiers = list(
+            map(self._escape_key, identifier_data.identifiers))
         if len(identifier_data.identifiers) > 0:
             proj = {"_id": False, ".".join(escaped_identifiers): True}
 
@@ -168,7 +171,8 @@ class MongoDriver(BaseDriver):
             partial = await self.rebuild_dataset(identifier_data, cursor)
 
         if partial is None:
-            raise KeyError("No matching document was found and Config expects a KeyError.")
+            raise KeyError(
+                "No matching document was found and Config expects a KeyError.")
 
         for i in escaped_identifiers:
             partial = partial[i]
@@ -178,8 +182,10 @@ class MongoDriver(BaseDriver):
 
     async def set(self, identifier_data: IdentifierData, value=None):
         uuid = self._escape_key(identifier_data.uuid)
-        primary_key = list(map(self._escape_key, self.get_primary_key(identifier_data)))
-        dot_identifiers = ".".join(map(self._escape_key, identifier_data.identifiers))
+        primary_key = list(
+            map(self._escape_key, self.get_primary_key(identifier_data)))
+        dot_identifiers = ".".join(
+            map(self._escape_key, identifier_data.identifiers))
         if isinstance(value, dict):
             if len(value) == 0:
                 await self.clear(identifier_data)
@@ -190,7 +196,8 @@ class MongoDriver(BaseDriver):
 
         if num_pkeys >= identifier_data.primary_key_len:
             # We're setting at the document level or below.
-            dot_identifiers = ".".join(map(self._escape_key, identifier_data.identifiers))
+            dot_identifiers = ".".join(
+                map(self._escape_key, identifier_data.identifiers))
             if dot_identifiers:
                 update_stmt = {"$set": {dot_identifiers: value}}
             else:
@@ -262,9 +269,11 @@ class MongoDriver(BaseDriver):
                         except KeyError:
                             # We've found the primary key of an old document which isn't in the
                             # updated set of documents - it should be deleted.
-                            to_delete.append({"_id": {"RED_uuid": uuid, "RED_primary_key": pkey}})
+                            to_delete.append(
+                                {"_id": {"RED_uuid": uuid, "RED_primary_key": pkey}})
                         else:
-                            _filter = {"_id": {"RED_uuid": uuid, "RED_primary_key": pkey}}
+                            _filter = {
+                                "_id": {"RED_uuid": uuid, "RED_primary_key": pkey}}
                             new_document.update(_filter)
                             to_replace.append((_filter, new_document))
 
@@ -286,7 +295,8 @@ class MongoDriver(BaseDriver):
 
     def generate_primary_key_filter(self, identifier_data: IdentifierData):
         uuid = self._escape_key(identifier_data.uuid)
-        primary_key = list(map(self._escape_key, self.get_primary_key(identifier_data)))
+        primary_key = list(
+            map(self._escape_key, self.get_primary_key(identifier_data)))
         ret = {"_id.RED_uuid": uuid}
         if len(identifier_data.identifiers) > 0:
             ret["_id.RED_primary_key"] = primary_key
@@ -305,7 +315,8 @@ class MongoDriver(BaseDriver):
         num_missing_pkeys = pkey_len - len(primary_keys)
         if num_missing_pkeys == 1:
             for pkey, document in data.items():
-                document["_id"] = {"RED_uuid": uuid, "RED_primary_key": primary_keys + [pkey]}
+                document["_id"] = {"RED_uuid": uuid,
+                                   "RED_primary_key": primary_keys + [pkey]}
                 yield document
         else:
             for pkey, inner_data in data.items():
@@ -325,7 +336,8 @@ class MongoDriver(BaseDriver):
         if identifier_data.identifiers:
             # This covers case 1
             mongo_collection = self.get_collection(identifier_data.category)
-            dot_identifiers = ".".join(map(self._escape_key, identifier_data.identifiers))
+            dot_identifiers = ".".join(
+                map(self._escape_key, identifier_data.identifiers))
             await mongo_collection.update_one(pkey_filter, update={"$unset": {dot_identifiers: 1}})
         elif identifier_data.category:
             # This covers cases 2-4
@@ -425,7 +437,8 @@ class MongoDriver(BaseDriver):
         return ret
 
 
-_SPECIAL_CHAR_PATTERN: Pattern[str] = re.compile(r"([.$]|\\U0000002E|\\U00000024)")
+_SPECIAL_CHAR_PATTERN: Pattern[str] = re.compile(
+    r"([.$]|\\U0000002E|\\U00000024)")
 _SPECIAL_CHARS = {
     ".": "\\U0000002E",
     "$": "\\U00000024",

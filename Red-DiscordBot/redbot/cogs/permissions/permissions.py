@@ -28,13 +28,16 @@ COG = "COG"
 COMMAND = "COMMAND"
 GLOBAL = 0
 
-_OldConfigSchema = Dict[int, Dict[str, Dict[str, Dict[str, Dict[str, List[int]]]]]]
+_OldConfigSchema = Dict[int,
+                        Dict[str, Dict[str, Dict[str, Dict[str, List[int]]]]]]
 _NewConfigSchema = Dict[str, Dict[int, Dict[str, Dict[int, bool]]]]
 
 # The strings in the schema are constants and should get extracted, but not translated until
 # runtime.
 translate = _
 def _(s): return s
+
+
 YAML_SCHEMA = Schema(
     Or(
         {
@@ -43,11 +46,13 @@ YAML_SCHEMA = Schema(
                     Or(str, int): Or(
                         {
                             Or(int, "default"): And(
-                                bool, error=_("Rules must be either `true` or `false`.")
+                                bool, error=_(
+                                    "Rules must be either `true` or `false`.")
                             )
                         },
                         {},
-                        error=_("Keys under command names must be IDs (numbers) or `default`."),
+                        error=_(
+                            "Keys under command names must be IDs (numbers) or `default`."),
                     )
                 },
                 {},
@@ -58,7 +63,8 @@ YAML_SCHEMA = Schema(
                     Or(str, int): Or(
                         {
                             Or(int, "default"): And(
-                                bool, error=_("Rules must be either `true` or `false`.")
+                                bool, error=_(
+                                    "Rules must be either `true` or `false`.")
                             )
                         },
                         {},
@@ -107,7 +113,8 @@ class Permissions(commands.Cog):
         #       -> True|False
 
         # Note that GLOBAL rules are denoted by an ID of 0.
-        self.config = config.Config.get_conf(self, identifier=78631113035100160)
+        self.config = config.Config.get_conf(
+            self, identifier=78631113035100160)
         self.config.register_global(version="")
         self.config.init_custom(COG, 1)
         self.config.register_custom(COG)
@@ -156,7 +163,8 @@ class Permissions(commands.Cog):
                         if obj:
                             # delegate to remove rule here
                             await self._remove_rule(
-                                CogOrCommand(typename, obj.qualified_name, obj),
+                                CogOrCommand(
+                                    typename, obj.qualified_name, obj),
                                 user_id,
                                 int(guild_id),
                             )
@@ -643,7 +651,8 @@ class Permissions(commands.Cog):
             await ctx.send(_("Invalid syntax: ") + str(e))
         except SchemaError as e:
             await ctx.send(
-                _("Your YAML file did not match the schema: ") + translate(e.errors[-1])
+                _("Your YAML file did not match the schema: ") +
+                translate(e.errors[-1])
             )
         else:
             await ctx.send(_("Rules set."))
@@ -666,7 +675,8 @@ class Permissions(commands.Cog):
                 continue
             conf = self.config.custom(category)
             for cmd_name, cmd_rules in rules_dict.items():
-                cmd_rules = {str(model_id): rule for model_id, rule in cmd_rules.items()}
+                cmd_rules = {str(model_id): rule for model_id,
+                             rule in cmd_rules.items()}
                 await conf.set_raw(cmd_name, str(guild_id), value=cmd_rules)
                 cmd_obj = getter(str(cmd_name))
                 if cmd_obj is not None:
@@ -681,9 +691,11 @@ class Permissions(commands.Cog):
             for cmd_name, cmd_rules in rules_dict.items():
                 model_rules = cmd_rules.get(str(guild_id))
                 if model_rules is not None:
-                    guild_rules[category][cmd_name] = dict(_int_key_map(model_rules.items()))
+                    guild_rules[category][cmd_name] = dict(
+                        _int_key_map(model_rules.items()))
 
-        fp = io.BytesIO(yaml.dump(guild_rules, default_flow_style=False).encode("utf-8"))
+        fp = io.BytesIO(
+            yaml.dump(guild_rules, default_flow_style=False).encode("utf-8"))
         return discord.File(fp, filename="acl.yaml")
 
     @staticmethod
@@ -692,7 +704,8 @@ class Permissions(commands.Cog):
         if ctx.guild is None or ctx.guild.me.permissions_in(ctx.channel).add_reactions:
             msg = await ctx.send(_("Are you sure?"))
             # noinspection PyAsyncCall
-            task = start_adding_reactions(msg, ReactionPredicate.YES_OR_NO_EMOJIS)
+            task = start_adding_reactions(
+                msg, ReactionPredicate.YES_OR_NO_EMOJIS)
             pred = ReactionPredicate.yes_or_no(msg, ctx.author)
             try:
                 await ctx.bot.wait_for("reaction_add", check=pred, timeout=30)
@@ -850,7 +863,8 @@ class Permissions(commands.Cog):
                 if model_id == "default":
                     cog_or_command.set_default_rule(None, guild_id=guild_id)
                 else:
-                    cog_or_command.clear_rule_for(int(model_id), guild_id=guild_id)
+                    cog_or_command.clear_rule_for(
+                        int(model_id), guild_id=guild_id)
 
 
 def _int_key_map(items_view: ItemsView[str, Any]) -> Iterator[Tuple[Union[str, int], Any]]:

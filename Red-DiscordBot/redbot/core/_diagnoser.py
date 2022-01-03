@@ -180,7 +180,8 @@ class DetailedGlobalCallOnceChecksMixin(IssueDiagnoserBase):
                     "If you instead want to clear the allowlist and let all users"
                     " run commands freely, you can run {command_2} to do that."
                 ).format(
-                    command_1=self._format_command_name(f"allowlist add {self.author.id}"),
+                    command_1=self._format_command_name(
+                        f"allowlist add {self.author.id}"),
                     user=escape(str(self.author), formatting=True),
                     command_2=self._format_command_name("allowlist clear"),
                 ),
@@ -197,7 +198,8 @@ class DetailedGlobalCallOnceChecksMixin(IssueDiagnoserBase):
                 "If you instead want to clear the blocklist and let all users"
                 " run commands freely, you can run {command_2} to do that."
             ).format(
-                command_1=self._format_command_name(f"blocklist remove {self.author.id}"),
+                command_1=self._format_command_name(
+                    f"blocklist remove {self.author.id}"),
                 user=escape(str(self.author), formatting=True),
                 command_2=self._format_command_name("blocklist clear"),
             ),
@@ -220,13 +222,16 @@ class DetailedGlobalCallOnceChecksMixin(IssueDiagnoserBase):
                     "If you instead want to clear the local allowlist and let all users"
                     " run commands freely, you can run {command_2} to do that."
                 ).format(
-                    command_1=self._format_command_name(f"localallowlist add {self.author.id}"),
+                    command_1=self._format_command_name(
+                        f"localallowlist add {self.author.id}"),
                     user=escape(str(self.author), formatting=True),
-                    command_2=self._format_command_name("localallowlist clear"),
+                    command_2=self._format_command_name(
+                        "localallowlist clear"),
                 ),
             )
 
-        details = _("Local blocklist prevents the user from running this command.")
+        details = _(
+            "Local blocklist prevents the user from running this command.")
         guild_blacklist = await self.bot.get_blacklist(self.guild)
         ids = {role.id for role in self.author.roles if not role.is_default()}
         ids.add(self.author.id)
@@ -236,7 +241,8 @@ class DetailedGlobalCallOnceChecksMixin(IssueDiagnoserBase):
         except KeyError:
             # author is not part of the blocklist
             to_remove = list(intersection)
-            role_names = [self.guild.get_role(role_id).name for role_id in to_remove]
+            role_names = [self.guild.get_role(
+                role_id).name for role_id in to_remove]
             return CheckResult(
                 False,
                 label,
@@ -253,14 +259,16 @@ class DetailedGlobalCallOnceChecksMixin(IssueDiagnoserBase):
                         f"localblocklist remove {' '.join(map(str, to_remove))}"
                     ),
                     roles=humanize_list(role_names),
-                    command_2=self._format_command_name("localblocklist clear"),
+                    command_2=self._format_command_name(
+                        "localblocklist clear"),
                 ),
             )
 
         if intersection:
             # both author and some of their roles are part of the blocklist
             to_remove = list(intersection)
-            role_names = [self.guild.get_role(role_id).name for role_id in to_remove]
+            role_names = [self.guild.get_role(
+                role_id).name for role_id in to_remove]
             to_remove.append(self.author.id)
             return CheckResult(
                 False,
@@ -279,7 +287,8 @@ class DetailedGlobalCallOnceChecksMixin(IssueDiagnoserBase):
                     ),
                     user=escape(str(self.author), formatting=True),
                     roles=humanize_list(role_names),
-                    command_2=self._format_command_name("localblocklist clear"),
+                    command_2=self._format_command_name(
+                        "localblocklist clear"),
                 ),
             )
 
@@ -296,7 +305,8 @@ class DetailedGlobalCallOnceChecksMixin(IssueDiagnoserBase):
                 "If you instead want to clear the local blocklist and let all users"
                 " run commands freely, you can run {command_2} to do that."
             ).format(
-                command_1=self._format_command_name(f"localblocklist remove {self.author.id}"),
+                command_1=self._format_command_name(
+                    f"localblocklist remove {self.author.id}"),
                 user=escape(str(self.author), formatting=True),
                 command_2=self._format_command_name("localblocklist clear"),
             ),
@@ -324,7 +334,8 @@ class DetailedCommandChecksMixin(IssueDiagnoserBase):
     ) -> CheckResult:
         command = self.ctx.command
         details = (
-            failed_with_message.format(command=self._format_command_name(command), message=msg)
+            failed_with_message.format(
+                command=self._format_command_name(command), message=msg)
             if msg
             else failed_without_message.format(command=self._format_command_name(command))
         )
@@ -354,7 +365,8 @@ class DetailedCommandChecksMixin(IssueDiagnoserBase):
                     "To fix this issue, you can run {command}"
                     " which will enable the {affected_command} command in this guild."
                 ).format(
-                    command=self._format_command_name(f"command enable guild {command}"),
+                    command=self._format_command_name(
+                        f"command enable guild {command}"),
                     affected_command=self._format_command_name(command),
                 ),
             )
@@ -578,8 +590,10 @@ class DetailedCommandChecksMixin(IssueDiagnoserBase):
     async def _check_requires_permission_rules(
         self, cog_or_command: commands.CogCommandMixin
     ) -> CheckResult:
-        label = _("User's discord permissions, privilege level and rules from Permissions cog")
-        should_invoke, next_state = cog_or_command.requires._get_transitioned_state(self.ctx)
+        label = _(
+            "User's discord permissions, privilege level and rules from Permissions cog")
+        should_invoke, next_state = cog_or_command.requires._get_transitioned_state(
+            self.ctx)
         if should_invoke is None:
             return await self._check_requires_verify_user(label, cog_or_command)
         elif isinstance(next_state, dict):
@@ -612,7 +626,8 @@ class DetailedCommandChecksMixin(IssueDiagnoserBase):
             label,
             (
                 partial(self._check_requires_permission_checks, cog_or_command),
-                partial(self._check_requires_user_perms_and_privilege_level, cog_or_command),
+                partial(
+                    self._check_requires_user_perms_and_privilege_level, cog_or_command),
             ),
             final_check_result=CheckResult(
                 False,
@@ -679,7 +694,8 @@ class DetailedCommandChecksMixin(IssueDiagnoserBase):
                     "The user is missing some of the channel permissions ({permissions})"
                     " required by the {command} command."
                 ).format(
-                    permissions=permissions, command=self._format_command_name(cog_or_command)
+                    permissions=permissions, command=self._format_command_name(
+                        cog_or_command)
                 )
             )
         if requires.privilege_level is not None:
@@ -698,7 +714,8 @@ class DetailedCommandChecksMixin(IssueDiagnoserBase):
                     "The user is missing the privilege level ({privilege_level})"
                     " required by the {cog} cog."
                 ).format(
-                    privilege_level=privilege_level, cog=inline(cog_or_command.qualified_name)
+                    privilege_level=privilege_level, cog=inline(
+                        cog_or_command.qualified_name)
                 )
                 if cog_or_command is self.ctx.cog
                 else _(
@@ -826,7 +843,8 @@ class RootDiagnosersMixin(
                     "To fix this issue, you can run {command}"
                     " which will enable the {affected_command} command globally."
                 ).format(
-                    command=self._format_command_name(f"command enable global {parent}"),
+                    command=self._format_command_name(
+                        f"command enable global {parent}"),
                     affected_command=self._format_command_name(parent),
                 ),
             )
@@ -840,7 +858,8 @@ class RootDiagnosersMixin(
                     "To fix this issue, you can run {command}"
                     " which will enable the {affected_command} command globally."
                 ).format(
-                    command=self._format_command_name(f"command enable global {command}"),
+                    command=self._format_command_name(
+                        f"command enable global {command}"),
                     affected_command=self._format_command_name(command),
                 ),
             )
@@ -905,7 +924,8 @@ class IssueDiagnoser(RootDiagnosersMixin, IssueDiagnoserBase):
             )
             lines.append(f"{prefix}{idx}. {subresult.label}: {status}")
             lines.extend(
-                self._get_message_from_check_result(subresult, prefix=f"  {prefix}{idx}.")
+                self._get_message_from_check_result(
+                    subresult, prefix=f"  {prefix}{idx}.")
             )
         return lines
 
@@ -950,8 +970,10 @@ class IssueDiagnoser(RootDiagnosersMixin, IssueDiagnoserBase):
 
         lines.append(_("\nHere's a detailed report in case you need it:"))
         lines.append(">>> " + bold(_("Channel: ")) + self.channel.mention)
-        lines.append(bold(_("Command caller: ")) + escape(str(self.author), formatting=True))
-        lines.append(bold(_("Command: ")) + self._format_command_name(self.command))
+        lines.append(bold(_("Command caller: ")) +
+                     escape(str(self.author), formatting=True))
+        lines.append(bold(_("Command: ")) +
+                     self._format_command_name(self.command))
         lines.append(bold(_("Tests that have been ran:")))
         lines.extend(self._get_message_from_check_result(result))
 

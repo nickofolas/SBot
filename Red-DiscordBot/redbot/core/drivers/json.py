@@ -106,7 +106,8 @@ class JsonDriver(BaseDriver):
             _driver_counts[self.cog_name] = 0
         _driver_counts[self.cog_name] += 1
 
-        _finalizers.append(weakref.finalize(self, finalize_driver, self.cog_name))
+        _finalizers.append(weakref.finalize(
+            self, finalize_driver, self.cog_name))
 
         if self.data is not None:
             return
@@ -203,7 +204,8 @@ class JsonDriver(BaseDriver):
 
         async with self._lock:
             for category, all_data in cog_data:
-                splitted_pkey = self._split_primary_key(category, custom_group_data, all_data)
+                splitted_pkey = self._split_primary_key(
+                    category, custom_group_data, all_data)
                 for pkey, data in splitted_pkey:
                     ident_data = IdentifierData(
                         self.cog_name,

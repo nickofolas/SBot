@@ -113,7 +113,7 @@ class SmartReact(commands.Cog):
 
         except (discord.errors.HTTPException, discord.errors.InvalidArgument):
             await message.channel.send("That's not an emoji I recognize. "
-                               "(might be custom!)")
+                                       "(might be custom!)")
 
     # Thanks irdumb#1229 for the help making this "more Pythonic"
     @commands.Cog.listener()

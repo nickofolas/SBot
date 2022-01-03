@@ -401,9 +401,11 @@ def convert(instance, backend):
     default_dirs["DATA_PATH"] = str(Path(instance_data[instance]["DATA_PATH"]))
 
     if current_backend == BackendType.MONGOV1:
-        raise RuntimeError("Please see the 3.2 release notes for upgrading a bot using mongo.")
+        raise RuntimeError(
+            "Please see the 3.2 release notes for upgrading a bot using mongo.")
     else:
-        new_storage_details = asyncio.run(do_migration(current_backend, target))
+        new_storage_details = asyncio.run(
+            do_migration(current_backend, target))
 
     if new_storage_details is not None:
         default_dirs["STORAGE_TYPE"] = target.value

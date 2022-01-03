@@ -53,7 +53,8 @@ class ModSettings(MixinMeta):
             yes_or_no = _("Overridden by another setting")
         else:
             yes_or_no = _("Yes") if track_nicknames else _("No")
-        msg += _("Track nickname changes: {yes_or_no}\n").format(yes_or_no=yes_or_no)
+        msg += _("Track nickname changes: {yes_or_no}\n").format(
+            yes_or_no=yes_or_no)
         msg += _("Delete repeats: {num_repeats}\n").format(
             num_repeats=_("after {num} repeats").format(num=delete_repeats)
             if delete_repeats != -1
@@ -149,14 +150,17 @@ class ModSettings(MixinMeta):
         if enabled is None:
             state = await self.config.guild(guild).mention_spam.strict()
             if state:
-                msg = _("Mention spam currently accounts for multiple mentions of the same user.")
+                msg = _(
+                    "Mention spam currently accounts for multiple mentions of the same user.")
             else:
-                msg = _("Mention spam currently only accounts for mentions of different users.")
+                msg = _(
+                    "Mention spam currently only accounts for mentions of different users.")
             await ctx.send(msg)
             return
 
         if enabled:
-            msg = _("Mention spam will now account for multiple mentions of the same user.")
+            msg = _(
+                "Mention spam will now account for multiple mentions of the same user.")
         else:
             msg = _("Mention spam will only account for mentions of different users.")
         await self.config.guild(guild).mention_spam.strict.set(enabled)
@@ -294,14 +298,17 @@ class ModSettings(MixinMeta):
         if repeats is not None:
             if repeats == -1:
                 await self.config.guild(guild).delete_repeats.set(repeats)
-                self.cache.pop(guild.id, None)  # remove cache with old repeat limits
+                # remove cache with old repeat limits
+                self.cache.pop(guild.id, None)
                 await ctx.send(_("Repeated messages will be ignored."))
             elif 2 <= repeats <= 20:
                 await self.config.guild(guild).delete_repeats.set(repeats)
                 # purge and update cache to new repeat limits
-                self.cache[guild.id] = defaultdict(lambda: deque(maxlen=repeats))
+                self.cache[guild.id] = defaultdict(
+                    lambda: deque(maxlen=repeats))
                 await ctx.send(
-                    _("Messages repeated up to {num} times will be deleted.").format(num=repeats)
+                    _("Messages repeated up to {num} times will be deleted.").format(
+                        num=repeats)
                 )
             else:
                 await ctx.send(
@@ -360,7 +367,8 @@ class ModSettings(MixinMeta):
         if enabled is None:
             setting = await self.config.guild(guild).dm_on_kickban()
             await ctx.send(
-                _("DM when kicked/banned is currently set to: {setting}").format(setting=setting)
+                _("DM when kicked/banned is currently set to: {setting}").format(
+                    setting=setting)
             )
             return
         await self.config.guild(guild).dm_on_kickban.set(enabled)

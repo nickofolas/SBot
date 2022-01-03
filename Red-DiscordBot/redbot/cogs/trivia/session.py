@@ -16,6 +16,8 @@ T_ = Translator("TriviaSession", __file__)
 
 
 def _(s): return s
+
+
 _REVEAL_MESSAGES = (
     _("I know this one! {answer}!"),
     _("Easy: {answer}."),
@@ -117,7 +119,8 @@ class TriviaSession:
         except (discord.NotFound, discord.Forbidden):
             self.stop()
         except Exception as exc:
-            LOG.error("A trivia session has encountered an error.\n", exc_info=exc)
+            LOG.error("A trivia session has encountered an error.\n",
+                      exc_info=exc)
             asyncio.create_task(
                 self.ctx.send(
                     _(
@@ -141,7 +144,8 @@ class TriviaSession:
             async with self.ctx.typing():
                 await asyncio.sleep(3)
             self.count += 1
-            msg = bold(_("Question number {num}!").format(num=self.count)) + "\n\n" + question
+            msg = bold(_("Question number {num}!").format(
+                num=self.count)) + "\n\n" + question
             await self.ctx.send(msg)
             continue_ = await self.wait_for_answer(answers, delay, timeout)
             if continue_ is False:
@@ -158,12 +162,14 @@ class TriviaSession:
         for idx, tup in enumerate(self.settings["lists"].items()):
             name, author = tup
             if author:
-                title = _("{trivia_list} (by {author})").format(trivia_list=name, author=author)
+                title = _("{trivia_list} (by {author})").format(
+                    trivia_list=name, author=author)
             else:
                 title = name
             list_names.append(title)
         await self.ctx.send(
-            _("Starting Trivia: {list_names}").format(list_names=humanize_list(list_names))
+            _("Starting Trivia: {list_names}").format(
+                list_names=humanize_list(list_names))
         )
 
     def _iter_questions(self):
@@ -214,9 +220,11 @@ class TriviaSession:
                 return False
             if self.settings["reveal_answer"]:
                 if self.settings["use_spoilers"]:
-                    reply = T_(random.choice(SPOILER_REVEAL_MESSAGES)).format(answer=answers[0])
+                    reply = T_(random.choice(SPOILER_REVEAL_MESSAGES)
+                               ).format(answer=answers[0])
                 else:
-                    reply = T_(random.choice(_REVEAL_MESSAGES)).format(answer=answers[0])
+                    reply = T_(random.choice(_REVEAL_MESSAGES)
+                               ).format(answer=answers[0])
             else:
                 reply = T_(random.choice(_FAIL_MESSAGES))
             if self.settings["bot_plays"]:
@@ -225,7 +233,8 @@ class TriviaSession:
             await self.ctx.send(reply)
         else:
             self.scores[message.author] += 1
-            reply = _("You got it {user}! **+1** to you!").format(user=message.author.display_name)
+            reply = _(
+                "You got it {user}! **+1** to you!").format(user=message.author.display_name)
             await self.ctx.send(reply)
         return True
 
@@ -291,7 +300,8 @@ class TriviaSession:
         """Cancel whichever tasks this session is running."""
         self._task.cancel()
         channel = self.ctx.channel
-        LOG.debug("Force stopping trivia session; #%s in %s", channel, channel.guild.id)
+        LOG.debug("Force stopping trivia session; #%s in %s",
+                  channel, channel.guild.id)
 
     async def pay_winners(self, multiplier: float):
         """Pay the winner(s) of this trivia session.
@@ -322,7 +332,8 @@ class TriviaSession:
         if payout <= 0:
             return
         for winner in winners:
-            LOG.debug("Paying trivia winner: %d credits --> %s", payout, winner.name)
+            LOG.debug("Paying trivia winner: %d credits --> %s",
+                      payout, winner.name)
             try:
                 await bank.deposit_credits(winner, payout)
             except errors.BalanceTooHigh as e:
@@ -331,7 +342,8 @@ class TriviaSession:
             msg = _(
                 "Congratulations {users}! You have each received {num} {currency} for winning!"
             ).format(
-                users=humanize_list([bold(winner.display_name) for winner in winners]),
+                users=humanize_list([bold(winner.display_name)
+                                    for winner in winners]),
                 num=payout,
                 currency=await bank.get_currency_name(self.ctx.guild),
             )

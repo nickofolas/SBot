@@ -29,7 +29,8 @@ class BackendType(enum.Enum):
     MONGO = "MongoDBV2"
 
 
-_DRIVER_CLASSES = {BackendType.JSON: JsonDriver, BackendType.POSTGRES: PostgresDriver}
+_DRIVER_CLASSES = {BackendType.JSON: JsonDriver,
+                   BackendType.POSTGRES: PostgresDriver}
 
 
 def _get_driver_class_include_old(storage_type: Optional[BackendType] = None) -> Type[BaseDriver]:
@@ -69,7 +70,8 @@ def get_driver_class(storage_type: Optional[BackendType] = None) -> Type[BaseDri
     try:
         return _DRIVER_CLASSES[storage_type]
     except KeyError:
-        raise ValueError(f"No driver found for storage type {storage_type}") from None
+        raise ValueError(
+            f"No driver found for storage type {storage_type}") from None
 
 
 def get_driver(
@@ -115,7 +117,8 @@ def get_driver(
         if not allow_old:
             driver_cls: Type[BaseDriver] = get_driver_class(storage_type)
         else:
-            driver_cls: Type[BaseDriver] = _get_driver_class_include_old(storage_type)
+            driver_cls: Type[BaseDriver] = _get_driver_class_include_old(
+                storage_type)
     except ValueError:
         if storage_type in (BackendType.MONGOV1, BackendType.MONGO):
             raise RuntimeError(
@@ -123,5 +126,6 @@ def get_driver(
                 "Mongo support was removed in 3.2."
             ) from None
         else:
-            raise RuntimeError(f"Invalid driver type: '{storage_type}'") from None
+            raise RuntimeError(
+                f"Invalid driver type: '{storage_type}'") from None
     return driver_cls(cog_name, identifier, **kwargs)

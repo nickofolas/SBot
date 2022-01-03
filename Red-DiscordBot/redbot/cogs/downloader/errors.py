@@ -40,7 +40,8 @@ class GitException(DownloaderException):
 
     def __init__(self, message: str, git_command: str) -> None:
         self.git_command = git_command
-        super().__init__(f"Git command failed: {git_command}\nError message: {message}")
+        super().__init__(
+            f"Git command failed: {git_command}\nError message: {message}")
 
 
 class InvalidRepoName(DownloaderException):

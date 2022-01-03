@@ -80,7 +80,8 @@ class Streams(commands.Cog):
         self.yt_cid_pattern = re.compile("^UC[-_A-Za-z0-9]{21}[AQgw]$")
 
         self._ready_event: asyncio.Event = asyncio.Event()
-        self._init_task: asyncio.Task = self.bot.loop.create_task(self.initialize())
+        self._init_task: asyncio.Task = self.bot.loop.create_task(
+            self.initialize())
 
     async def red_delete_data_for_user(self, **kwargs):
         """ Nothing to delete """
@@ -153,7 +154,8 @@ class Streams(commands.Cog):
                     "or in DM with the bot."
                 ).format(
                     command="`[p]set api twitch client_id {} client_secret {}`".format(
-                        _("<your_client_id_here>"), _("<your_client_secret_here>")
+                        _("<your_client_id_here>"), _(
+                            "<your_client_secret_here>")
                     )
                 )
                 if notified_owner_missing_twitch_secret is False:
@@ -191,13 +193,15 @@ class Streams(commands.Cog):
                         data["message"],
                     )
                 else:
-                    log.error("Twitch OAuth2 API request failed with status code %s", req.status)
+                    log.error(
+                        "Twitch OAuth2 API request failed with status code %s", req.status)
 
                 if req.status != 200:
                     return
 
         self.ttv_bearer_cache = data
-        self.ttv_bearer_cache["expires_at"] = datetime.now().timestamp() + data.get("expires_in")
+        self.ttv_bearer_cache["expires_at"] = datetime.now(
+        ).timestamp() + data.get("expires_in")
 
     async def maybe_renew_twitch_bearer_token(self) -> None:
         if self.ttv_bearer_cache:
@@ -394,7 +398,8 @@ class Streams(commands.Cog):
             is_yt = _class.__name__ == "YoutubeStream"
             is_twitch = _class.__name__ == "TwitchStream"
             if is_yt and not self.check_name_or_id(channel_name):
-                stream = _class(_bot=self.bot, id=channel_name, token=token, config=self.config)
+                stream = _class(_bot=self.bot, id=channel_name,
+                                token=token, config=self.config)
             elif is_twitch:
                 await self.maybe_renew_twitch_bearer_token()
                 stream = _class(
@@ -409,7 +414,8 @@ class Streams(commands.Cog):
                         _bot=self.bot, name=channel_name, token=token, config=self.config
                     )
                 else:
-                    stream = _class(_bot=self.bot, name=channel_name, token=token)
+                    stream = _class(
+                        _bot=self.bot, name=channel_name, token=token)
             try:
                 exists = await self.check_exists(stream)
             except InvalidTwitchCredentials:
@@ -466,7 +472,8 @@ class Streams(commands.Cog):
 
         await self.config.refresh_timer.set(refresh_time)
         await ctx.send(
-            _("Refresh timer set to {refresh_time} seconds".format(refresh_time=refresh_time))
+            _("Refresh timer set to {refresh_time} seconds".format(
+                refresh_time=refresh_time))
         )
 
     @streamset.command()
@@ -487,7 +494,8 @@ class Streams(commands.Cog):
             "or in DM with the bot.\n"
         ).format(
             command="`{}set api twitch client_id {} client_secret {}`".format(
-                ctx.clean_prefix, _("<your_client_id_here>"), _("<your_client_secret_here>")
+                ctx.clean_prefix, _("<your_client_id_here>"), _(
+                    "<your_client_secret_here>")
             )
         )
 
@@ -725,9 +733,11 @@ class Streams(commands.Cog):
         m = await channel.send(
             content,
             embed=embed,
-            allowed_mentions=discord.AllowedMentions(roles=True, everyone=True),
+            allowed_mentions=discord.AllowedMentions(
+                roles=True, everyone=True),
         )
-        message_data = {"guild": m.guild.id, "channel": m.channel.id, "message": m.id}
+        message_data = {"guild": m.guild.id,
+                        "channel": m.channel.id, "message": m.id}
         if is_schedule:
             message_data["is_schedule"] = True
         stream.messages.append(message_data)
@@ -750,7 +760,8 @@ class Streams(commands.Cog):
                         embed = await stream.is_online()
                 except StreamNotFound:
                     if stream.retry_count > MAX_RETRY_COUNT:
-                        log.info("Stream with name %s no longer exists. Removing...", stream.name)
+                        log.info(
+                            "Stream with name %s no longer exists. Removing...", stream.name)
                         to_remove.append(stream)
                     else:
                         log.info(
@@ -817,10 +828,13 @@ class Streams(commands.Cog):
                                     "{stream.name}", str(stream.name)
                                 )  # Backwards compatibility
                                 content = content.replace(
-                                    "{stream.display_name}", str(stream.display_name)
+                                    "{stream.display_name}", str(
+                                        stream.display_name)
                                 )
-                                content = content.replace("{stream}", str(stream.name))
-                                content = content.replace("{mention}", mention_str)
+                                content = content.replace(
+                                    "{stream}", str(stream.name))
+                                content = content.replace(
+                                    "{mention}", mention_str)
                             else:
                                 content = _("{mention}, {display_name} is live!").format(
                                     mention=mention_str,
@@ -838,9 +852,11 @@ class Streams(commands.Cog):
                                     "{stream.name}", str(stream.name)
                                 )  # Backwards compatibility
                                 content = content.replace(
-                                    "{stream.display_name}", str(stream.display_name)
+                                    "{stream.display_name}", str(
+                                        stream.display_name)
                                 )
-                                content = content.replace("{stream}", str(stream.name))
+                                content = content.replace(
+                                    "{stream}", str(stream.name))
                             else:
                                 content = _("{display_name} is live!").format(
                                     display_name=escape(
@@ -855,7 +871,8 @@ class Streams(commands.Cog):
                                 await role.edit(mentionable=False)
                         await self.save_streams()
             except Exception as e:
-                log.error("An error has occured with Streams. Please report it.", exc_info=e)
+                log.error(
+                    "An error has occured with Streams. Please report it.", exc_info=e)
 
         if to_remove:
             for stream in to_remove:
@@ -875,7 +892,8 @@ class Streams(commands.Cog):
         if guild_data["mention_here"]:
             mentions.append("@here")
         can_manage_roles = guild.me.guild_permissions.manage_roles
-        can_mention_everyone = channel.permissions_for(guild.me).mention_everyone
+        can_mention_everyone = channel.permissions_for(
+            guild.me).mention_everyone
         for role in guild.roles:
             if await self.config.role(role).mention():
                 if not can_mention_everyone and can_manage_roles and not role.mentionable:
@@ -911,7 +929,8 @@ class Streams(commands.Cog):
             if token:
                 if _class.__name__ == "TwitchStream":
                     raw_stream["token"] = token.get("client_id")
-                    raw_stream["bearer"] = self.ttv_bearer_cache.get("access_token", None)
+                    raw_stream["bearer"] = self.ttv_bearer_cache.get(
+                        "access_token", None)
                 else:
                     if _class.__name__ == "YoutubeStream":
                         raw_stream["config"] = self.config

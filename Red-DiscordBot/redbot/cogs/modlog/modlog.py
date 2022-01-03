@@ -52,7 +52,8 @@ class ModLog(commands.Cog):
             if channel.permissions_for(guild.me).send_messages:
                 await modlog.set_modlog_channel(guild, channel)
                 await ctx.send(
-                    _("Mod events will be sent to {channel}.").format(channel=channel.mention)
+                    _("Mod events will be sent to {channel}.").format(
+                        channel=channel.mention)
                 )
             else:
                 await ctx.send(
@@ -94,7 +95,8 @@ class ModLog(commands.Cog):
             await casetype.set_enabled(not enabled)
             await ctx.send(
                 _("Case creation for {action_name} actions is now {enabled}.").format(
-                    action_name=action, enabled=_("enabled") if not enabled else _("disabled")
+                    action_name=action, enabled=_(
+                        "enabled") if not enabled else _("disabled")
                 )
             )
 
@@ -250,8 +252,10 @@ class ModLog(commands.Cog):
         to_modify = {"reason": reason}
         if case_obj.moderator != author:
             to_modify["amended_by"] = author
-        to_modify["modified_at"] = ctx.message.created_at.replace(tzinfo=timezone.utc).timestamp()
+        to_modify["modified_at"] = ctx.message.created_at.replace(
+            tzinfo=timezone.utc).timestamp()
         await case_obj.edit(to_modify)
         await ctx.send(
-            _("Reason for case #{num} has been updated.").format(num=case_obj.case_number)
+            _("Reason for case #{num} has been updated.").format(
+                num=case_obj.case_number)
         )

@@ -17,4 +17,5 @@ class RawUserIds(Converter):
         if match := _id_regex.match(argument) or _mention_regex.match(argument):
             return int(match.group(1))
 
-        raise BadArgument(_("{} doesn't look like a valid user ID.").format(argument))
+        raise BadArgument(
+            _("{} doesn't look like a valid user ID.").format(argument))
