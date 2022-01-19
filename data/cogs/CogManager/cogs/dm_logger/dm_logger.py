@@ -36,7 +36,7 @@ class DMLogger(Cog):
         channel = msg.channel
         aut = msg.author
         # Check if a DM is sent by anyone but the bot owner.
-        if isinstance(channel, discord.abc.PrivateChannel) and not await self.bot.is_owner(aut) and not aut.bot:
+        if isinstance(channel, discord.DMChannel) and not await self.bot.is_owner(aut) and not aut.bot:
             # Log DM to CSV file.
             self.log_dm_to_csv(msg)
             # Check if the threshold for the periodical export is met.
