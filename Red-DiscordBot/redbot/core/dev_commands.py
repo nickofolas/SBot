@@ -137,11 +137,12 @@ class Dev(commands.Cog):
     async def git(self, ctx, *, command):
         """Execute a git command in shell."""
         stdout, stderr, code = await do_shell(fr"cd {ROOT} && git {command}")
-        await ctx.send(
-            "```\n" + stdout.decode("UTF-8", errors="ignore") + "\n```"
-            + "```\n" + stderr.decode("UTF-8", errors="ignore") + "\n```"
-            + code
-        )
+
+        embed = discord.Embed(title="Git Output", description=f"Code: {code}", color=await ctx.embed_colour()) \
+            .add_field(name="stdout", value="```\n" + stdout[:1000] or "N/A" + "\n```", inline=False) \
+            .add_field(name="stderr", value="```\n" + stderr[:1000] or "N/A" + "\n```", inline=False)
+
+        await ctx.send(embed=embed)
 
     @commands.command()
     @checks.is_owner()
