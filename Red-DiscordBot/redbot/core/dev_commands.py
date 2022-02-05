@@ -1,15 +1,17 @@
 import ast
 import asyncio
-import aiohttp
 import inspect
 import io
+import re
+import sys
 import textwrap
 import traceback
 import types
-import re
 from contextlib import redirect_stdout
 from copy import copy
+from pathlib import Path
 
+import aiohttp
 import discord
 
 from . import checks, commands
@@ -29,6 +31,18 @@ https://github.com/Rapptz/RoboDanny/blob/master/cogs/repl.py
 _ = Translator("Dev", __file__)
 
 START_CODE_BLOCK_RE = re.compile(r"^((```py(thon)?)(?=\s)|(```))")
+cwd = Path(sys.exec_prefix).resolve()
+ROOT = Path(*cwd.parts[:-1])
+
+
+async def do_shell(cmd):
+    proc = await asyncio.create_subprocess_shell(
+        cmd,
+        stdout=asyncio.subprocess.PIPE,
+        stderr=asyncio.subprocess.PIPE
+    )
+    stdout, stderr = await proc.communicate()
+    return stdout, stderr, str(proc.returncode)
 
 
 @cog_i18n(_)
@@ -117,6 +131,17 @@ class Dev(commands.Cog):
                 traceback.clear_frames(e.__traceback__)
                 env[name] = e
         return env
+
+    @commands.command()
+    @checks.is_owner()
+    async def git(self, ctx, *, command):
+        """Execute a git command in shell."""
+        stdout, stderr, code = await do_shell(fr"cd {ROOT} && git {command}")
+        await ctx.send(
+            "```\n" + stdout.decode("UTF-8", errors="ignore") + "\n```"
+            + "```\n" + stderr.decode("UTF-8", errors="ignore") + "\n```"
+            + code
+        )
 
     @commands.command()
     @checks.is_owner()
