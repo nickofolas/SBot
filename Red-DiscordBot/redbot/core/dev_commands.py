@@ -139,8 +139,8 @@ class Dev(commands.Cog):
         stdout, stderr, code = await do_shell(fr"cd {ROOT} && git {command}")
 
         embed = discord.Embed(title="Git Output", description=f"Code: {code}", color=await ctx.embed_colour()) \
-            .add_field(name="stdout", value="```\n" + stdout[:1000].decode("UTF-8", "ignore") or "N/A" + "\n```", inline=False) \
-            .add_field(name="stderr", value="```\n" + stderr[:1000].decode("UTF-8", "ignore") or "N/A" + "\n```", inline=False)
+            .add_field(name="stdout", value="```\n" + (stdout[:1000].decode("UTF-8", "ignore") or "N/A") + "\n```", inline=False) \
+            .add_field(name="stderr", value="```\n" + (stderr[:1000].decode("UTF-8", "ignore") or "N/A") + "\n```", inline=False)
 
         await ctx.send(embed=embed)
 
