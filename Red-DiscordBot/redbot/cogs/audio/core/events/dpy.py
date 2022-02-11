@@ -23,8 +23,7 @@ from ..cog_utils import HUMANIZED_PERM, CompositeMetaClass
 
 log = logging.getLogger("red.cogs.Audio.cog.Events.dpy")
 _ = Translator("Audio", Path(__file__))
-RE_CONVERSION: Final[Pattern] = re.compile(
-    'Converting to "(.*)" failed for parameter "(.*)".')
+RE_CONVERSION: Final[Pattern] = re.compile('Converting to "(.*)" failed for parameter "(.*)".')
 
 
 class DpyEvents(MixinMeta, metaclass=CompositeMetaClass):
@@ -204,8 +203,7 @@ class DpyEvents(MixinMeta, metaclass=CompositeMetaClass):
             await self.send_embed_msg(
                 ctx,
                 title=_("There was an issue communicating with Discord."),
-                description=_(
-                    "This error has been reported to the bot owner."),
+                description=_("This error has been reported to the bot owner."),
                 error=True,
             )
             log.exception(
@@ -266,8 +264,7 @@ class DpyEvents(MixinMeta, metaclass=CompositeMetaClass):
                 pass
 
         channel = self.rgetattr(member, "voice.channel", None)
-        bot_voice_state = self.rgetattr(
-            member, "guild.me.voice.self_deaf", None)
+        bot_voice_state = self.rgetattr(member, "guild.me.voice.self_deaf", None)
         if (
             channel
             and bot_voice_state is False

@@ -62,16 +62,11 @@ class AudioAPIInterface:
         self.config = config
         self.conn = conn
         self.cog = cog
-        self.spotify_api: SpotifyWrapper = SpotifyWrapper(
-            self.bot, self.config, session, self.cog)
-        self.youtube_api: YouTubeWrapper = YouTubeWrapper(
-            self.bot, self.config, session, self.cog)
-        self.local_cache_api = LocalCacheWrapper(
-            self.bot, self.config, self.conn, self.cog)
-        self.global_cache_api = GlobalCacheWrapper(
-            self.bot, self.config, session, self.cog)
-        self.persistent_queue_api = QueueInterface(
-            self.bot, self.config, self.conn, self.cog)
+        self.spotify_api: SpotifyWrapper = SpotifyWrapper(self.bot, self.config, session, self.cog)
+        self.youtube_api: YouTubeWrapper = YouTubeWrapper(self.bot, self.config, session, self.cog)
+        self.local_cache_api = LocalCacheWrapper(self.bot, self.config, self.conn, self.cog)
+        self.global_cache_api = GlobalCacheWrapper(self.bot, self.config, session, self.cog)
+        self.persistent_queue_api = QueueInterface(self.bot, self.config, self.conn, self.cog)
         self._session: aiohttp.ClientSession = session
         self._tasks: MutableMapping = {}
         self._lock: asyncio.Lock = asyncio.Lock()
@@ -90,8 +85,7 @@ class AudioAPIInterface:
         track: Optional[MutableMapping] = {}
         try:
             query_data = {}
-            date = datetime.datetime.now(
-                datetime.timezone.utc) - datetime.timedelta(days=7)
+            date = datetime.datetime.now(datetime.timezone.utc) - datetime.timedelta(days=7)
             date_timestamp = int(date.timestamp())
             query_data["day"] = date_timestamp
             max_age = await self.config.cache_age()
@@ -107,8 +101,7 @@ class AudioAPIInterface:
                 results = LoadResult(track)
                 track = random.choice(list(results.tracks))
         except Exception as exc:
-            debug_exc_log(
-                log, exc, "Failed to fetch a random track from database")
+            debug_exc_log(log, exc, "Failed to fetch a random track from database")
             track = {}
 
         if not track:
@@ -156,8 +149,7 @@ class AudioAPIInterface:
         async with self._lock:
             if lock_id in self._tasks:
                 if IS_DEBUG:
-                    log.debug("Running database writes for %d (%s)",
-                              lock_id, lock_author)
+                    log.debug("Running database writes for %d (%s)", lock_id, lock_author)
                 try:
                     tasks = self._tasks[lock_id]
                     tasks = [self.route_tasks(a, tasks[a]) for a in tasks]
@@ -169,8 +161,7 @@ class AudioAPIInterface:
                     )
                 else:
                     if IS_DEBUG:
-                        log.debug(
-                            "Completed database writes for %d (%s)", lock_id, lock_author)
+                        log.debug("Completed database writes for %d (%s)", lock_id, lock_author)
 
     async def run_all_pending_tasks(self) -> None:
         """Run all pending tasks left in the cache, called on cog_unload."""
@@ -178,8 +169,7 @@ class AudioAPIInterface:
             if IS_DEBUG:
                 log.debug("Running pending writes to database")
             try:
-                tasks: MutableMapping = {
-                    "update": [], "insert": [], "global": []}
+                tasks: MutableMapping = {"update": [], "insert": [], "global": []}
                 async for k, task in AsyncIter(self._tasks.items()):
                     async for t, args in AsyncIter(task.items()):
                         tasks[t].append(args)
@@ -192,8 +182,7 @@ class AudioAPIInterface:
                 debug_exc_log(log, exc, "Failed database writes")
             else:
                 if IS_DEBUG:
-                    log.debug(
-                        "Completed pending writes to database have finished")
+                    log.debug("Completed pending writes to database have finished")
 
     def append_task(self, ctx: commands.Context, event: str, task: Tuple, _id: int = None) -> None:
         """Add a task to the cache to be run later."""
@@ -219,8 +208,7 @@ class AudioAPIInterface:
         total_tracks = len(tracks)
         database_entries = []
         track_count = 0
-        time_now = int(datetime.datetime.now(
-            datetime.timezone.utc).timestamp())
+        time_now = int(datetime.datetime.now(datetime.timezone.utc).timestamp())
         youtube_cache = CacheLevel.set_youtube().is_subset(current_cache_level)
         youtube_api_error = None
         global_api = self.cog.global_api_user.get("can_read")
@@ -345,8 +333,7 @@ class AudioAPIInterface:
             else:
                 tracks_raw = results.get("tracks", results).get("items", [])
                 if tracks_raw:
-                    new_tracks = [k["track"]
-                                  for k in tracks_raw if k.get("track")]
+                    new_tracks = [k["track"] for k in tracks_raw if k.get("track")]
                     tracks.extend(new_tracks)
             track_count += len(new_tracks)
             if notifier:
@@ -487,15 +474,13 @@ class AudioAPIInterface:
                 lock(ctx, False)
                 embed3 = discord.Embed(
                     colour=await ctx.embed_colour(),
-                    title=_(
-                        "This doesn't seem to be a supported Spotify URL or code."),
+                    title=_("This doesn't seem to be a supported Spotify URL or code."),
                 )
                 await notifier.update_embed(embed3)
 
                 return track_list
             database_entries = []
-            time_now = int(datetime.datetime.now(
-                datetime.timezone.utc).timestamp())
+            time_now = int(datetime.datetime.now(datetime.timezone.utc).timestamp())
             youtube_cache = CacheLevel.set_youtube().is_subset(current_cache_level)
             spotify_cache = CacheLevel.set_spotify().is_subset(current_cache_level)
             async for track_count, track in AsyncIter(tracks_from_spotify).enumerate(start=1):
@@ -571,8 +556,7 @@ class AudioAPIInterface:
                                 (result, called_api) = await self.fetch_track(
                                     ctx,
                                     player,
-                                    Query.process_input(
-                                        val, self.cog.local_folder_current_path),
+                                    Query.process_input(val, self.cog.local_folder_current_path),
                                     forced=forced,
                                     should_query_global=not should_query_global,
                                 )
@@ -591,8 +575,7 @@ class AudioAPIInterface:
                                 lock(ctx, False)
                                 error_embed = discord.Embed(
                                     colour=await ctx.embed_colour(),
-                                    title=_(
-                                        "Player timeout, skipping remaining tracks."),
+                                    title=_("Player timeout, skipping remaining tracks."),
                                 )
                                 if notifier is not None:
                                     await notifier.update_embed(error_embed)
@@ -633,8 +616,7 @@ class AudioAPIInterface:
                     continue
                 consecutive_fails = 0
                 single_track = track_object[0]
-                query = Query.process_input(
-                    single_track, self.cog.local_folder_current_path)
+                query = Query.process_input(single_track, self.cog.local_folder_current_path)
                 if not await self.cog.is_query_allowed(
                     self.config,
                     ctx,
@@ -643,8 +625,7 @@ class AudioAPIInterface:
                 ):
                     has_not_allowed = True
                     if IS_DEBUG:
-                        log.debug("Query is not allowed in %r (%d)",
-                                  ctx.guild.name, ctx.guild.id)
+                        log.debug("Query is not allowed in %r (%d)", ctx.guild.name, ctx.guild.id)
                     continue
                 track_list.append(single_track)
                 if enqueue:
@@ -742,8 +723,7 @@ class AudioAPIInterface:
         """Call the Youtube API and returns the youtube URL that the query matched."""
         track_url = await self.youtube_api.get_call(track_info)
         if CacheLevel.set_youtube().is_subset(current_cache_level) and track_url:
-            time_now = int(datetime.datetime.now(
-                datetime.timezone.utc).timestamp())
+            time_now = int(datetime.datetime.now(datetime.timezone.utc).timestamp())
             task = (
                 "insert",
                 (
@@ -772,8 +752,7 @@ class AudioAPIInterface:
             try:
                 (val, update) = await self.local_cache_api.youtube.fetch_one({"track": track_info})
             except Exception as exc:
-                debug_exc_log(
-                    log, exc, "Failed to fetch %r from YouTube table", track_info)
+                debug_exc_log(log, exc, "Failed to fetch %r from YouTube table", track_info)
         if val is None:
             try:
                 youtube_url = await self.fetch_youtube_query(
@@ -838,8 +817,7 @@ class AudioAPIInterface:
                     {"query": query_string}
                 )
             except Exception as exc:
-                debug_exc_log(
-                    log, exc, "Failed to fetch %r from Lavalink table", query_string)
+                debug_exc_log(log, exc, "Failed to fetch %r from Lavalink table", query_string)
 
             if val and isinstance(val, dict):
                 if IS_DEBUG:
@@ -905,8 +883,7 @@ class AudioAPIInterface:
             except RuntimeError:
                 raise TrackEnqueueError
         if results is None:
-            results = LoadResult(
-                {"loadType": "LOAD_FAILED", "playlistInfo": {}, "tracks": []})
+            results = LoadResult({"loadType": "LOAD_FAILED", "playlistInfo": {}, "tracks": []})
             valid_global_entry = False
         update_global = (
             globaldb_toggle and not valid_global_entry and self.global_cache_api.has_api_key
@@ -928,8 +905,7 @@ class AudioAPIInterface:
             and results.tracks
         ):
             try:
-                time_now = int(datetime.datetime.now(
-                    datetime.timezone.utc).timestamp())
+                time_now = int(datetime.datetime.now(datetime.timezone.utc).timestamp())
                 data = json.dumps(results._raw)
                 if all(k in data for k in ["loadType", "playlistInfo", "isSeekable", "isStream"]):
                     task = (
@@ -976,8 +952,7 @@ class AudioAPIInterface:
                 )
                 tracks = playlist.tracks_obj
             except Exception as exc:
-                debug_exc_log(
-                    log, exc, "Failed to fetch playlist for autoplay")
+                debug_exc_log(log, exc, "Failed to fetch playlist for autoplay")
 
         if not tracks or not getattr(playlist, "tracks", None):
             if cache_enabled:
@@ -986,11 +961,9 @@ class AudioAPIInterface:
             if not tracks:
                 ctx = namedtuple("Context", "message guild cog")
                 (results, called_api) = await self.fetch_track(
-                    cast(commands.Context, ctx(
-                        player.guild, player.guild, self.cog)),
+                    cast(commands.Context, ctx(player.guild, player.guild, self.cog)),
                     player,
-                    Query.process_input(
-                        _TOP_100_US, self.cog.local_folder_current_path),
+                    Query.process_input(_TOP_100_US, self.cog.local_folder_current_path),
                 )
                 tracks = list(results.tracks)
         if tracks:
@@ -1003,8 +976,7 @@ class AudioAPIInterface:
                 if tries <= 0:
                     raise DatabaseError("No valid entry found")
                 track = random.choice(tracks)
-                query = Query.process_input(
-                    track, self.cog.local_folder_current_path)
+                query = Query.process_input(track, self.cog.local_folder_current_path)
                 await asyncio.sleep(0.001)
                 if (not query.valid) or (
                     query.is_local

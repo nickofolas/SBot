@@ -98,8 +98,7 @@ class PlayerCommands(MixinMeta, metaclass=CompositeMetaClass):
                 return await self.send_embed_msg(
                     ctx,
                     title=_("Unable To Play Tracks"),
-                    description=_(
-                        "Connection to Lavalink has not yet been established."),
+                    description=_("Connection to Lavalink has not yet been established."),
                 )
         player = lavalink.get_player(ctx.guild.id)
         player.store("notify_channel", ctx.channel.id)
@@ -109,8 +108,7 @@ class PlayerCommands(MixinMeta, metaclass=CompositeMetaClass):
             return await self.send_embed_msg(
                 ctx,
                 title=_("Unable To Play Tracks"),
-                description=_(
-                    "You must be in the voice channel to use the play command."),
+                description=_("You must be in the voice channel to use the play command."),
             )
         if not query.valid:
             return await self.send_embed_msg(
@@ -208,8 +206,7 @@ class PlayerCommands(MixinMeta, metaclass=CompositeMetaClass):
                 return await self.send_embed_msg(
                     ctx,
                     title=_("Unable To Play Tracks"),
-                    description=_(
-                        "Connection to Lavalink has not yet been established."),
+                    description=_("Connection to Lavalink has not yet been established."),
                 )
         player = lavalink.get_player(ctx.guild.id)
         player.store("notify_channel", ctx.channel.id)
@@ -219,8 +216,7 @@ class PlayerCommands(MixinMeta, metaclass=CompositeMetaClass):
             return await self.send_embed_msg(
                 ctx,
                 title=_("Unable To Play Tracks"),
-                description=_(
-                    "You must be in the voice channel to use the play command."),
+                description=_("You must be in the voice channel to use the play command."),
             )
         if not query.valid:
             return await self.send_embed_msg(
@@ -254,8 +250,7 @@ class PlayerCommands(MixinMeta, metaclass=CompositeMetaClass):
         elif not tracks:
             self.update_player_lock(ctx, False)
             title = _("Unable To Play Tracks")
-            desc = _("No tracks found for `{query}`.").format(
-                query=query.to_string_user())
+            desc = _("No tracks found for `{query}`.").format(query=query.to_string_user())
             embed = discord.Embed(title=title, description=desc)
             if await self.config.use_external_lavalink() and query.is_local:
                 embed.description = _(
@@ -285,8 +280,7 @@ class PlayerCommands(MixinMeta, metaclass=CompositeMetaClass):
         )
         if seek and seek > 0:
             single_track.start_timestamp = seek * 1000
-        query = Query.process_input(
-            single_track, self.local_folder_current_path)
+        query = Query.process_input(single_track, self.local_folder_current_path)
         if not await self.is_query_allowed(
             self.config,
             ctx,
@@ -294,8 +288,7 @@ class PlayerCommands(MixinMeta, metaclass=CompositeMetaClass):
             query_obj=query,
         ):
             if IS_DEBUG:
-                log.debug("Query is not allowed in %r (%d)",
-                          ctx.guild.name, ctx.guild.id)
+                log.debug("Query is not allowed in %r (%d)", ctx.guild.name, ctx.guild.id)
             self.update_player_lock(ctx, False)
             return await self.send_embed_msg(
                 ctx,
@@ -337,8 +330,7 @@ class PlayerCommands(MixinMeta, metaclass=CompositeMetaClass):
             )
             player.queue.insert(0, single_track)
             player.maybe_shuffle()
-            self.bot.dispatch("red_audio_track_enqueue",
-                              player.guild, single_track, ctx.author)
+            self.bot.dispatch("red_audio_track_enqueue", player.guild, single_track, ctx.author)
         description = await self.get_track_description(
             single_track, self.local_folder_current_path
         )
@@ -478,8 +470,7 @@ class PlayerCommands(MixinMeta, metaclass=CompositeMetaClass):
                 return await self.send_embed_msg(
                     ctx,
                     title=_("Unable To Play Tracks"),
-                    description=_(
-                        "Connection to Lavalink has not yet been established."),
+                    description=_("Connection to Lavalink has not yet been established."),
                 )
         player = lavalink.get_player(ctx.guild.id)
         player.store("notify_channel", ctx.channel.id)
@@ -491,8 +482,7 @@ class PlayerCommands(MixinMeta, metaclass=CompositeMetaClass):
             return await self.send_embed_msg(
                 ctx,
                 title=_("Unable To Play Tracks"),
-                description=_(
-                    "You must be in the voice channel to use the genre command."),
+                description=_("You must be in the voice channel to use the genre command."),
             )
         try:
             category_list = await self.api_interface.spotify_api.get_categories(ctx=ctx)
@@ -529,14 +519,12 @@ class PlayerCommands(MixinMeta, metaclass=CompositeMetaClass):
                 ctx,
                 playlists_list,
                 page_num,
-                _("Playlists for {friendly_name}").format(
-                    friendly_name=category_name),
+                _("Playlists for {friendly_name}").format(friendly_name=category_name),
                 playlist=True,
             )
             playlists_search_page_list.append(embed)
         playlists_pick = await menu(ctx, playlists_search_page_list, playlist_search_controls)
-        query = Query.process_input(
-            playlists_pick, self.local_folder_current_path)
+        query = Query.process_input(playlists_pick, self.local_folder_current_path)
         if not query.valid:
             return await self.send_embed_msg(ctx, title=_("No tracks to play."))
         if len(player.queue) >= 10000:
@@ -598,8 +586,7 @@ class PlayerCommands(MixinMeta, metaclass=CompositeMetaClass):
                 return await self.send_embed_msg(
                     ctx,
                     title=_("Unable To Play Tracks"),
-                    description=_(
-                        "Connection to Lavalink has not yet been established."),
+                    description=_("Connection to Lavalink has not yet been established."),
                 )
         player = lavalink.get_player(ctx.guild.id)
         player.store("notify_channel", ctx.channel.id)
@@ -611,8 +598,7 @@ class PlayerCommands(MixinMeta, metaclass=CompositeMetaClass):
             return await self.send_embed_msg(
                 ctx,
                 title=_("Unable To Play Tracks"),
-                description=_(
-                    "You must be in the voice channel to use the autoplay command."),
+                description=_("You must be in the voice channel to use the autoplay command."),
             )
         if len(player.queue) >= 10000:
             return await self.send_embed_msg(
@@ -724,8 +710,7 @@ class PlayerCommands(MixinMeta, metaclass=CompositeMetaClass):
                 return await self.send_embed_msg(
                     ctx,
                     title=_("Unable To Search For Tracks"),
-                    description=_(
-                        "Connection to Lavalink has not yet been established."),
+                    description=_("Connection to Lavalink has not yet been established."),
                 )
         player = lavalink.get_player(ctx.guild.id)
         guild_data = await self.config.guild(ctx.guild).all()
@@ -735,8 +720,7 @@ class PlayerCommands(MixinMeta, metaclass=CompositeMetaClass):
             return await self.send_embed_msg(
                 ctx,
                 title=_("Unable To Search For Tracks"),
-                description=_(
-                    "You must be in the voice channel to enqueue tracks."),
+                description=_("You must be in the voice channel to enqueue tracks."),
             )
         await self._eq_check(ctx, player)
         await self.set_player_settings(ctx)
@@ -808,8 +792,7 @@ class PlayerCommands(MixinMeta, metaclass=CompositeMetaClass):
                             "in a different machine than the local tracks."
                         )
                     elif query.is_local and query.suffix in _PARTIALLY_SUPPORTED_MUSIC_EXT:
-                        embed = discord.Embed(
-                            title=_("Track is not playable."))
+                        embed = discord.Embed(title=_("Track is not playable."))
                         embed.description = _(
                             "**{suffix}** is not a fully supported format and some "
                             "tracks may not play."
@@ -828,8 +811,7 @@ class PlayerCommands(MixinMeta, metaclass=CompositeMetaClass):
                 async for track in AsyncIter(tracks):
                     if len(player.queue) >= 10000:
                         continue
-                    query = Query.process_input(
-                        track, self.local_folder_current_path)
+                    query = Query.process_input(track, self.local_folder_current_path)
                     if not await self.is_query_allowed(
                         self.config,
                         ctx,

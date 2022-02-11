@@ -43,8 +43,7 @@ class Audio(
     def __init__(self, bot: Red):
         super().__init__()
         self.bot = bot
-        self.config = Config.get_conf(
-            self, 2711759130, force_registration=True)
+        self.config = Config.get_conf(self, 2711759130, force_registration=True)
 
         self.api_interface = None
         self.player_manager = None
@@ -148,8 +147,7 @@ class Audio(
             url_keyword_whitelist=[],
             country_code="US",
         )
-        _playlist: Mapping = dict(
-            id=None, author=None, name=None, playlist_url=None, tracks=[])
+        _playlist: Mapping = dict(id=None, author=None, name=None, playlist_url=None, tracks=[])
 
         self.config.init_custom("EQUALIZER", 1)
         self.config.register_custom("EQUALIZER", eq_bands=[], eq_presets={})

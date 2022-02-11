@@ -47,8 +47,7 @@ class AudioEvents(MixinMeta, metaclass=CompositeMetaClass):
                 self.bot.user.id, await self.config.daily_playlists()
             )
             today = datetime.date.today()
-            midnight = datetime.datetime.combine(
-                today, datetime.datetime.min.time())
+            midnight = datetime.datetime.combine(today, datetime.datetime.min.time())
             today_id = int(time.mktime(today.timetuple()))
             track = self.track_to_json(track)
             if daily_cache:
@@ -125,8 +124,7 @@ class AudioEvents(MixinMeta, metaclass=CompositeMetaClass):
                     bot=self.bot,
                 )
             except Exception as err:
-                debug_exc_log(
-                    log, err, "Failed to delete daily playlist ID: %d", too_old_id)
+                debug_exc_log(log, err, "Failed to delete daily playlist ID: %d", too_old_id)
             try:
                 await delete_playlist(
                     scope=PlaylistScope.GLOBAL.value,

@@ -27,8 +27,7 @@ class YouTubeCacheFetchResult:
 
     def __post_init__(self):
         if isinstance(self.last_updated, int):
-            self.updated_on: datetime.datetime = datetime.datetime.fromtimestamp(
-                self.last_updated)
+            self.updated_on: datetime.datetime = datetime.datetime.fromtimestamp(self.last_updated)
 
 
 @dataclass
@@ -38,8 +37,7 @@ class SpotifyCacheFetchResult:
 
     def __post_init__(self):
         if isinstance(self.last_updated, int):
-            self.updated_on: datetime.datetime = datetime.datetime.fromtimestamp(
-                self.last_updated)
+            self.updated_on: datetime.datetime = datetime.datetime.fromtimestamp(self.last_updated)
 
 
 @dataclass
@@ -49,8 +47,7 @@ class LavalinkCacheFetchResult:
 
     def __post_init__(self):
         if isinstance(self.last_updated, int):
-            self.updated_on: datetime.datetime = datetime.datetime.fromtimestamp(
-                self.last_updated)
+            self.updated_on: datetime.datetime = datetime.datetime.fromtimestamp(self.last_updated)
 
         if isinstance(self.query, str):
             self.query = json.loads(self.query)
@@ -98,8 +95,7 @@ class QueueFetchResult:
 def standardize_scope(scope: str) -> str:
     """Convert any of the used scopes into one we are expecting."""
     scope = scope.upper()
-    valid_scopes = ["GLOBAL", "GUILD", "AUTHOR",
-                    "USER", "SERVER", "MEMBER", "BOT"]
+    valid_scopes = ["GLOBAL", "GUILD", "AUTHOR", "USER", "SERVER", "MEMBER", "BOT"]
 
     if scope in PlaylistScope.list():
         return scope
@@ -132,13 +128,11 @@ def prepare_config_scope(
     elif scope == PlaylistScope.USER.value:
         if author is None:
             raise MissingAuthor("Invalid author for user scope.")
-        config_scope = [PlaylistScope.USER.value,
-                        int(getattr(author, "id", author))]
+        config_scope = [PlaylistScope.USER.value, int(getattr(author, "id", author))]
     else:
         if guild is None:
             raise MissingGuild("Invalid guild for guild scope.")
-        config_scope = [PlaylistScope.GUILD.value,
-                        int(getattr(guild, "id", guild))]
+        config_scope = [PlaylistScope.GUILD.value, int(getattr(guild, "id", guild))]
     return config_scope
 
 
@@ -153,13 +147,11 @@ def prepare_config_scope_for_migration23(  # TODO: remove me in a future version
     elif scope == PlaylistScope.USER.value:
         if author is None:
             raise MissingAuthor("Invalid author for user scope.")
-        config_scope = [PlaylistScope.USER.value,
-                        str(getattr(author, "id", author))]
+        config_scope = [PlaylistScope.USER.value, str(getattr(author, "id", author))]
     else:
         if guild is None:
             raise MissingGuild("Invalid guild for guild scope.")
-        config_scope = [PlaylistScope.GUILD.value,
-                        str(getattr(guild, "id", guild))]
+        config_scope = [PlaylistScope.GUILD.value, str(getattr(guild, "id", guild))]
     return config_scope
 
 

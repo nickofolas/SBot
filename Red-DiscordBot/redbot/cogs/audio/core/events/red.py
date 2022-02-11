@@ -56,5 +56,4 @@ class RedEvents(MixinMeta, metaclass=CompositeMetaClass):
 
             async with self.config.custom("EQUALIZER").all() as all_eqs:
                 for guild_id, preset_name in collected_for_removal:
-                    all_eqs[str(guild_id)
-                            ]["eq_presets"][preset_name]["author"] = 0xDE1
+                    all_eqs[str(guild_id)]["eq_presets"][preset_name]["author"] = 0xDE1

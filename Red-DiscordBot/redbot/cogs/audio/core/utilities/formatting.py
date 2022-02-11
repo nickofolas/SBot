@@ -72,8 +72,7 @@ class FormattingUtilities(MixinMeta, metaclass=CompositeMetaClass):
                 search_track_num = 5
             if playlist:
                 name = "**[{}]({})** - {} {}".format(
-                    entry.get("name"), entry.get("url"), str(
-                        entry.get("tracks")), _("tracks")
+                    entry.get("name"), entry.get("url"), str(entry.get("tracks")), _("tracks")
                 )
             else:
                 name = f"{list(entry.keys())[0]}"
@@ -97,8 +96,7 @@ class FormattingUtilities(MixinMeta, metaclass=CompositeMetaClass):
                 msg = _("Connection to Lavalink has failed")
                 description = EmptyEmbed
                 if await self.bot.is_owner(ctx.author):
-                    description = _(
-                        "Please check your console or logs for details.")
+                    description = _("Please check your console or logs for details.")
                 return await self.send_embed_msg(ctx, title=msg, description=description)
             try:
                 await lavalink.connect(
@@ -109,8 +107,7 @@ class FormattingUtilities(MixinMeta, metaclass=CompositeMetaClass):
                 return await self.send_embed_msg(ctx, title=_("Connect to a voice channel first."))
             except IndexError:
                 return await self.send_embed_msg(
-                    ctx, title=_(
-                        "Connection to Lavalink has not yet been established.")
+                    ctx, title=_("Connection to Lavalink has not yet been established.")
                 )
         player = lavalink.get_player(ctx.guild.id)
         player.store("notify_channel", ctx.channel.id)
@@ -141,8 +138,7 @@ class FormattingUtilities(MixinMeta, metaclass=CompositeMetaClass):
                 search_choice, self.local_folder_current_path
             )
         else:
-            search_choice = Query.process_input(
-                search_choice, self.local_folder_current_path)
+            search_choice = Query.process_input(search_choice, self.local_folder_current_path)
             if search_choice.is_local:
                 if (
                     search_choice.local_track_path.exists()
@@ -156,13 +152,11 @@ class FormattingUtilities(MixinMeta, metaclass=CompositeMetaClass):
                     search_choice.invoked_from = "localtrack"
             return await ctx.invoke(self.command_play, query=search_choice)
 
-        songembed = discord.Embed(
-            title=_("Track Enqueued"), description=description)
+        songembed = discord.Embed(title=_("Track Enqueued"), description=description)
         queue_dur = await self.queue_duration(ctx)
         queue_total_duration = self.format_time(queue_dur)
         before_queue_length = len(player.queue)
-        query = Query.process_input(
-            search_choice, self.local_folder_current_path)
+        query = Query.process_input(search_choice, self.local_folder_current_path)
         if not await self.is_query_allowed(
             self.config,
             ctx,
@@ -170,8 +164,7 @@ class FormattingUtilities(MixinMeta, metaclass=CompositeMetaClass):
             query_obj=query,
         ):
             if IS_DEBUG:
-                log.debug("Query is not allowed in %r (%d)",
-                          ctx.guild.name, ctx.guild.id)
+                log.debug("Query is not allowed in %r (%d)", ctx.guild.name, ctx.guild.id)
             self.update_player_lock(ctx, False)
             return await self.send_embed_msg(
                 ctx, title=_("This track is not allowed in this server.")
@@ -203,8 +196,7 @@ class FormattingUtilities(MixinMeta, metaclass=CompositeMetaClass):
             )
             player.add(ctx.author, search_choice)
             player.maybe_shuffle()
-            self.bot.dispatch("red_audio_track_enqueue",
-                              player.guild, search_choice, ctx.author)
+            self.bot.dispatch("red_audio_track_enqueue", player.guild, search_choice, ctx.author)
 
         if not guild_data["shuffle"] and queue_dur > 0:
             songembed.set_footer(
@@ -218,8 +210,7 @@ class FormattingUtilities(MixinMeta, metaclass=CompositeMetaClass):
         return await self.send_embed_msg(ctx, embed=songembed)
 
     async def _format_search_options(self, search_choice):
-        query = Query.process_input(
-            search_choice, self.local_folder_current_path)
+        query = Query.process_input(search_choice, self.local_folder_current_path)
         description = await self.get_track_description(
             search_choice, self.local_folder_current_path
         )
@@ -243,36 +234,30 @@ class FormattingUtilities(MixinMeta, metaclass=CompositeMetaClass):
             if search_track_num == 0:
                 search_track_num = 5
             try:
-                query = Query.process_input(
-                    track.uri, self.local_folder_current_path)
+                query = Query.process_input(track.uri, self.local_folder_current_path)
                 if query.is_local:
                     search_list += "`{0}.` **{1}**\n[{2}]\n".format(
                         search_track_num,
                         discord.utils.escape_markdown(track.title),
                         discord.utils.escape_markdown(
-                            LocalPath(
-                                track.uri, self.local_folder_current_path).to_string_user()
+                            LocalPath(track.uri, self.local_folder_current_path).to_string_user()
                         ),
                     )
                 else:
                     search_list += "`{0}.` **[{1}]({2})**\n".format(
-                        search_track_num, discord.utils.escape_markdown(
-                            track.title), track.uri
+                        search_track_num, discord.utils.escape_markdown(track.title), track.uri
                     )
             except AttributeError:
-                track = Query.process_input(
-                    track, self.local_folder_current_path)
+                track = Query.process_input(track, self.local_folder_current_path)
                 if track.is_local and command != "search":
                     search_list += "`{}.` **{}**\n".format(
-                        search_track_num, discord.utils.escape_markdown(
-                            track.to_string_user())
+                        search_track_num, discord.utils.escape_markdown(track.to_string_user())
                     )
                     if track.is_album:
                         folder = True
                 else:
                     search_list += "`{}.` **{}**\n".format(
-                        search_track_num, discord.utils.escape_markdown(
-                            track.to_string_user())
+                        search_track_num, discord.utils.escape_markdown(track.to_string_user())
                     )
         if hasattr(tracks[0], "uri") and hasattr(tracks[0], "track_identifier"):
             title = _("Tracks Found:")
@@ -318,8 +303,7 @@ class FormattingUtilities(MixinMeta, metaclass=CompositeMetaClass):
                     else:
                         string = (
                             f'**{escape(f"{track.author} - {track.title}", formatting=True)}**'
-                            + escape(f"\n{query.to_string_user()} ",
-                                     formatting=True)
+                            + escape(f"\n{query.to_string_user()} ", formatting=True)
                         )
                 elif hasattr(track, "title") and track.title != "Unknown title":
                     if shorten:

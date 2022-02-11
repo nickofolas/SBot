@@ -26,8 +26,7 @@ from ..cog_utils import CompositeMetaClass, DataReader
 
 log = logging.getLogger("red.cogs.Audio.cog.Utilities.miscellaneous")
 _ = Translator("Audio", Path(__file__))
-_RE_TIME_CONVERTER: Final[Pattern] = re.compile(
-    r"(?:(\d+):)?([0-5]?[0-9]):([0-5][0-9])")
+_RE_TIME_CONVERTER: Final[Pattern] = re.compile(r"(?:(\d+):)?([0-5]?[0-9]):([0-5][0-9])")
 _prefer_lyrics_cache = {}
 
 
@@ -51,8 +50,7 @@ class MiscellaneousUtilities(MixinMeta, metaclass=CompositeMetaClass):
                 bal = await bank.get_balance(ctx.author)
                 await self.send_embed_msg(
                     ctx,
-                    title=_("Not enough {currency}").format(
-                        currency=credits_name),
+                    title=_("Not enough {currency}").format(currency=credits_name),
                     description=_(
                         "{required_credits} {currency} required, but you have {bal}."
                     ).format(
@@ -76,8 +74,7 @@ class MiscellaneousUtilities(MixinMeta, metaclass=CompositeMetaClass):
         timestamp = kwargs.get("timestamp")
         footer = kwargs.get("footer")
         thumbnail = kwargs.get("thumbnail")
-        contents = dict(title=title, type=_type,
-                        url=url, description=description)
+        contents = dict(title=title, type=_type, url=url, description=description)
         if hasattr(kwargs.get("embed"), "to_dict"):
             embed = kwargs.get("embed")
             if embed is not None:
@@ -285,8 +282,7 @@ class MiscellaneousUtilities(MixinMeta, metaclass=CompositeMetaClass):
 
     async def data_schema_migration(self, from_version: int, to_version: int) -> None:
         database_entries = []
-        time_now = int(datetime.datetime.now(
-            datetime.timezone.utc).timestamp())
+        time_now = int(datetime.datetime.now(datetime.timezone.utc).timestamp())
         if from_version == to_version:
             return
         if from_version < 2 <= to_version:
@@ -301,8 +297,7 @@ class MiscellaneousUtilities(MixinMeta, metaclass=CompositeMetaClass):
                     ).enumerate(start=1000):
                         if not data or not name:
                             continue
-                        playlist = {"id": count, "name": name,
-                                    "guild": int(guild_id)}
+                        playlist = {"id": count, "name": name, "guild": int(guild_id)}
                         playlist.update(data)
                         guild_playlist[str(count)] = playlist
 
@@ -310,8 +305,7 @@ class MiscellaneousUtilities(MixinMeta, metaclass=CompositeMetaClass):
                         async for t in AsyncIter(tracks_in_playlist):
                             uri = t.get("info", {}).get("uri")
                             if uri:
-                                t = {"loadType": "V2_COMPAT",
-                                     "tracks": [t], "query": uri}
+                                t = {"loadType": "V2_COMPAT", "tracks": [t], "query": uri}
                                 data = json.dumps(t)
                                 if all(
                                     k in data
